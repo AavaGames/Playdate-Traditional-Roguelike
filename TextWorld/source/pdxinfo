@@ -1,0 +1,6 @@
+name=A World
+author=Philip Fertsman
+description=This is template project
+bundleID=com.AavaGames.package
+version=0.0.1
+buildNumber=1
