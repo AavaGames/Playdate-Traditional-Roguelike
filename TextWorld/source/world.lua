@@ -1,6 +1,7 @@
 import "global"
 import "player"
 import "animal"
+import "camera"
 
 local gfx <const> = playdate.graphics
 
@@ -35,7 +36,10 @@ function world:init()
         end
     end
 
-    self.player = player(1, 0)
+    self.player = player(math.floor(worldDimension.x/2), math.floor(worldDimension.y/2))
+    self.camera = camera(self.player)
+    --self.camera = camera(nil, 10, 0) -- not following
+
     worldGrid[0][0].char = "Z"
     worldGrid[1][5].char = "Z"
 end
@@ -48,7 +52,7 @@ function world:update()
                 if actorGrid[x][y].updated == false then
                     actorGrid[x][y]:update()
                 else
-                    print("cant update")
+                    --print("cant update")
                 end
             end
 
@@ -62,21 +66,30 @@ function world:update()
             end
         end
     end
+
+    self.camera:update() -- must update last to follow
 end
 
 function world:draw()
     gfx.setImageDrawMode(playdate.graphics.kDrawModeNXOR)
 
     --gfx.drawText("THIS IS BASE FONT",0,0)
+    local startX = clamp(self.camera.x - math.floor((xMax-(self.insetAmount*2))/2), 0, worldDimension.x-xMax+(self.insetAmount*2))
+    local startY = clamp(self.camera.y - math.floor((yMax-(self.insetAmount*2))/2), 0, worldDimension.y-yMax+(self.insetAmount*2))
+
     local first = self.insetAmount
     local last = self.insetAmount + 1;
     local xOffset = 0
     local yOffset = 0
     for xPos = first, xMax - last, 1 do
         for yPos = first, yMax - last, 1 do
-            
-            local x = self.player.x + xOffset
-            local y = self.player.y + yOffset
+
+            local x = startX + xOffset
+            local y = startY + yOffset
+
+            if (x > worldDimension.x-1 or y > worldDimension.y-1) then
+                break
+            end
 
             local char = ""
             if actorGrid[x][y] ~= nil then

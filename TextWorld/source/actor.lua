@@ -16,23 +16,19 @@ end
 
 function actor:update()
     self.updated = true
-    print("actor")
 end
 
 function actor:setLocation(x, y)
-    print("1")
-    
     x = clamp(x, 0, worldDimension.x - 1)
     y = clamp(y, 0, worldDimension.y - 1)
     if x ~= self.x or y ~= self.y then
-        print("2")
         if actorGrid[x][y] == nil then
             actorGrid[self.x][self.y] = nil -- leave old pos
             self.x = x
             self.y = y
             actorGrid[self.x][self.y] = self -- set new pos
     
-            print("new ", x, y)
+            --print("new ", x, y)
         end
     end
 end

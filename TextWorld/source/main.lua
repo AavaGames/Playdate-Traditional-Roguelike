@@ -6,16 +6,12 @@ local fps = false;
 
 local gfx <const> = playdate.graphics
 
-local geebee = gfx.font.new('assets/fonts/Gee Bee')
-local sans = gfx.font.new('assets/fonts/Mini Sans/Mini Sans')
-local mono = gfx.font.new('assets/fonts/Mini Mono/Mini Mono')
-
 local function initializeGame()
 	playdate.display.setRefreshRate(targetFPS)
 	math.randomseed(playdate.getSecondsSinceEpoch())
 
 	border = border(2,4)
-	gfx.setFont(mono)
+	gfx.setFont(currentFont) 
 
 	gfx.setBackgroundColor(gfx.kColorWhite)
 
@@ -24,7 +20,6 @@ local function initializeGame()
 		gfx.setBackgroundColor(bgColor and gfx.kColorBlack or gfx.kColorWhite)
 		bgColor = not bgColor
 		playdate.timer.performAfterDelay(10000, invertColors)
-		print("test")
 	end
 	--invertColors()
 
