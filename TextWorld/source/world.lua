@@ -16,35 +16,53 @@ function world:init()
     self.xMaxPercentCuttoff = 1
     self.yMaxPercentCuttoff = 0.6
 
-    for x = 0, worldDimension.x - 1, 1 do
+    -- var tile = array[y * width + x]
+    -- 0 = empty, 1 = wall, 2 = ground, 3 = nil, 4 = grass
+    local townFile = playdate.file.open("assets/maps/town.json")
+    local townJson = json.decodeFile(townFile)
+    townArray = townJson.layers[1].data
+    townDim = { x = townJson.width, y = townJson.height }
+
+    print (townDim.x, townDim.y, townArray[1])
+
+    for x = 1, townDim.x, 1 do
         worldGrid[x] = {}
-        for y = 0, worldDimension.y - 1, 1 do
-            worldGrid[x][y] = entity()
+        for y = 1, townDim.y, 1 do
+            local type = townArray[y * townDim.x * x]
+
+            if type == 1 then
+                worldGrid[x][y] = entity()
+            else
+                worldGrid[x][y] = nil
+            end
+            
         end
     end
 
-    -- no overlaping with other, can easily check if you can walk on the world location
-    -- entity = all things
-    -- actor : entity = player, animal, etc
-    -- ??? = trees, boulders, etc.
-    -- worldEntity = water, grass, dirt, etc ?
+    
+    -- for x = 0, worldDimension.x - 1, 1 do
+    --     worldGrid[x] = {}
+    --     for y = 0, worldDimension.y - 1, 1 do
+    --         worldGrid[x][y] = entity()
+    --     end
+    -- end
+
+    --worldGrid[0][0].char = "Z"
+    --worldGrid[1][5].char = "Z"
 
     for x = 0, worldDimension.x - 1, 1 do
         actorGrid[x] = {}
         for y = 0, worldDimension.y - 1, 1 do
             actorGrid[x][y] = nil
-            if math.random(250) == 1 then 
-                animal(x, y)
-            end
+            -- if math.random(250) == 1 then 
+            --     animal(x, y)
+            -- end
         end
     end
 
     self.player = player(math.floor(worldDimension.x/2), math.floor(worldDimension.y/2))
     self.camera = camera(self.player)
     --self.camera = camera(nil, 10, 0) -- not following
-
-    worldGrid[0][0].char = "Z"
-    worldGrid[1][5].char = "Z"
 end
 
 function world:update()

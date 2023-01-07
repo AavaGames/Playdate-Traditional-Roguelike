@@ -21,7 +21,7 @@ mono = gfx.font.new('assets/fonts/Mini Mono/Mini Mono')
 mono2 = gfx.font.new('assets/fonts/Mini Mono 2X/Mini Mono 2X')
 
 baseFont = mono2
-showLog = true
+showLog = false
 
 xMax = screenDimensions.x / fontSize
 yMax = screenDimensions.y / fontSize

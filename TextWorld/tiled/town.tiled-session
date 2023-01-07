@@ -1,0 +1,96 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "ascii.tsx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "fileStates": {
+        "ascii.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "town-spritesheet.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 8,
+            "scaleInEditor": 23
+        },
+        "town..tmj": {
+            "scale": 1.491020910209102,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 222.33088599241051,
+                "y": 394.0253258538195
+            }
+        },
+        "town.json": {
+            "scale": 2.5846481876332623,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 146.05469394489356,
+                "y": 221.50016498927565
+            }
+        },
+        "town.tmj": {
+            "scale": 2.5846481876332623,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 146.05469394489356,
+                "y": 221.50016498927565
+            }
+        },
+        "town.tmx": {
+            "scale": 2,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 268.25,
+                "y": 203.25
+            }
+        },
+        "tw.tmj": {
+            "scale": 2.658333333333333,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 124.32601880877743,
+                "y": 228.15047021943573
+            }
+        }
+    },
+    "last.exportedFilePath": "D:/Github/PlaydateProjects/TextWorld/tiled",
+    "last.imagePath": "D:/Github/PlaydateProjects/TextWorld/tiled/spritesheets",
+    "map.fixedSize": false,
+    "map.height": 100,
+    "map.lastUsedExportFilter": "JSON map files (*.tmj *.json)",
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 8,
+    "map.tileWidth": 8,
+    "map.width": 50,
+    "openFiles": [
+        "town.tmx",
+        "tw.tmj",
+        "town-spritesheet.tsx",
+        "town.tmj",
+        "town.json",
+        "ascii.tsx"
+    ],
+    "project": "town.tiled-project",
+    "recentFiles": [
+        "town.tmx",
+        "tw.tmj",
+        "town-spritesheet.tsx",
+        "town.tmj",
+        "town.json",
+        "ascii.tsx",
+        "town..tmj"
+    ],
+    "resizeMap.removeObjects": true,
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 8,
+        "width": 8
+    },
+    "tileset.type": 0
+}
