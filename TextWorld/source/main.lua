@@ -1,6 +1,7 @@
 import "global"
 import "world"
 import "border"
+import "logManager"
 
 local fps = false;
 
@@ -10,7 +11,6 @@ local function initializeGame()
 	playdate.display.setRefreshRate(targetFPS)
 	math.randomseed(playdate.getSecondsSinceEpoch())
 
-	border = border(2,4)
 	gfx.setFont(currentFont) 
 
 	gfx.setBackgroundColor(gfx.kColorWhite)
@@ -24,10 +24,16 @@ local function initializeGame()
 	--invertColors()
 
 	world = world()
+	screenBorder = border(4, 4, 400-8, 240-8, 4, gfx.kColorBlack)
+
+	logBorder = border(10, 162, 400-20, 64, 2, gfx.kColorBlack)
+
+	logManager = logManager()
 end
 
 local function updateGame()
 	world:update()
+	logManager:update()
 end
 
 local function drawGame()
@@ -35,8 +41,10 @@ local function drawGame()
 	gfx.sprite.update()
 
 	world:draw()
+	logManager:draw()
 
-	border:draw()
+	screenBorder:draw()
+	logBorder:draw()
 end
 
 initializeGame()

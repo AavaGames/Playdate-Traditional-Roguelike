@@ -7,6 +7,11 @@ local gfx <const> = playdate.graphics
 
 -- Global Variables --
 
+screenDimensions = {
+    x = 400,
+    y = 240
+}
+
 targetFPS = 30
 
 fontSize = 16;
@@ -17,13 +22,8 @@ mono2 = gfx.font.new('assets/fonts/Mini Mono 2X/Mini Mono 2X')
 
 currentFont = mono2
 
-xMax = 400 / fontSize
-yMax = 240 / fontSize
-
-screen = {
-    x = 400,
-    y = 240
-}
+xMax = screenDimensions.x / fontSize
+yMax = screenDimensions.y / fontSize
 
 worldDimension = { x = 50, y = 50 } -- min xMax, yMax
 

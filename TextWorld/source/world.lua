@@ -13,6 +13,9 @@ actorGrid = {}
 function world:init()
     self.insetAmount = 1
 
+    self.xMaxPercentCuttoff = 1
+    self.yMaxPercentCuttoff = 0.6
+
     for x = 0, worldDimension.x - 1, 1 do
         worldGrid[x] = {}
         for y = 0, worldDimension.y - 1, 1 do
@@ -91,6 +94,16 @@ function world:draw()
                 break
             end
 
+            local drawCoord = { x = fontSize * xPos, y = fontSize * yPos}
+            if (drawCoord.x > screenDimensions.x * self.xMaxPercentCuttoff) then
+                xPos = xMax
+                break
+            end
+            if (drawCoord.y > screenDimensions.y * self.yMaxPercentCuttoff) then
+                yPos = yMax
+                break
+            end
+
             local char = ""
             if actorGrid[x][y] ~= nil then
                 char = actorGrid[x][y].char
@@ -98,7 +111,7 @@ function world:draw()
                 char = worldGrid[x][y].char
             end
 
-            gfx.drawText(char, fontSize * xPos, fontSize * yPos)
+            gfx.drawText(char, drawCoord.x, drawCoord.y)
 
             yOffset += 1
         end
