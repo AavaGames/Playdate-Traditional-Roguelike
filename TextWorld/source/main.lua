@@ -11,7 +11,7 @@ local function initializeGame()
 	playdate.display.setRefreshRate(targetFPS)
 	math.randomseed(playdate.getSecondsSinceEpoch())
 
-	gfx.setFont(currentFont) 
+	gfx.setFont(baseFont) 
 
 	gfx.setBackgroundColor(gfx.kColorWhite)
 
@@ -24,10 +24,7 @@ local function initializeGame()
 	--invertColors()
 
 	world = world()
-	screenBorder = border(4, 4, 400-8, 240-8, 4, gfx.kColorBlack)
-
-	logBorder = border(10, 162, 400-20, 64, 2, gfx.kColorBlack)
-
+	screenBorder = border(2, 2, 400-8, 240-8, 4, gfx.kColorBlack)
 	logManager = logManager()
 end
 
@@ -41,10 +38,11 @@ local function drawGame()
 	gfx.sprite.update()
 
 	world:draw()
-	logManager:draw()
+	if showLog then
+		logManager:draw()
+	end
 
 	screenBorder:draw()
-	logBorder:draw()
 end
 
 initializeGame()

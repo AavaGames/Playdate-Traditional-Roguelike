@@ -76,7 +76,8 @@ end
 function world:draw()
     gfx.setImageDrawMode(playdate.graphics.kDrawModeNXOR)
 
-    --gfx.drawText("THIS IS BASE FONT",0,0)
+    gfx.setFont(baseFont)
+
     local startX = clamp(self.camera.x - math.floor((xMax-(self.insetAmount*2))/2), 0, worldDimension.x-xMax+(self.insetAmount*2))
     local startY = clamp(self.camera.y - math.floor((yMax-(self.insetAmount*2))/2), 0, worldDimension.y-yMax+(self.insetAmount*2))
 
@@ -99,7 +100,7 @@ function world:draw()
                 xPos = xMax
                 break
             end
-            if (drawCoord.y > screenDimensions.y * self.yMaxPercentCuttoff) then
+            if (showLog and drawCoord.y > screenDimensions.y * self.yMaxPercentCuttoff) then
                 yPos = yMax
                 break
             end

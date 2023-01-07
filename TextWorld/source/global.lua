@@ -20,7 +20,8 @@ sans = gfx.font.new('assets/fonts/Mini Sans/Mini Sans')
 mono = gfx.font.new('assets/fonts/Mini Mono/Mini Mono')
 mono2 = gfx.font.new('assets/fonts/Mini Mono 2X/Mini Mono 2X')
 
-currentFont = mono2
+baseFont = mono2
+showLog = true
 
 xMax = screenDimensions.x / fontSize
 yMax = screenDimensions.y / fontSize
