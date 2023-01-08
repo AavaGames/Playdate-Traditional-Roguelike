@@ -51,7 +51,7 @@ function world:init(theWorldManager)
         end
     end
     --self.player = player(math.floor(self.gridDimensions.x/2), math.floor(self.gridDimensions.y/2))
-    self.player = player(self, 5,5)
+    self.player = player(self, 16,53)
     self.camera = camera(self.player)
 end
 

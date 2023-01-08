@@ -1,6 +1,7 @@
-name=A World
+name=Playband
 author=Philip Fertsman
-description=This is an ascii world.
-bundleID=com.AavaGames.package
-version=0.0.1
+description=Break the seal and steal the heart.
+bundleID=com.AavaGames.Playband
+version=0.0.2
 buildNumber=1
+imagePath=/assets/card/
