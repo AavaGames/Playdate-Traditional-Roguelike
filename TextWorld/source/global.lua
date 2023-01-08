@@ -26,8 +26,6 @@ showLog = false
 xMax = screenDimensions.x / fontSize
 yMax = screenDimensions.y / fontSize
 
-worldDimension = { x = 50, y = 50 } -- min xMax, yMax
-
 defaultDrawMode = playdate.graphics.kDrawModeNXOR
 
 function clamp(number, min, max)
