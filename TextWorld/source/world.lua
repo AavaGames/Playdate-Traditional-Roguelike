@@ -10,6 +10,8 @@ class("world").extends()
 worldGrid = {}
 actorGrid = {}
 
+gridDimensions = { x, y }
+
 function world:init()
     self.insetAmount = 1
 
@@ -19,43 +21,35 @@ function world:init()
     -- var tile = array[y * width + x]
     -- 0 = empty, 1 = wall, 2 = ground, 3 = nil, 4 = grass
 
-    -- local townFile = playdate.file.open("assets/maps/town.json")
-    -- local townJson = json.decodeFile(townFile)
-    -- townArray = townJson.layers[1].data
-    -- townDim = { x = townJson.width, y = townJson.height }
+    local townFile = playdate.file.open("assets/maps/town.json")
+    local townJson = json.decodeFile(townFile)
+    townArray = townJson.layers[1].data
+    gridDimensions = { x = townJson.width, y = townJson.height }
 
-    -- print (townDim.x, townDim.y, townArray[1])
+    print (gridDimensions.x, gridDimensions.y, townArray[1], townArray[gridDimensions.y * gridDimensions.x])
 
-    -- for x = 1, townDim.x, 1 do
-    --     worldGrid[x] = {}
-    --     for y = 1, townDim.y, 1 do
-    --         local type = townArray[y * townDim.x * x]
-
-    --         if type == 1 then
-    --             worldGrid[x][y] = entity()
-    --         else
-    --             worldGrid[x][y] = nil
-    --         end
-            
-    --     end
-    -- end
-
-    
-    for x = 0, worldDimension.x - 1, 1 do
+    for x = 1, gridDimensions.x, 1 do
         worldGrid[x] = {}
-        for y = 0, worldDimension.y - 1, 1 do
-            worldGrid[x][y] = entity()
+        for y = 1, gridDimensions.y, 1 do
+            local type = townArray[y * gridDimensions.x * x]
+
+            if type == 1 then
+                worldGrid[x][y] = entity()
+            else
+                worldGrid[x][y] =  nil
+            end
+            
         end
     end
 
-    worldGrid[math.floor(worldDimension.x/2) -2][math.floor(worldDimension.y/2)-2].char = "Z"
-    worldGrid[math.floor(worldDimension.x/2) +2][math.floor(worldDimension.y/2)+2].char = "Z"
+    printTable(townArray)
 
-    --worldGrid[1][5].char = "Z"
+    -- worldGrid[math.floor(worldDimension.x/2) -2][math.floor(worldDimension.y/2)-2].char = "Z"
+    -- worldGrid[math.floor(worldDimension.x/2) +2][math.floor(worldDimension.y/2)+2].char = "Z"
 
-    for x = 0, worldDimension.x - 1, 1 do
+    for x = 0, gridDimensions.x - 1, 1 do
         actorGrid[x] = {}
-        for y = 0, worldDimension.y - 1, 1 do
+        for y = 0, gridDimensions.y - 1, 1 do
             actorGrid[x][y] = nil
             -- if math.random(250) == 1 then 
             --     animal(x, y)
@@ -63,16 +57,15 @@ function world:init()
         end
     end
 
-    self.player = player(math.floor(worldDimension.x/2), math.floor(worldDimension.y/2))
-    self.camera = camera(self.player)
-    --self.camera = camera(nil, 10, 0) -- not following
 
-    --printTable()
+    --self.player = player(math.floor(worldDimension.x/2), math.floor(worldDimension.y/2))
+    self.player = player(15,0)
+    self.camera = camera(self.player)
 end
 
 function world:update()
-    for x = 0, worldDimension.x - 1, 1 do
-        for y = 0, worldDimension.y - 1, 1 do
+    for x = 0, gridDimensions.x - 1, 1 do
+        for y = 0, gridDimensions.y - 1, 1 do
 
             if actorGrid[x][y] ~= nil then
                 if actorGrid[x][y].updated == false then
@@ -85,8 +78,8 @@ function world:update()
         end
     end
 
-    for x = 0, worldDimension.x - 1, 1 do
-        for y = 0, worldDimension.y - 1, 1 do
+    for x = 0, gridDimensions.x - 1, 1 do
+        for y = 0, gridDimensions.y - 1, 1 do
             if actorGrid[x][y] ~= nil then
                 actorGrid[x][y].updated = false
             end
@@ -101,20 +94,21 @@ function world:draw()
 
     gfx.setFont(baseFont)
 
-    local startX = clamp(self.camera.x - math.floor((xMax-(self.insetAmount*2))/2), 0, worldDimension.x-xMax+(self.insetAmount*2))
-    local startY = clamp(self.camera.y - math.floor((yMax-(self.insetAmount*2))/2), 0, worldDimension.y-yMax+(self.insetAmount*2))
+    local startX = clamp(self.camera.x - math.floor((xMax-(self.insetAmount*2))/2), 1, gridDimensions.x-xMax+(self.insetAmount*2))
+    local startY = clamp(self.camera.y - math.floor((yMax-(self.insetAmount*2))/2), 1, gridDimensions.y-yMax+(self.insetAmount*2))
 
     local first = self.insetAmount
     local last = self.insetAmount + 1;
     local xOffset = 0
     local yOffset = 0
+
     for xPos = first, xMax - last, 1 do
         for yPos = first, yMax - last, 1 do
 
             local x = startX + xOffset
             local y = startY + yOffset
 
-            if (x > worldDimension.x-1 or y > worldDimension.y-1) then
+            if (x > gridDimensions.x or y > gridDimensions.y) then
                 break
             end
 
@@ -131,7 +125,7 @@ function world:draw()
             local char = ""
             if actorGrid[x][y] ~= nil then
                 char = actorGrid[x][y].char
-            else
+            elseif worldGrid[x][y] ~= nil then
                 char = worldGrid[x][y].char
             end
 
