@@ -18,36 +18,39 @@ function world:init()
 
     -- var tile = array[y * width + x]
     -- 0 = empty, 1 = wall, 2 = ground, 3 = nil, 4 = grass
-    local townFile = playdate.file.open("assets/maps/town.json")
-    local townJson = json.decodeFile(townFile)
-    townArray = townJson.layers[1].data
-    townDim = { x = townJson.width, y = townJson.height }
 
-    print (townDim.x, townDim.y, townArray[1])
+    -- local townFile = playdate.file.open("assets/maps/town.json")
+    -- local townJson = json.decodeFile(townFile)
+    -- townArray = townJson.layers[1].data
+    -- townDim = { x = townJson.width, y = townJson.height }
 
-    for x = 1, townDim.x, 1 do
-        worldGrid[x] = {}
-        for y = 1, townDim.y, 1 do
-            local type = townArray[y * townDim.x * x]
+    -- print (townDim.x, townDim.y, townArray[1])
 
-            if type == 1 then
-                worldGrid[x][y] = entity()
-            else
-                worldGrid[x][y] = nil
-            end
-            
-        end
-    end
-
-    
-    -- for x = 0, worldDimension.x - 1, 1 do
+    -- for x = 1, townDim.x, 1 do
     --     worldGrid[x] = {}
-    --     for y = 0, worldDimension.y - 1, 1 do
-    --         worldGrid[x][y] = entity()
+    --     for y = 1, townDim.y, 1 do
+    --         local type = townArray[y * townDim.x * x]
+
+    --         if type == 1 then
+    --             worldGrid[x][y] = entity()
+    --         else
+    --             worldGrid[x][y] = nil
+    --         end
+            
     --     end
     -- end
 
-    --worldGrid[0][0].char = "Z"
+    
+    for x = 0, worldDimension.x - 1, 1 do
+        worldGrid[x] = {}
+        for y = 0, worldDimension.y - 1, 1 do
+            worldGrid[x][y] = entity()
+        end
+    end
+
+    worldGrid[math.floor(worldDimension.x/2) -2][math.floor(worldDimension.y/2)-2].char = "Z"
+    worldGrid[math.floor(worldDimension.x/2) +2][math.floor(worldDimension.y/2)+2].char = "Z"
+
     --worldGrid[1][5].char = "Z"
 
     for x = 0, worldDimension.x - 1, 1 do
@@ -63,6 +66,8 @@ function world:init()
     self.player = player(math.floor(worldDimension.x/2), math.floor(worldDimension.y/2))
     self.camera = camera(self.player)
     --self.camera = camera(nil, 10, 0) -- not following
+
+    --printTable()
 end
 
 function world:update()

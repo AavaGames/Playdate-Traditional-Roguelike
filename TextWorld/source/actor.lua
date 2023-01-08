@@ -4,12 +4,16 @@ import "world"
 
 class("actor").extends(entity)
 
+ACTIVE = 0
+INACTIVE = 1
+
 function actor:init(x, y)
     self.char = "a"
     self.name = "Actor"
     self.x = x
     self.y = y
     self.updated = false
+    self.state = ACTIVE
 
     actorGrid[self.x][self.y] = self -- TODO: can spawn on top of another actor overwriting their pos
 end

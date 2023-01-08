@@ -3,7 +3,7 @@ import "world"
 import "border"
 import "logManager"
 
-local fps = false;
+local fps = true;
 
 local gfx <const> = playdate.graphics
 
@@ -12,6 +12,8 @@ local function initializeGame()
 	math.randomseed(playdate.getSecondsSinceEpoch())
 
 	gfx.setFont(baseFont) 
+
+	--print("font height " .. baseFont:getHeight())
 
 	gfx.setBackgroundColor(gfx.kColorWhite)
 
@@ -29,6 +31,8 @@ local function initializeGame()
 end
 
 local function updateGame()
+	-- playdate.keyPressed() -- use kb input for debugging
+
 	world:update()
 	logManager:update()
 end
