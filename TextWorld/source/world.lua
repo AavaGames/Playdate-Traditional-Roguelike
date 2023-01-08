@@ -3,73 +3,78 @@ import "player"
 import "animal"
 import "camera"
 
+import "worldManager"
+
+import "tile"
+import "grass"
+import "wall"
+
 local gfx <const> = playdate.graphics
 
 class("world").extends()
 
-worldGrid = {}
-actorGrid = {}
+function world:init(theWorldManager)
+    self.worldManager = theWorldManager
 
-gridDimensions = { x, y }
-
-function world:init()
-    self.insetAmount = 1
-
-    self.xMaxPercentCuttoff = 1
-    self.yMaxPercentCuttoff = 0.6
+    self.grid = {}
+    self.gridDimensions = { x, y }
 
     -- var tile = array[y * width + x]
     -- 0 = empty, 1 = wall, 2 = ground, 3 = nil, 4 = grass
 
     local townFile = playdate.file.open("assets/maps/town.json")
     local townJson = json.decodeFile(townFile)
-    townArray = townJson.layers[1].data
-    gridDimensions = { x = townJson.width, y = townJson.height }
+    local townArray = townJson.layers[1].data
+    self.gridDimensions = { x = townJson.width, y = townJson.height }
 
-    print (gridDimensions.x, gridDimensions.y, townArray[1], townArray[gridDimensions.y * gridDimensions.x])
+    print (self.gridDimensions.x, self.gridDimensions.y, townArray[1], townArray[self.gridDimensions.y * self.gridDimensions.x])
+    --table.create(gridDimensions.x, 0)
+    for x = 1, self.gridDimensions.x, 1 do
+        self.grid[x] = {}
+        for y = 1, self.gridDimensions.y, 1 do
+            self.grid[x][y] = tile()
+        end
+    end
 
-    for x = 1, gridDimensions.x, 1 do
-        worldGrid[x] = {}
-        for y = 1, gridDimensions.y, 1 do
-            local type = townArray[y * gridDimensions.x * x]
-
+    -- populate map
+    for x = 1, self.gridDimensions.x, 1 do
+        for y = 1, self.gridDimensions.y, 1 do
+            local tile = self.grid[x][y]
+            local type = townArray[x + self.gridDimensions.x * y]
             if type == 1 then
-                worldGrid[x][y] = entity()
-            else
-                worldGrid[x][y] =  nil
+                wall(self, x, y)
+            elseif type == 3 then
+                --tile.decoration = ground()
+            elseif type == 4 then
+                tile.decoration = grass()
             end
-            
         end
     end
-
-    printTable(townArray)
-
-    -- worldGrid[math.floor(worldDimension.x/2) -2][math.floor(worldDimension.y/2)-2].char = "Z"
-    -- worldGrid[math.floor(worldDimension.x/2) +2][math.floor(worldDimension.y/2)+2].char = "Z"
-
-    for x = 0, gridDimensions.x - 1, 1 do
-        actorGrid[x] = {}
-        for y = 0, gridDimensions.y - 1, 1 do
-            actorGrid[x][y] = nil
-            -- if math.random(250) == 1 then 
-            --     animal(x, y)
-            -- end
-        end
-    end
-
-
-    --self.player = player(math.floor(worldDimension.x/2), math.floor(worldDimension.y/2))
-    self.player = player(15,0)
+    --self.player = player(math.floor(self.gridDimensions.x/2), math.floor(self.gridDimensions.y/2))
+    self.player = player(self, 5,5)
     self.camera = camera(self.player)
 end
 
-function world:update()
-    for x = 0, gridDimensions.x - 1, 1 do
-        for y = 0, gridDimensions.y - 1, 1 do
+function world:setLocation(actor, x, y)
+    x = clamp(x, 1, self.gridDimensions.x)
+    y = clamp(y, 1, self.gridDimensions.y)
 
-            if actorGrid[x][y] ~= nil then
-                if actorGrid[x][y].updated == false then
-                    actorGrid[x][y]:update()
+    local tile = self.grid[x][y]
+    if tile.actor == nil then
+        actor:updateTile(tile)
+        return true
+    else
+        return false
+    end
+end
+
+function world:update()
+    for x = 1, self.gridDimensions.x, 1 do
+        for y = 1, self.gridDimensions.y, 1 do
+            local tile = self.grid[x][y]
+            if tile.actor ~= nil then
+                if tile.actor.updated == false then
+                    tile.actor:update()
                 else
                     --print("cant update")
                 end
@@ -78,10 +83,11 @@ function world:update()
         end
     end
 
-    for x = 0, gridDimensions.x - 1, 1 do
-        for y = 0, gridDimensions.y - 1, 1 do
-            if actorGrid[x][y] ~= nil then
-                actorGrid[x][y].updated = false
+    for x = 1, self.gridDimensions.x, 1 do
+        for y = 1, self.gridDimensions.y, 1 do
+            local tile = self.grid[x][y]
+            if tile.actor ~= nil then
+                tile.actor.updated = false
             end
         end
     end
@@ -92,41 +98,49 @@ end
 function world:draw()
     gfx.setImageDrawMode(playdate.graphics.kDrawModeNXOR)
 
-    gfx.setFont(baseFont)
+    gfx.setFont(worldFont)
 
-    local startX = clamp(self.camera.x - math.floor((xMax-(self.insetAmount*2))/2), 1, gridDimensions.x-xMax+(self.insetAmount*2))
-    local startY = clamp(self.camera.y - math.floor((yMax-(self.insetAmount*2))/2), 1, gridDimensions.y-yMax+(self.insetAmount*2))
+    local screenX = xMax-(worldManager.insetAmount*2)
+    local screenY = yMax-(worldManager.insetAmount*2)
+    local startX = clamp(self.camera.x - math.floor(screenX/2), 1, self.gridDimensions.x-screenX)
+    local startY = clamp(self.camera.y - math.floor(screenY/2), 1, self.gridDimensions.y-screenY)
 
-    local first = self.insetAmount
-    local last = self.insetAmount + 1;
+    local first = worldManager.insetAmount
+    local last = worldManager.insetAmount + 1;
     local xOffset = 0
     local yOffset = 0
 
     for xPos = first, xMax - last, 1 do
         for yPos = first, yMax - last, 1 do
-
             local x = startX + xOffset
             local y = startY + yOffset
 
-            if (x > gridDimensions.x or y > gridDimensions.y) then
+            if (x > self.gridDimensions.x or y > self.gridDimensions.y) then
                 break
             end
 
             local drawCoord = { x = fontSize * xPos, y = fontSize * yPos}
-            if (drawCoord.x > screenDimensions.x * self.xMaxPercentCuttoff) then
+            if (drawCoord.x > screenDimensions.x * worldManager.xMaxPercentCutoff) then
                 xPos = xMax
                 break
             end
-            if (showLog and drawCoord.y > screenDimensions.y * self.yMaxPercentCuttoff) then
+            if drawCoord.y > screenDimensions.y * worldManager.yMaxPercentCutoff or 
+                (showLog and drawCoord.y > screenDimensions.y * worldManager.logYMaxPercentCutoff) then
                 yPos = yMax
                 break
             end
+            drawCoord.x += worldManager.drawOffset.x
+            drawCoord.y += worldManager.drawOffset.y
 
+            -- actor > effect > item > deco
             local char = ""
-            if actorGrid[x][y] ~= nil then
-                char = actorGrid[x][y].char
-            elseif worldGrid[x][y] ~= nil then
-                char = worldGrid[x][y].char
+            local tile = self.grid[x][y]
+            if tile.actor ~= nil then
+                char = tile.actor.char
+            --elseif table.getsize(tile.effects) > 0 then
+            --elseif table.getsize(tile.items) > 0 then
+            elseif tile.decoration ~= nil then
+                char = tile.decoration.char
             end
 
             gfx.drawText(char, drawCoord.x, drawCoord.y)

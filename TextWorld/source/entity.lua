@@ -4,10 +4,9 @@ local gfx <const> = playdate.graphics
 
 class("entity").extends()
 
-local chars = {"v", "W", "M"}
-
+--abstract class
 function entity:init()
-    --self.char = chars[math.random(3)]
-    self.char = "v"
-    self.name = "Grass"
+    self.char = "E"
+    self.name = "Entity"
+    self.description = "Default Entity"
 end

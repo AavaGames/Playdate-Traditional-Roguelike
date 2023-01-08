@@ -7,37 +7,42 @@ class("actor").extends(entity)
 ACTIVE = 0
 INACTIVE = 1
 
-function actor:init(x, y)
+function actor:init(theWorld, x, y)
     self.char = "a"
     self.name = "Actor"
-    self.x = x
-    self.y = y
+    self.description = "An actor"
+    
+    self.x = 0
+    self.y = 0
     self.updated = false
     self.state = ACTIVE
 
-    actorGrid[self.x][self.y] = self -- TODO: can spawn on top of another actor overwriting their pos
+    self.world = theWorld
+    self.tile = nil
+    self:move(x, y) -- TODO: can spawn on top of another actor overwriting their pos (SpawnAt)
 end
 
 function actor:update()
     self.updated = true
 end
 
-function actor:setLocation(x, y)
-    x = clamp(x, 0, worldDimension.x - 1)
-    y = clamp(y, 0, worldDimension.y - 1)
+function actor:move(x, y)
+    x += self.x
+    y += self.y
     if x ~= self.x or y ~= self.y then
-        if actorGrid[x][y] == nil then
-            actorGrid[self.x][self.y] = nil -- leave old pos
+        if self.world:setLocation(self, x, y) then
             self.x = x
             self.y = y
-            actorGrid[self.x][self.y] = self -- set new pos
-    
-            --print("new ", x, y)
+        else
+            --print(self.name .. " collided")
         end
     end
 end
 
-function actor:move(x, y)
-    -- add movement
-    self:setLocation(self.x + x, self.y + y)
+function actor:updateTile(tile)
+    if self.tile ~= nil then
+        self.tile:exit(self)
+    end
+    self.tile = tile 
+    self.tile:enter(self)
 end

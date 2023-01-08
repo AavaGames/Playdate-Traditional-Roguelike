@@ -3,8 +3,8 @@ import "actor"
 
 class("animal").extends(actor)
 
-function animal:init(x, y)
-    animal.super.init(self, x, y)
+function animal:init(theWorld, x, y)
+    animal.super.init(self, theWorld, x, y)
     self.name = "Animal"
 
     local function randomMove()

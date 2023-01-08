@@ -10,7 +10,6 @@ function logManager:init()
     self.position = { x = 14, y = 240-74}
     self.size = { x = 400-26, y = 64 }
 
-    self.font = sans
     self.fontSize = 8
     self.linePadding = 2
 
@@ -31,7 +30,7 @@ end
 
 function logManager:draw()
     gfx.setImageDrawMode(playdate.graphics.kDrawModeNXOR)
-    gfx.setFont(self.font)
+    gfx.setFont(logFont)
 
     local text = ""
     for i = self.lineCount-1, 0, -1 do

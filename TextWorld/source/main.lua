@@ -1,7 +1,8 @@
 import "global"
-import "world"
-import "border"
+
+import "worldManager"
 import "logManager"
+import "border"
 
 local fps = true;
 
@@ -25,15 +26,12 @@ local function initializeGame()
 	end
 	--invertColors()
 
-	world = world()
-	screenBorder = border(2, 2, 400-8, 240-8, 4, gfx.kColorBlack)
+	worldManager = worldManager()
 	logManager = logManager()
 end
 
 local function updateGame()
-	-- playdate.keyPressed() -- use kb input for debugging
-
-	world:update()
+	worldManager:update()
 	logManager:update()
 end
 
@@ -41,12 +39,15 @@ local function drawGame()
 	gfx.clear()
 	gfx.sprite.update()
 
-	world:draw()
+	worldManager:draw()
+
+	-- if playdate.keyPressed("o") then
+	-- 	showLog = not showLog
+	-- end
+
 	if showLog then
 		logManager:draw()
 	end
-
-	screenBorder:draw()
 end
 
 initializeGame()

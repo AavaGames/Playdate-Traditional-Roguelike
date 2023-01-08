@@ -4,10 +4,11 @@ import "CoreLibs/keyboard"
 
 class("player").extends(actor)
 
-function player:init(x, y)
-    player.super.init(self, x, y)
+function player:init(theWorld, x, y)
+    player.super.init(self, theWorld, x, y)
     self.char = "O"
-    self.name = "Player"
+    self.name = "You"
+    self.description = "A striking individual, who seems to be quite powerful!"
 
     self.moveDir = { x = 0, y = 0 }
     self.moveSpeed = 5
