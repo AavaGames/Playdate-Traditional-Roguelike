@@ -28,7 +28,7 @@ function camera:update()
         if playdate.buttonJustPressed(playdate.kButtonDown) then
             self.y += 1
         end
-        self.x = clamp(self.x, 0, self.world.gridDimensions.x-1)
-        self.y = clamp(self.y, 0, self.world.gridDimensions.y-1)
+        self.x = math.clamp(self.x, 0, self.world.gridDimensions.x-1)
+        self.y = math.clamp(self.y, 0, self.world.gridDimensions.y-1)
     end
 end

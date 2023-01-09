@@ -10,7 +10,6 @@ function town:init(theWorldManager, thePlayer)
 end
 
 function town:create()
-    print ("creating world ")
     local townFile = playdate.file.open("assets/maps/town.json")
     local townJson = json.decodeFile(townFile)
     local townArray = townJson.layers[1].data

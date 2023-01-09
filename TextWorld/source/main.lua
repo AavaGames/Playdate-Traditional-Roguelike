@@ -8,6 +8,10 @@ local function initializeGame()
 	gfx.setBackgroundColor(gfx.kColorWhite)
 
 	gameManager = gameManager()
+	screenManager = screenManager()
+
+	--text = worldFont:getGlyph("O")
+	--blur = text:fadedImage(0.5, playdate.graphics.image.kDitherTypeBayer2x2)
 end
 
 local function updateGame()
@@ -16,10 +20,16 @@ local function updateGame()
 end
 
 local function drawGame()
-	gfx.clear()
-	gfx.sprite.update()
+	if (gameManager.worldManager.currentWorld.redrawWorld) then
+		gfx.clear()
+		gfx.sprite.update()
 
-	gameManager:draw()
+		gameManager:draw()
+
+		--text:draw(40, 40)
+		--text:draw(70, 40)
+		--blur:draw(60,60)
+	end
 end
 
 initializeGame()

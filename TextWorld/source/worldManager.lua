@@ -20,7 +20,12 @@ function worldManager:init(player)
 end
 
 function worldManager:update()
+    self.player:update()
     self.currentWorld:update()
+end
+
+function worldManager:lateUpdate()
+    self.currentWorld:lateUpdate()
 end
 
 function worldManager:draw()
@@ -30,5 +35,6 @@ end
 
 function worldManager:loadWorld(world)
     self.player:despawn()
+    --insert transition
     self.currentWorld = world(self, self.player)
 end

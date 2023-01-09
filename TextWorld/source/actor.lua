@@ -31,8 +31,10 @@ function actor:move(x, y)
         if self.world:setLocation(self, x, y) then
             self.x = x
             self.y = y
+            return true
         else
             --print(self.name .. " collided")
+            return false
         end
     end
 end

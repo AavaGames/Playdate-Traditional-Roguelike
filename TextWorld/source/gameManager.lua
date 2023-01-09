@@ -1,7 +1,8 @@
 class("gameManager").extends()
 
 function gameManager:init()
-
+	--self.mainMenu = false
+	
     self.bgColor = false;
 	local function invertColors()
 		gfx.setBackgroundColor(self.bgColor and gfx.kColorBlack or gfx.kColorWhite)
@@ -21,7 +22,7 @@ function gameManager:update()
 	-- end
 
     self.worldManager:update()
-	if self.showLog then
+	if showLog then
 		self.logManager:update()
 	end
 end
@@ -31,8 +32,8 @@ function gameManager:lateUpdate()
 end
 
 function gameManager:draw()
-    self.worldManager:draw()
-    if self.showLog then
+	self.worldManager:draw()
+	if showLog then
 		self.logManager:draw()
 	end
 end

@@ -9,6 +9,8 @@ function world:init(theWorldManager, thePlayer)
     self.grid = nil
     self.gridDimensions = { x, y }
 
+    self.redrawWorld = true;
+
     if (self.name == nil) then
         self.name = "World"
     end
@@ -20,10 +22,10 @@ function world:init(theWorldManager, thePlayer)
     -- 0 = empty, 1 = wall, 2 = ?, 3 = ?, 4 = grass
     self:create()
 
-    print(self.grid)
-
     self.player:spawn(self, self.playerSpawnPosition.x, self.playerSpawnPosition.y)
+    animal(self, 6, 43)
     self.camera = camera(self.player)
+    self.camera:update()
 end
 
 function world:create()
@@ -31,8 +33,8 @@ function world:create()
 end
 
 function world:setLocation(actor, x, y)
-    x = clamp(x, 1, self.gridDimensions.x)
-    y = clamp(y, 1, self.gridDimensions.y)
+    x = math.clamp(x, 1, self.gridDimensions.x)
+    y = math.clamp(y, 1, self.gridDimensions.y)
 
     local tile = self.grid[x][y]
     if tile.actor == nil then
@@ -44,10 +46,19 @@ function world:setLocation(actor, x, y)
 end
 
 function world:update()
+
+end
+
+function world:lateUpdate()
+    
+end
+
+function world:round()
+    print("round")
     for x = 1, self.gridDimensions.x, 1 do
         for y = 1, self.gridDimensions.y, 1 do
             local tile = self.grid[x][y]
-            if (tile ~= nil and tile.actor ~= nil) then
+            if (tile ~= nil and tile.actor ~= nil and not tile.actor.isa(player)) then
                 if tile.actor.updated == false then
                     tile.actor:update()
                 else
@@ -67,6 +78,7 @@ function world:update()
     end
 
     self.camera:update() -- must update last to follow
+    self.redrawWorld = true;
 end
 
 function world:draw()
@@ -76,8 +88,8 @@ function world:draw()
 
     local screenX = xMax-(self.worldManager.insetAmount*2)
     local screenY = yMax-(self.worldManager.insetAmount*2)
-    local startX = clamp(self.camera.x - math.floor(screenX/2), 1, self.gridDimensions.x-screenX + 1)
-    local startY = clamp(self.camera.y - math.floor(screenY/2), 1, self.gridDimensions.y-screenY + 1)
+    local startX = math.clamp(self.camera.x - math.floor(screenX/2), 1, self.gridDimensions.x-screenX + 1)
+    local startY = math.clamp(self.camera.y - math.floor(screenY/2), 1, self.gridDimensions.y-screenY + 1)
 
     local first = self.worldManager.insetAmount
     local last = self.worldManager.insetAmount + 1;
@@ -128,4 +140,5 @@ function world:draw()
     end
 
     gfx.setImageDrawMode(defaultDrawMode)
+    --self.redrawWorld = false;
 end

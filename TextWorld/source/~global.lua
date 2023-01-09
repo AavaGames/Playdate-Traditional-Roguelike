@@ -1,3 +1,5 @@
+import "~imports"
+
 local gfx <const> = playdate.graphics
 
 -- Global Variables --
@@ -18,47 +20,10 @@ mono2 = gfx.font.new('assets/fonts/Mini Mono 2X/Mini Mono 2X')
 
 worldFont = mono2
 logFont = sans
-showLog = false
+
+showLog = true
 
 xMax = screenDimensions.x / fontSize
 yMax = screenDimensions.y / fontSize
 
 defaultDrawMode = playdate.graphics.kDrawModeNXOR
-
-function clamp(number, min, max)
-    if number < min then
-        number = min
-    elseif number > max then
-        number = max
-    end
-    return number
-end
-
--- All Imports --
-
-import "CoreLibs/object"
-import "CoreLibs/graphics"
-import "CoreLibs/sprites"
-import "CoreLibs/timer"
-import "CoreLibs/keyboard"
-
-import "gameManager"
-
-import "world"
-import "worldManager"
-import "tile"
-
-import "logManager"
-import "border"
-
-import "town"
-
-import "actor"
-import "player"
-import "camera"
-import "wall"
-import "animal"
-
-import "entity"
-import "grass"
-import "ground"
