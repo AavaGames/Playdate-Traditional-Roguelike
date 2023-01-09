@@ -15,21 +15,27 @@ function world:init(theWorldManager)
     local townJson = json.decodeFile(townFile)
     local townArray = townJson.layers[1].data
     self.gridDimensions = { x = townJson.width, y = townJson.height }
-
-    print (self.gridDimensions.x, self.gridDimensions.y, townArray[1], townArray[self.gridDimensions.y * self.gridDimensions.x])
-    --table.create(gridDimensions.x, 0)
+    
+    -- init table
+    self.grid = table.create(self.gridDimensions.x)
     for x = 1, self.gridDimensions.x, 1 do
-        self.grid[x] = {}
-        for y = 1, self.gridDimensions.y, 1 do
-            self.grid[x][y] = tile()
-        end
+        self.grid[x] = table.create(self.gridDimensions.y)
     end
 
     -- populate map
     for x = 1, self.gridDimensions.x, 1 do
         for y = 1, self.gridDimensions.y, 1 do
+            local width = self.gridDimensions.x
+            local index = x + width * (y-1)
+            local type = townArray[index]
+
+            if (type > 0) then
+                self.grid[x][y] = tile()
+            else
+                self.grid[x][y] = nil
+            end
+    
             local tile = self.grid[x][y]
-            local type = townArray[x + self.gridDimensions.x * y]
             if type == 1 then
                 wall(self, x, y)
             elseif type == 3 then
@@ -37,8 +43,12 @@ function world:init(theWorldManager)
             elseif type == 4 then
                 tile.decoration = grass()
             end
+
         end
     end
+
+    print(self.grid[15][self.gridDimensions.y].actor.char)
+
     --self.player = player(math.floor(self.gridDimensions.x/2), math.floor(self.gridDimensions.y/2))
     self.player = player(self, 16,53)
     self.camera = camera(self.player)
@@ -61,21 +71,20 @@ function world:update()
     for x = 1, self.gridDimensions.x, 1 do
         for y = 1, self.gridDimensions.y, 1 do
             local tile = self.grid[x][y]
-            if tile.actor ~= nil then
+            if (tile ~= nil and tile.actor ~= nil) then
                 if tile.actor.updated == false then
                     tile.actor:update()
                 else
                     --print("cant update")
                 end
             end
-
         end
     end
 
     for x = 1, self.gridDimensions.x, 1 do
         for y = 1, self.gridDimensions.y, 1 do
             local tile = self.grid[x][y]
-            if tile.actor ~= nil then
+            if (tile ~= nil and tile.actor ~= nil) then
                 tile.actor.updated = false
             end
         end
@@ -91,8 +100,8 @@ function world:draw()
 
     local screenX = xMax-(worldManager.insetAmount*2)
     local screenY = yMax-(worldManager.insetAmount*2)
-    local startX = clamp(self.camera.x - math.floor(screenX/2), 1, self.gridDimensions.x-screenX)
-    local startY = clamp(self.camera.y - math.floor(screenY/2), 1, self.gridDimensions.y-screenY)
+    local startX = clamp(self.camera.x - math.floor(screenX/2), 1, self.gridDimensions.x-screenX + 1)
+    local startY = clamp(self.camera.y - math.floor(screenY/2), 1, self.gridDimensions.y-screenY + 1)
 
     local first = worldManager.insetAmount
     local last = worldManager.insetAmount + 1;
@@ -124,15 +133,17 @@ function world:draw()
             -- actor > effect > item > deco
             local char = ""
             local tile = self.grid[x][y]
-            if tile.actor ~= nil then
-                char = tile.actor.char
-            --elseif table.getsize(tile.effects) > 0 then
-            --elseif table.getsize(tile.items) > 0 then
-            elseif tile.decoration ~= nil then
-                char = tile.decoration.char
+            if (tile ~= nil) then
+                if tile.actor ~= nil then
+                    char = tile.actor.char
+                --elseif table.getsize(tile.effects) > 0 then
+                --elseif table.getsize(tile.items) > 0 then
+                elseif tile.decoration ~= nil then
+                    char = tile.decoration.char
+                end
+    
+                gfx.drawText(char, drawCoord.x, drawCoord.y)
             end
-
-            gfx.drawText(char, drawCoord.x, drawCoord.y)
 
             yOffset += 1
         end

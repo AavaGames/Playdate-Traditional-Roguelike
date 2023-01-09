@@ -1,6 +1,3 @@
-import "global"
-import "actor"
-
 class("a").extends(actor)
 
 function a:init(theWorld, x, y)

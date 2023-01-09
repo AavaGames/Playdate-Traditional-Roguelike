@@ -3,7 +3,7 @@ local gfx <const> = playdate.graphics
 class("tile").extends()
 
 function tile:init()
-    self.decoration = nil
+    self.decoration = ground()
     self.actor = nil
     self.items = {}
     self.effects = {}

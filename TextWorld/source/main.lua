@@ -1,4 +1,4 @@
-import "global"
+import "~global"
 
 local gfx <const> = playdate.graphics
 
