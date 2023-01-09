@@ -2,56 +2,32 @@ local gfx <const> = playdate.graphics
 
 class("world").extends()
 
-function world:init(theWorldManager)
+function world:init(theWorldManager, thePlayer)
     self.worldManager = theWorldManager
+    self.player = thePlayer
 
-    self.grid = {}
+    self.grid = nil
     self.gridDimensions = { x, y }
 
+    if (self.name == nil) then
+        self.name = "World"
+    end
+    if (self.playerSpawnPosition == nil) then
+        self.playerSpawnPosition = { x, y }
+    end
+    
     -- var tile = array[y * width + x]
-    -- 0 = empty, 1 = wall, 2 = ground, 3 = nil, 4 = grass
+    -- 0 = empty, 1 = wall, 2 = ?, 3 = ?, 4 = grass
+    self:create()
 
-    local townFile = playdate.file.open("assets/maps/town.json")
-    local townJson = json.decodeFile(townFile)
-    local townArray = townJson.layers[1].data
-    self.gridDimensions = { x = townJson.width, y = townJson.height }
-    
-    -- init table
-    self.grid = table.create(self.gridDimensions.x)
-    for x = 1, self.gridDimensions.x, 1 do
-        self.grid[x] = table.create(self.gridDimensions.y)
-    end
+    print(self.grid)
 
-    -- populate map
-    for x = 1, self.gridDimensions.x, 1 do
-        for y = 1, self.gridDimensions.y, 1 do
-            local width = self.gridDimensions.x
-            local index = x + width * (y-1)
-            local type = townArray[index]
-
-            if (type > 0) then
-                self.grid[x][y] = tile()
-            else
-                self.grid[x][y] = nil
-            end
-    
-            local tile = self.grid[x][y]
-            if type == 1 then
-                wall(self, x, y)
-            elseif type == 3 then
-                --tile.decoration = ground()
-            elseif type == 4 then
-                tile.decoration = grass()
-            end
-
-        end
-    end
-
-    print(self.grid[15][self.gridDimensions.y].actor.char)
-
-    --self.player = player(math.floor(self.gridDimensions.x/2), math.floor(self.gridDimensions.y/2))
-    self.player = player(self, 16,53)
+    self.player:spawn(self, self.playerSpawnPosition.x, self.playerSpawnPosition.y)
     self.camera = camera(self.player)
+end
+
+function world:create()
+    -- abstract function to create grid
 end
 
 function world:setLocation(actor, x, y)
@@ -98,13 +74,13 @@ function world:draw()
 
     gfx.setFont(worldFont)
 
-    local screenX = xMax-(worldManager.insetAmount*2)
-    local screenY = yMax-(worldManager.insetAmount*2)
+    local screenX = xMax-(self.worldManager.insetAmount*2)
+    local screenY = yMax-(self.worldManager.insetAmount*2)
     local startX = clamp(self.camera.x - math.floor(screenX/2), 1, self.gridDimensions.x-screenX + 1)
     local startY = clamp(self.camera.y - math.floor(screenY/2), 1, self.gridDimensions.y-screenY + 1)
 
-    local first = worldManager.insetAmount
-    local last = worldManager.insetAmount + 1;
+    local first = self.worldManager.insetAmount
+    local last = self.worldManager.insetAmount + 1;
     local xOffset = 0
     local yOffset = 0
 
@@ -118,17 +94,17 @@ function world:draw()
             end
 
             local drawCoord = { x = fontSize * xPos, y = fontSize * yPos}
-            if (drawCoord.x > screenDimensions.x * worldManager.xMaxPercentCutoff) then
+            if (drawCoord.x > screenDimensions.x * self.worldManager.xMaxPercentCutoff) then
                 xPos = xMax
                 break
             end
-            if drawCoord.y > screenDimensions.y * worldManager.yMaxPercentCutoff or 
-                (showLog and drawCoord.y > screenDimensions.y * worldManager.logYMaxPercentCutoff) then
+            if drawCoord.y > screenDimensions.y * self.worldManager.yMaxPercentCutoff or 
+                (showLog and drawCoord.y > screenDimensions.y * self.worldManager.logYMaxPercentCutoff) then
                 yPos = yMax
                 break
             end
-            drawCoord.x += worldManager.drawOffset.x
-            drawCoord.y += worldManager.drawOffset.y
+            drawCoord.x += self.worldManager.drawOffset.x
+            drawCoord.y += self.worldManager.drawOffset.y
 
             -- actor > effect > item > deco
             local char = ""

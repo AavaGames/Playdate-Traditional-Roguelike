@@ -4,7 +4,7 @@ class("worldManager").extends()
 
 currentWorld = nil
 
-function worldManager:init()
+function worldManager:init(player)
     self.insetAmount = 1
     self.xMaxPercentCutoff = 1
     self.yMaxPercentCutoff = 1
@@ -12,16 +12,23 @@ function worldManager:init()
     -- can be used to move viewport around in addition to cutoff
     self.drawOffset = { x = 0, y = 0 }
 
-    currentWorld = world(self)
-
+    self.player = player
+    self.currentWorld = nil
     self.worldBorder = border(2, 2, 400-8, 240-8, 4, gfx.kColorBlack)
+
+    self:loadWorld(town)
 end
 
 function worldManager:update()
-    currentWorld:update()
+    self.currentWorld:update()
 end
 
 function worldManager:draw()
-    currentWorld:draw()
+    self.currentWorld:draw()
     self.worldBorder:draw()
+end
+
+function worldManager:loadWorld(world)
+    self.player:despawn()
+    self.currentWorld = world(self, self.player)
 end

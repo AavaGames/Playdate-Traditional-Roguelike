@@ -22,8 +22,6 @@ function player:init(theWorld, x, y)
     --playdate.keyboard.textChangedCallback = function() self:inventoryUse() end
 end
 
-
-
 function player:update()
     player.super.update(self)
 
@@ -66,4 +64,25 @@ function player:inventoryUse()
     print("picked: " .. playdate.keyboard.text)
 
     playdate.keyboard.hide()
+end
+
+function player:spawn(theWorld, x, y)
+    self.x = 0
+    self.y = 0
+    self.updated = false
+    self.state = ACTIVE
+
+    print("SPAWNING ERROR: ", theWorld.name, x, y, " parameters failed to find appropriate location.")
+
+    self.world = theWorld
+    self.tile = nil
+    if (theWorld ~= nil and x ~= nil and y ~= nil) then
+        self:move(x, y) -- TODO: can spawn on top of another actor overwriting their pos (SpawnAt)
+    else
+        print("SPAWNING ERROR: ", theWorld.name, x, y, " parameters failed to find appropriate location.")
+    end
+end
+
+function player:despawn()
+    self.state = INACTIVE
 end

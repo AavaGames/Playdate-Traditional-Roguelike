@@ -15,7 +15,9 @@ function actor:init(theWorld, x, y)
 
     self.world = theWorld
     self.tile = nil
-    self:move(x, y) -- TODO: can spawn on top of another actor overwriting their pos (SpawnAt)
+    if (theWorld ~= nil and x ~= nil and y ~= nil) then
+        self:move(x, y) -- TODO: can spawn on top of another actor overwriting their pos (SpawnAt)
+    end
 end
 
 function actor:update()

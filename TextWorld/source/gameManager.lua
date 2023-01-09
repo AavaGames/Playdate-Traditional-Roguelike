@@ -1,26 +1,29 @@
 class("gameManager").extends()
 
-function gameManager.init()
+function gameManager:init()
 
-    bgColor = false;
+    self.bgColor = false;
 	local function invertColors()
-		gfx.setBackgroundColor(bgColor and gfx.kColorBlack or gfx.kColorWhite)
-		bgColor = not bgColor
+		gfx.setBackgroundColor(self.bgColor and gfx.kColorBlack or gfx.kColorWhite)
+		self.bgColor = not self.bgColor
 		playdate.timer.performAfterDelay(10000, invertColors)
 	end
 	--invertColors()
 
-    worldManager = worldManager()
-	logManager = logManager()
+	self.player = player()
+    self.worldManager = worldManager(self.player)
+	self.logManager = logManager()	
 end
 
 function gameManager:update()
-    worldManager:update()
-	logManager:update()
-
-    -- if playdate.keyPressed("o") then
+	-- if playdate.keyPressed("o") then
 	-- 	showLog = not showLog
 	-- end
+
+    self.worldManager:update()
+	if self.showLog then
+		self.logManager:update()
+	end
 end
 
 function gameManager:lateUpdate()
@@ -28,8 +31,8 @@ function gameManager:lateUpdate()
 end
 
 function gameManager:draw()
-    worldManager:draw()
-    if showLog then
-		logManager:draw()
+    self.worldManager:draw()
+    if self.showLog then
+		self.logManager:draw()
 	end
 end
