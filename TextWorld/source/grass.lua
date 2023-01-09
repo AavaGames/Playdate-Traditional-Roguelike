@@ -1,5 +1,3 @@
-import "entity"
-
 class("grass").extends(entity)
 
 function grass:init()

@@ -1,5 +1,3 @@
-import "global"
-
 class("border").extends()
 
 local gfx <const> = playdate.graphics

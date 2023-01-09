@@ -1,5 +1,3 @@
-import "global"
-
 class("logManager").extends()
 
 local gfx <const> = playdate.graphics

@@ -1,5 +1,3 @@
-import "global"
-
 local gfx <const> = playdate.graphics
 
 class("camera").extends()

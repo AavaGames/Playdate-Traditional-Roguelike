@@ -1,14 +1,3 @@
-import "global"
-import "player"
-import "animal"
-import "camera"
-
-import "worldManager"
-
-import "tile"
-import "grass"
-import "wall"
-
 local gfx <const> = playdate.graphics
 
 class("world").extends()

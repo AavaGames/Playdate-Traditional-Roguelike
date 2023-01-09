@@ -1,7 +1,3 @@
-import "global"
-import "entity"
-import "world"
-
 class("actor").extends(entity)
 
 ACTIVE = 0

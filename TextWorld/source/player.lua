@@ -1,7 +1,3 @@
-import "global"
-import "actor"
-import "CoreLibs/keyboard"
-
 class("player").extends(actor)
 
 function player:init(theWorld, x, y)

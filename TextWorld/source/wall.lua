@@ -1,6 +1,3 @@
-import "global"
-import "actor"
-
 class("wall").extends(actor)
 
 function wall:init(theWorld, x, y)

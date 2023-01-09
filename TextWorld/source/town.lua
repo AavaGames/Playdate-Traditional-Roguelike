@@ -1,5 +1,3 @@
-import "world"
-
 local gfx <const> = playdate.graphics
 
 class("town").extends()

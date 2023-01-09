@@ -1,7 +1,3 @@
-import "global"
-import "actor"
-
-
 local gfx <const> = playdate.graphics
 
 class("tile").extends()

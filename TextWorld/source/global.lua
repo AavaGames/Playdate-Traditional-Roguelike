@@ -1,8 +1,3 @@
-import "CoreLibs/object"
-import "CoreLibs/graphics"
-import "CoreLibs/sprites"
-import "CoreLibs/timer"
-
 local gfx <const> = playdate.graphics
 
 -- Global Variables --
@@ -12,6 +7,7 @@ screenDimensions = {
     y = 240
 }
 
+fps = true
 targetFPS = 30
 
 fontSize = 16;
@@ -37,3 +33,31 @@ function clamp(number, min, max)
     end
     return number
 end
+
+-- All Imports --
+
+import "CoreLibs/object"
+import "CoreLibs/graphics"
+import "CoreLibs/sprites"
+import "CoreLibs/timer"
+import "CoreLibs/keyboard"
+
+import "gameManager"
+
+import "world"
+import "worldManager"
+import "tile"
+
+import "logManager"
+import "border"
+
+import "town"
+
+import "actor"
+import "player"
+import "camera"
+import "wall"
+import "animal"
+
+import "entity"
+import "grass"
