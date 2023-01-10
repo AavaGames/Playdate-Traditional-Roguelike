@@ -11,6 +11,22 @@ function gameManager:init()
 	end
 	--invertColors()
 
+	local menu = playdate.getSystemMenu()
+    local worldSizeMenu, error = menu:addOptionsMenuItem("world font", { "1x", "2x" }, "2x", function(value)
+		if value == "1x" then
+			fontSize = 8
+			worldFont = mono
+			
+		elseif value == "2x" then
+			fontSize = 16
+			worldFont = mono2
+		end
+		xMax = screenDimensions.x / fontSize
+		yMax = screenDimensions.y / fontSize
+		self.worldManager.currentWorld.redrawWorld = true
+    end)
+	
+
 	self.player = player()
     self.worldManager = worldManager(self.player)
 	self.logManager = logManager(self.worldManager)
