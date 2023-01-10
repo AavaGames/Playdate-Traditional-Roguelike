@@ -26,10 +26,10 @@ function worldManager:update()
 
     if (playdate.buttonJustPressed(playdate.kButtonB)) then
         local view = {
-            x = 16,
-            y = 16,
-            width = screenDimensions.y - fontSize * 2,
-            height = screenDimensions.y - fontSize * 2
+            x = 12,
+            y = 12,
+            width = screenDimensions.y - 24,
+            height = screenDimensions.y - 24
         }
         self:setViewport(view)
     end

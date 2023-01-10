@@ -1,7 +1,7 @@
-name=Playband
+name=Tyalband
 author=Philip Fertsman
 description=Break the seal and steal the heart.
-bundleID=com.AavaGames.Playband
+bundleID=com.AavaGames.Tyalband
 version=0.0.2
 buildNumber=1
 imagePath=/assets/card/

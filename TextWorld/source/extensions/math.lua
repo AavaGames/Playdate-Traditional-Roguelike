@@ -1,3 +1,6 @@
+function math.round(value)
+    return math.floor(value+0.5)
+end
 
 function math.clamp(value, min, max)
     if value < min then

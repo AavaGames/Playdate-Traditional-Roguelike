@@ -54,7 +54,7 @@ function world:lateUpdate()
 end
 
 function world:round()
-    print("round")
+    --print("round")
     for x = 1, self.gridDimensions.x, 1 do
         for y = 1, self.gridDimensions.y, 1 do
             local tile = self.grid[x][y]
@@ -89,8 +89,9 @@ function world:draw()
 
         local viewport = self.worldManager.viewport
 
-        local screenXSize = viewport.width / fontSize
-        local screenYSize = viewport.height / fontSize
+        local screenXSize = math.floor(viewport.width / fontSize)
+        local screenYSize = math.floor(viewport.height / fontSize)
+        -- TODO replace this math with pre-calcuated shit per font so that the screen is properly placed
         local startGridX = math.clamp(self.camera.x - math.floor(screenXSize*0.5), 1, self.gridDimensions.x-screenXSize+1)
         local startGridY = math.clamp(self.camera.y - math.floor(screenYSize*0.5), 1, self.gridDimensions.y-screenYSize+1)
 
@@ -119,6 +120,7 @@ function world:draw()
                 -- actor > effect > item > deco
                     -- flip flop between actor and effect over time?
                 local char = ""
+
                 local tile = self.grid[x][y]
                 if (tile ~= nil) then
                     if tile.actor ~= nil then
