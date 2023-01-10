@@ -13,7 +13,7 @@ function gameManager:init()
 
 	self.player = player()
     self.worldManager = worldManager(self.player)
-	self.logManager = logManager()	
+	self.logManager = logManager(self.worldManager)
 end
 
 function gameManager:update()
@@ -22,18 +22,14 @@ function gameManager:update()
 	-- end
 
     self.worldManager:update()
-	if showLog then
-		self.logManager:update()
-	end
+	self.logManager:update()
 end
 
 function gameManager:lateUpdate()
-
+	self.worldManager:lateUpdate()
 end
 
 function gameManager:draw()
 	self.worldManager:draw()
-	if showLog then
-		self.logManager:draw()
-	end
+	self.logManager:draw()
 end

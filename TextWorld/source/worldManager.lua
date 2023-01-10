@@ -5,16 +5,17 @@ class("worldManager").extends()
 currentWorld = nil
 
 function worldManager:init(player)
-    self.insetAmount = 1
-    self.xMaxPercentCutoff = 1
-    self.yMaxPercentCutoff = 1
-    self.logYMaxPercentCutoff = 0.6
-    -- can be used to move viewport around in addition to cutoff
-    self.drawOffset = { x = 0, y = 0 }
-
     self.player = player
     self.currentWorld = nil
     self.worldBorder = border(2, 2, 400-8, 240-8, 4, gfx.kColorBlack)
+
+    self.defaultViewport = {
+        x = fontSize,
+        y = fontSize,
+        width = screenDimensions.x - fontSize * 2,
+        height = screenDimensions.y - fontSize * 2
+    }
+    self.viewport = self.defaultViewport
 
     self:loadWorld(town)
 end
@@ -22,6 +23,16 @@ end
 function worldManager:update()
     self.player:update()
     self.currentWorld:update()
+
+    if (playdate.buttonJustPressed(playdate.kButtonB)) then
+        local view = {
+            x = 16,
+            y = 16,
+            width = screenDimensions.y - fontSize * 2,
+            height = screenDimensions.y - fontSize * 2
+        }
+        self:setViewport(view)
+    end
 end
 
 function worldManager:lateUpdate()
@@ -37,4 +48,11 @@ function worldManager:loadWorld(world)
     self.player:despawn()
     --insert transition
     self.currentWorld = world(self, self.player)
+end
+
+function worldManager:setViewport(viewport)
+    -- IDEA: Coroutine to have smooth transition
+    self.viewport = viewport or self.defaultViewport
+    print("view", self.viewport.width)
+    self.currentWorld.redrawWorld = true
 end

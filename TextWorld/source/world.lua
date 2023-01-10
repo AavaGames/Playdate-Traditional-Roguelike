@@ -82,63 +82,63 @@ function world:round()
 end
 
 function world:draw()
-    gfx.setImageDrawMode(playdate.graphics.kDrawModeNXOR)
+    if (self.redrawWorld) then
+        gfx.setImageDrawMode(playdate.graphics.kDrawModeNXOR)
 
-    gfx.setFont(worldFont)
+        gfx.setFont(worldFont)
 
-    local screenX = xMax-(self.worldManager.insetAmount*2)
-    local screenY = yMax-(self.worldManager.insetAmount*2)
-    local startX = math.clamp(self.camera.x - math.floor(screenX/2), 1, self.gridDimensions.x-screenX + 1)
-    local startY = math.clamp(self.camera.y - math.floor(screenY/2), 1, self.gridDimensions.y-screenY + 1)
+        local viewport = self.worldManager.viewport
 
-    local first = self.worldManager.insetAmount
-    local last = self.worldManager.insetAmount + 1;
-    local xOffset = 0
-    local yOffset = 0
+        local screenXSize = viewport.width / fontSize
+        local screenYSize = viewport.height / fontSize
+        local startGridX = math.clamp(self.camera.x - math.floor(screenXSize*0.5), 1, self.gridDimensions.x-screenXSize+1)
+        local startGridY = math.clamp(self.camera.y - math.floor(screenYSize*0.5), 1, self.gridDimensions.y-screenYSize+1)
 
-    for xPos = first, xMax - last, 1 do
-        for yPos = first, yMax - last, 1 do
-            local x = startX + xOffset
-            local y = startY + yOffset
+        local xOffset = 0
+        local yOffset = 0
+        for xPos = 0, xMax, 1 do
+            for yPos = 0, yMax, 1 do
 
-            if (x > self.gridDimensions.x or y > self.gridDimensions.y) then
-                break
-            end
+                local x = startGridX + xOffset
+                local y = startGridY + yOffset
 
-            local drawCoord = { x = fontSize * xPos, y = fontSize * yPos}
-            if (drawCoord.x > screenDimensions.x * self.worldManager.xMaxPercentCutoff) then
-                xPos = xMax
-                break
-            end
-            if drawCoord.y > screenDimensions.y * self.worldManager.yMaxPercentCutoff or 
-                (showLog and drawCoord.y > screenDimensions.y * self.worldManager.logYMaxPercentCutoff) then
-                yPos = yMax
-                break
-            end
-            drawCoord.x += self.worldManager.drawOffset.x
-            drawCoord.y += self.worldManager.drawOffset.y
-
-            -- actor > effect > item > deco
-            local char = ""
-            local tile = self.grid[x][y]
-            if (tile ~= nil) then
-                if tile.actor ~= nil then
-                    char = tile.actor.char
-                --elseif table.getsize(tile.effects) > 0 then
-                --elseif table.getsize(tile.items) > 0 then
-                elseif tile.decoration ~= nil then
-                    char = tile.decoration.char
+                if (x > self.gridDimensions.x or y > self.gridDimensions.y) then
+                    break
                 end
-    
-                gfx.drawText(char, drawCoord.x, drawCoord.y)
+                local drawCoord = { 
+                    x = viewport.x + fontSize * xPos,
+                    y = viewport.y + fontSize * yPos
+                }   
+                if drawCoord.x > (viewport.width) then
+                    break
+                end
+                if drawCoord.y > (viewport.height) then
+                    break
+                end
+                
+                -- actor > effect > item > deco
+                    -- flip flop between actor and effect over time?
+                local char = ""
+                local tile = self.grid[x][y]
+                if (tile ~= nil) then
+                    if tile.actor ~= nil then
+                        char = tile.actor.char
+                    --elseif table.getsize(tile.effects) > 0 then
+                    --elseif table.getsize(tile.items) > 0 then
+                    elseif tile.decoration ~= nil then
+                        char = tile.decoration.char
+                    end
+        
+                    gfx.drawText(char, drawCoord.x, drawCoord.y)
+                end
+
+                yOffset += 1
             end
-
-            yOffset += 1
+            xOffset += 1
+            yOffset = 0
         end
-        xOffset += 1
-        yOffset = 0
-    end
 
-    gfx.setImageDrawMode(defaultDrawMode)
-    --self.redrawWorld = false;
+        gfx.setImageDrawMode(defaultDrawMode)
+        self.redrawWorld = false;
+    end
 end
