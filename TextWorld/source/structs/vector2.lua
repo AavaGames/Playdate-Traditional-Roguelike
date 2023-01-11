@@ -203,13 +203,32 @@ function Vector2.clamp(vector2, minVector, maxVector)
 	return vector2
 end
 
-function Vector2.lerp(startVector, endVector, journey)
-	error("Vector2.lerp not implemented")
+-- Linearly interpolates between two vectors.
+function Vector2.lerp(startVector, endVector, time)
+	time = math.clamp(time, 0, 1)
+	return Vector2.new(
+		startVector.x + (endVector.x - startVector.x) * time,
+		startVector.y + (endVector.y - startVector.y) * time
+	);
 end
 
-function Vector2.dot(startVector, endVector, journey)
-	error("Vector2.dot not implemented")
+-- Linearly interpolates between two vectors without clamping the interpolant
+function Vector2.lerpUnclamped(startVector, endVector, time)
+	return Vector2.new(
+		startVector.x + (endVector.x - startVector.x) * time,
+		startVector.y + (endVector.y - startVector.y) * time
+	);
 end
+
+function Vector2.dot(vector1, vector2)
+	return vector1.x * vector2.x + vector1.y * vector2.y; 
+end
+
+function Vector2.distance(vector1, vector2)
+	return Vector2.new(Vector2.getMagnitude((a-b)))
+end
+
+-- "Static"
 
 function Vector2.zero()
 	return Vector2.new(0, 0)
