@@ -9,8 +9,6 @@ function world:init(theWorldManager, thePlayer)
     self.grid = nil
     self.gridDimensions = Vector2.zero()
 
-    self.redrawWorld = true;
-
     if (self.name == nil) then
         self.name = "World"
     end
@@ -77,71 +75,71 @@ function world:round()
     end
 
     self.camera:update() -- must update last to follow
-    self.redrawWorld = true;
+    screenManager:redrawWorld()
 end
 
 function world:draw()
-    if (self.redrawWorld) then
-        gfx.setImageDrawMode(playdate.graphics.kDrawModeNXOR)
+    print("World Drawn")
 
-        gfx.setFont(worldFont)
+    gfx.setImageDrawMode(playdate.graphics.kDrawModeNXOR)
 
-        local viewport = self.worldManager.viewport
+    gfx.setFont(screenManager.currentWorldFont.font)
 
-        local screenXSize = math.floor(viewport.width / fontSize)
-        local screenYSize = math.floor(viewport.height / fontSize)
-        -- TODO replace this math with pre-calcuated shit per font so that the screen is properly placed
+    local viewport = self.worldManager.viewport
+    local fontSize = screenManager.currentWorldFont.size
 
-        -- +1?
-        local startGridX = math.clamp(self.camera.position.x - math.floor(screenXSize*0.5), 1, self.gridDimensions.x-screenXSize + 1)
-        local startGridY = math.clamp(self.camera.position.y - math.floor(screenYSize*0.5), 1, self.gridDimensions.y-screenYSize + 1)
+    local screenXSize = math.floor(viewport.width / fontSize)
+    local screenYSize = math.floor(viewport.height / fontSize)
+    -- TODO replace this math with pre-calcuated shit per font so that the screen is properly placed
 
-        local xOffset = 0
-        local yOffset = 0
-        for xPos = 0, xMax, 1 do
-            for yPos = 0, yMax, 1 do
+    -- +1?
+    local startGridX = math.clamp(self.camera.position.x - math.floor(screenXSize*0.5), 1, self.gridDimensions.x-screenXSize + 1)
+    local startGridY = math.clamp(self.camera.position.y - math.floor(screenYSize*0.5), 1, self.gridDimensions.y-screenYSize + 1)
 
-                local x = startGridX + xOffset
-                local y = startGridY + yOffset
+    local xOffset = 0
+    local yOffset = 0
+    for xPos = 0, screenManager.gridScreenMax.x, 1 do
+        for yPos = 0, screenManager.gridScreenMax.y, 1 do
 
-                if (x > self.gridDimensions.x or y > self.gridDimensions.y) then
-                    break
-                end
-                local drawCoord = { 
-                    x = viewport.x + fontSize * xPos,
-                    y = viewport.y + fontSize * yPos
-                }   
-                if drawCoord.x > (viewport.width) then
-                    break
-                end
-                if drawCoord.y > (viewport.height) then
-                    break
-                end
-                
-                -- actor > effect > item > deco
-                    -- flip flop between actor and effect over time?
-                local char = ""
+            local x = startGridX + xOffset
+            local y = startGridY + yOffset
 
-                local tile = self.grid[x][y]
-                if (tile ~= nil) then
-                    if tile.actor ~= nil then
-                        char = tile.actor.char
-                    --elseif table.getsize(tile.effects) > 0 then
-                    --elseif table.getsize(tile.items) > 0 then
-                    elseif tile.decoration ~= nil then
-                        char = tile.decoration.char
-                    end
-        
-                    gfx.drawText(char, drawCoord.x, drawCoord.y)
-                end
-
-                yOffset += 1
+            if (x > self.gridDimensions.x or y > self.gridDimensions.y) then
+                break
             end
-            xOffset += 1
-            yOffset = 0
-        end
+            local drawCoord = { 
+                x = viewport.x + fontSize * xPos,
+                y = viewport.y + fontSize * yPos
+            }   
+            if drawCoord.x > (viewport.width) then
+                break
+            end
+            if drawCoord.y > (viewport.height) then
+                break
+            end
+            
+            -- actor > effect > item > deco
+                -- flip flop between actor and effect over time?
+            local char = ""
 
-        gfx.setImageDrawMode(defaultDrawMode)
-        self.redrawWorld = false;
+            local tile = self.grid[x][y]
+            if (tile ~= nil) then
+                if tile.actor ~= nil then
+                    char = tile.actor.char
+                --elseif table.getsize(tile.effects) > 0 then
+                --elseif table.getsize(tile.items) > 0 then
+                elseif tile.decoration ~= nil then
+                    char = tile.decoration.char
+                end
+    
+                gfx.drawText(char, drawCoord.x, drawCoord.y)
+            end
+
+            yOffset += 1
+        end
+        xOffset += 1
+        yOffset = 0
     end
+
+    gfx.setImageDrawMode(screenManager.defaultDrawMode)
 end

@@ -5,15 +5,16 @@ class("worldManager").extends()
 currentWorld = nil
 
 function worldManager:init(player)
+    screenManager.worldManager = self
     self.player = player
     self.currentWorld = nil
-    self.worldBorder = border(2, 2, 400-8, 240-8, 4, gfx.kColorBlack)
+    self.worldBorder = border(2, 2, 400-4, 240-4, 4, gfx.kColorBlack)
 
     self.defaultViewport = {
-        x = fontSize,
-        y = fontSize,
-        width = screenDimensions.x - fontSize * 2,
-        height = screenDimensions.y - fontSize * 2
+        x = screenManager.currentWorldFont.size,
+        y = screenManager.currentWorldFont.size,
+        width = screenManager.screenDimensions.x - screenManager.currentWorldFont.size * 2,
+        height = screenManager.screenDimensions.y - screenManager.currentWorldFont.size * 2
     }
     self.viewport = self.defaultViewport
 
@@ -28,8 +29,8 @@ function worldManager:update()
         local view = {
             x = 12,
             y = 12,
-            width = screenDimensions.y - 24,
-            height = screenDimensions.y - 24
+            width = screenManager.screenDimensions.y - 24,
+            height = screenManager.screenDimensions.y - 24
         }
         self:setViewport(view)
     end
@@ -53,6 +54,5 @@ end
 function worldManager:setViewport(viewport)
     -- IDEA: Coroutine to have smooth transition
     self.viewport = viewport or self.defaultViewport
-    print("view", self.viewport.width)
-    self.currentWorld.redrawWorld = true
+    screenManager:redrawWorld(true)
 end

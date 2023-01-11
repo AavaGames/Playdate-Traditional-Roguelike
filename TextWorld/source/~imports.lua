@@ -13,7 +13,6 @@ import "/extensions//dm/table"
 import "/extensions//dm/sampler"
 import "/structs/vector2"
 
-
 import "gameManager"
 import "screenManager"
 

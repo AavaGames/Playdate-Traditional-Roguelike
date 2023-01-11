@@ -3,6 +3,7 @@ class("logManager").extends()
 local gfx <const> = playdate.graphics
 
 function logManager:init(theWorldManager)
+    screenManager.logManager = self
     self.worldManager = theWorldManager
 
 	self.log = {}
@@ -19,13 +20,13 @@ function logManager:init(theWorldManager)
     self.currentLine = -1
 
     self.logVisibleViewport = {
-        x = fontSize,
-        y = fontSize,
-        width = screenDimensions.x - fontSize * 2,
-        height = screenDimensions.y * 0.6
+        x = screenManager.currentWorldFont.size,
+        y = screenManager.currentWorldFont.size,
+        width = screenManager.screenDimensions.x - screenManager.currentWorldFont.size * 2,
+        height = screenManager.screenDimensions.y * 0.6
     }
 
-    logBorder = border(10, 162, 400-22, 66, 2, gfx.kColorBlack)
+    logBorder = border(8, 162, 400-16, 70, 2, gfx.kColorBlack)
 
     -- table.insert(self.log, "This is text")
     -- table.insert(self.log, "Super duper long text string that should be off the screen a a a by now")
@@ -42,6 +43,7 @@ function logManager:showLog()
         -- log view
         self.worldManager:setViewport(self.logVisibleViewport)
         self.showingLog = true
+        screenManager:redrawLog()
     end
 end
 
@@ -56,7 +58,7 @@ end
 function logManager:draw()
     if (self.showingLog) then
         gfx.setImageDrawMode(playdate.graphics.kDrawModeNXOR)
-        gfx.setFont(logFont)
+        gfx.setFont(screenManager.currentLogFont.font)
     
         local text = ""
         for i = self.lineCount-1, 0, -1 do
@@ -68,7 +70,7 @@ function logManager:draw()
         gfx.drawTextInRect(text, self.position.x, self.position.y, self.size.x, self.size.y)
     
         logBorder:draw()
-        gfx.setImageDrawMode(defaultDrawMode)
+        gfx.setImageDrawMode(screenManager.defaultDrawMode)
     end
 end
 
@@ -86,6 +88,7 @@ end
 
 function logManager:add(text)
     table.insert(self.log, text)
-
-    self:showLog()
+    if (self.showingLog) then
+        screenManager:redrawLog()
+    end
 end
