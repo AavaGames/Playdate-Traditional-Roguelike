@@ -1,16 +1,11 @@
---MADE BY HASNAIN RAZA
+--[[
+	
+	Made by Hasnain Raza
+	Additions by Philip Fertsman (@aavagames)
+
+]]
 
 Vector2 = {}
-
-function protect(tbl)
-    return setmetatable({}, {
-        __index = tbl,
-        __newindex = function(t, key, value)
-            error("attempting to change constant " ..
-                   tostring(key) .. " to " .. tostring(value), 2)
-        end
-    })
-end
 
 --// METAMETHODS //--
 
@@ -198,7 +193,7 @@ function Vector2.getMagnitude(vector2)
 	)
 end
 
-function Vector2.getUnitVector(vector2)
+function Vector2.normalize(vector2)
 	return (vector2/vector2.magnitude)
 end
 
@@ -212,21 +207,30 @@ function Vector2.lerp(startVector, endVector, journey)
 	error("Vector2.lerp not implemented")
 end
 
+function Vector2.dot(startVector, endVector, journey)
+	error("Vector2.dot not implemented")
+end
+
 function Vector2.zero()
 	return Vector2.new(0, 0)
 end
+
 function Vector2.one()
 	return Vector2.new(1, 1)
 end
+
 function Vector2.right() 
 	return Vector2.new(1, 0)
 end
+
 function Vector2.left() 
 	return Vector2.new(-1, 0)
 end
+
 function Vector2.up() 
 	return Vector2.new(0, -1)
 end
+
 function Vector2.down() 
 	return Vector2.new(0, 1)
 end

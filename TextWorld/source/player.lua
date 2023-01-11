@@ -67,17 +67,17 @@ function player:inventoryUse()
     playdate.keyboard.hide()
 end
 
-function player:spawn(theWorld, vectorPosition)
+function player:spawn(theWorld, startPosition)
     self.position = Vector2.zero()
     self.updated = false
     self.state = ACTIVE
 
     self.world = theWorld
     self.tile = nil
-    if (theWorld ~= nil and vectorPosition ~= nil) then
-        self:move(vectorPosition) -- TODO: can spawn on top of another actor overwriting their pos (SpawnAt)
+    if (theWorld ~= nil and startPosition ~= nil) then
+        self:move(startPosition) -- TODO: can spawn on top of another actor overwriting their pos (SpawnAt)
     else
-        print("SPAWNING ERROR: ", theWorld.name, vectorPosition, " parameters failed to find appropriate location.")
+        print("SPAWNING ERROR: ", theWorld.name, startPosition, " parameters failed to find appropriate location.")
     end
 end
 
