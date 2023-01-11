@@ -1,7 +1,7 @@
 class("player").extends(actor)
 
-function player:init(theWorld, x, y)
-    player.super.init(self, theWorld, x, y)
+function player:init(theWorld, startPosition)
+    player.super.init(self, theWorld, startPosition)
     self.char = "O"
     self.name = "You"
     self.description = "A striking individual, who seems to be quite powerful!"
@@ -32,7 +32,7 @@ function player:update()
     
 
     if (self.state == ACTIVE) then
-        self.moveDir = { x = 0, y = 0 }
+        self.moveDir = Vector2.zero()
         local actionTaken = false
         -- diagonals are difficult with this movement
         if playdate.buttonJustPressed(playdate.kButtonRight) then
@@ -48,8 +48,8 @@ function player:update()
             self.moveDir.y += 1
         end
 
-        if (self.moveDir.x ~= 0 or self.moveDir.y ~= 0) then
-            if self:move(self.moveDir.x, self.moveDir.y) then
+        if (self.moveDir ~= Vector2.zero()) then
+            if self:move(self.moveDir) then
                 actionTaken = true
             end
         end
@@ -67,18 +67,17 @@ function player:inventoryUse()
     playdate.keyboard.hide()
 end
 
-function player:spawn(theWorld, x, y)
-    self.x = 0
-    self.y = 0
+function player:spawn(theWorld, vectorPosition)
+    self.position = Vector2.zero()
     self.updated = false
     self.state = ACTIVE
 
     self.world = theWorld
     self.tile = nil
-    if (theWorld ~= nil and x ~= nil and y ~= nil) then
-        self:move(x, y) -- TODO: can spawn on top of another actor overwriting their pos (SpawnAt)
+    if (theWorld ~= nil and vectorPosition ~= nil) then
+        self:move(vectorPosition) -- TODO: can spawn on top of another actor overwriting their pos (SpawnAt)
     else
-        print("SPAWNING ERROR: ", theWorld.name, x, y, " parameters failed to find appropriate location.")
+        print("SPAWNING ERROR: ", theWorld.name, vectorPosition, " parameters failed to find appropriate location.")
     end
 end
 

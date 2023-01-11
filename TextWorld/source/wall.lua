@@ -1,7 +1,7 @@
 class("wall").extends(actor)
 
-function wall:init(theWorld, x, y)
-    wall.super.init(self, theWorld, x, y)
+function wall:init(theWorld, startPosition)
+    wall.super.init(self, theWorld, startPosition)
     self.char = "M"
     self.name = "Wall"
     self.description = "A cold wall."

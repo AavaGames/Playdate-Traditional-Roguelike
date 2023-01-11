@@ -36,7 +36,7 @@ function town:create()
     
             local tile = self.grid[x][y]
             if type == 1 then
-                wall(self, x, y)
+                wall(self, Vector2.new(x,y))
             elseif type == 3 then
                 --tile.decoration = ground()
             elseif type == 4 then

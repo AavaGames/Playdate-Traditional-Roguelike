@@ -49,7 +49,7 @@ end
 
 function gameManager:update()
 	-- if playdate.keyPressed("o") then
-	-- 	showLog = not showLog
+
 	-- end
 
     self.worldManager:update()

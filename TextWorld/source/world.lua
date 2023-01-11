@@ -7,7 +7,7 @@ function world:init(theWorldManager, thePlayer)
     self.player = thePlayer
 
     self.grid = nil
-    self.gridDimensions = { x, y }
+    self.gridDimensions = Vector2.zero()
 
     self.redrawWorld = true;
 
@@ -15,15 +15,15 @@ function world:init(theWorldManager, thePlayer)
         self.name = "World"
     end
     if (self.playerSpawnPosition == nil) then
-        self.playerSpawnPosition = { x, y }
+        self.playerSpawnPosition = Vector2.zero()
     end
     
     -- var tile = array[y * width + x]
     -- 0 = empty, 1 = wall, 2 = ?, 3 = ?, 4 = grass
     self:create()
 
-    self.player:spawn(self, self.playerSpawnPosition.x, self.playerSpawnPosition.y)
-    animal(self, 6, 43)
+    self.player:spawn(self, self.playerSpawnPosition)
+    animal(self, Vector2.new(6, 43))
     self.camera = camera(self.player)
     self.camera:update()
 end
@@ -32,11 +32,10 @@ function world:create()
     -- abstract function to create grid
 end
 
-function world:setLocation(actor, x, y)
-    x = math.clamp(x, 1, self.gridDimensions.x)
-    y = math.clamp(y, 1, self.gridDimensions.y)
+function world:setPosition(actor, position)
+    position = Vector2.clamp(position, Vector2.one(), self.gridDimensions)
 
-    local tile = self.grid[x][y]
+    local tile = self.grid[position.x][position.y]
     if tile.actor == nil then
         actor:updateTile(tile)
         return true
@@ -92,8 +91,10 @@ function world:draw()
         local screenXSize = math.floor(viewport.width / fontSize)
         local screenYSize = math.floor(viewport.height / fontSize)
         -- TODO replace this math with pre-calcuated shit per font so that the screen is properly placed
-        local startGridX = math.clamp(self.camera.x - math.floor(screenXSize*0.5), 1, self.gridDimensions.x-screenXSize+1)
-        local startGridY = math.clamp(self.camera.y - math.floor(screenYSize*0.5), 1, self.gridDimensions.y-screenYSize+1)
+
+        -- +1?
+        local startGridX = math.clamp(self.camera.position.x - math.floor(screenXSize*0.5), 1, self.gridDimensions.x-screenXSize + 1)
+        local startGridY = math.clamp(self.camera.position.y - math.floor(screenYSize*0.5), 1, self.gridDimensions.y-screenYSize + 1)
 
         local xOffset = 0
         local yOffset = 0
