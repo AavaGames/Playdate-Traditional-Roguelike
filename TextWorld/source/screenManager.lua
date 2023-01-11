@@ -3,7 +3,7 @@ local gfx <const> = playdate.graphics
 class("screenManager").extends()
 
 function screenManager:init()
-    self.fps = false
+    self.fps = true
     self.targetFPS = 30
 
     self.screenDimensions = {
@@ -53,7 +53,7 @@ function screenManager:init()
     self.defaultDrawMode = playdate.graphics.kDrawModeNXOR -- change to color
 
     playdate.display.setRefreshRate(self.targetFPS)
-	gfx.setBackgroundColor(gfx.kColorWhite)
+	gfx.setBackgroundColor(gfx.kColorBlack)
 
     self.worldManager, self.logManager = nil, nil
     self._drawWorld = true;
@@ -77,33 +77,37 @@ function screenManager:update() end
 function screenManager:lateUpdate() end
 
 function screenManager:draw()
-    if self._redrawScreen then
-        gfx.clear()
-	    gfx.sprite.update()
-        self._drawWorld = true
-        self._drawLog = true
-        self._redrawScreen = false
+    draw = true
+    if draw then
+        if self._redrawScreen then
+            gfx.clear()
+            gfx.sprite.update()
+            self._drawWorld = true
+            self._drawLog = true
+            self._redrawScreen = false
+        end
+    
+        if self._drawWorld then
+            -- replace with clear world
+            gfx.clear()
+            gfx.sprite.update()
+    
+            self.worldManager:draw()
+            self.logManager:draw()
+            self._drawWorld = false
+        end
+    
+        if self._redrawLog then
+            -- clear log
+            self.logManager:draw()
+            self._redrawLog = false
+        end
+    
+        if self.fps then
+            playdate.drawFPS(0,0)
+        end
     end
-
-	if self._drawWorld then
-        -- replace with clear world
-        gfx.clear()
-	    gfx.sprite.update()
-
-        self.worldManager:draw()
-        self.logManager:draw()
-        self._drawWorld = false
-    end
-
-    if self._redrawLog then
-        -- clear log
-        self.logManager:draw()
-        self._redrawLog = false
-    end
-
-	if self.fps then
-		playdate.drawFPS(0,0)
-	end
+    
 end
 
 -- 
@@ -127,6 +131,7 @@ function screenManager:setWorldFont(value)
     end
     self.gridScreenMax.x = math.floor(self.screenDimensions.x / self.currentWorldFont.size)
     self.gridScreenMax.y = math.floor(self.screenDimensions.y / self.currentWorldFont.size)
+    self:clearGlyphs()
     self:redrawWorld(false)
 end
 
@@ -141,15 +146,18 @@ function screenManager:setLogFont(value)
     self:redrawLog(false)
 end
 
-function screenManager:addGlyph(char)
-    --text = worldFont:getGlyph("O")
-	--blur = text:fadedImage(0.5, playdate.graphics.image.kDitherTypeBayer2x2)
-
+function screenManager:getGlyph(char, visibility)
     if (self.worldGlyphs[char] == nil) then
-        self.worldGlyphs[char] = worldFont.getGlyph(char)
+        self.worldGlyphs[char] = self.currentWorldFont.font:getGlyph(char)
         self.worldGlyphs_dim[char] = self.worldGlyphs[char]:fadedImage(0.5, playdate.graphics.image.kDitherTypeBayer2x2)
+    end
+    
+    if visibility == 1 then -- lit
+        return self.worldGlyphs[char]
+    elseif visibility == 2 then -- dim
+        return self.worldGlyphs[char]
     else
-        print("already contain glyph")
+        return self.worldGlyphs_dim[char] -- replace with SEEN
     end
 end
 
@@ -157,3 +165,6 @@ function screenManager:clearGlyphs()
     self.worldGlyphs = {}
     self.worldGlyphs_dim = {}
 end
+
+-- function screenManager:getGlyph(char, state)
+-- end

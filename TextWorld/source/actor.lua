@@ -10,12 +10,13 @@ function actor:init(theWorld, startPosition)
     
     self.position = Vector2.zero()
     self.updated = false
-    self.state = ACTIVE
+    self.state = INACTIVE
 
     self.world = theWorld
     self.tile = nil
     if (theWorld ~= nil and startPosition ~= nil) then
         self:move(startPosition) -- TODO: can spawn on top of another actor overwriting their pos (SpawnAt)
+        self.state = ACTIVE
     end
 end
 

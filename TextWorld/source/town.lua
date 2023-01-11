@@ -29,7 +29,7 @@ function town:create()
             local type = townArray[index]
 
             if (type > 0) then
-                self.grid[x][y] = tile()
+                self.grid[x][y] = tile(x, y)
             else
                 self.grid[x][y] = nil
             end

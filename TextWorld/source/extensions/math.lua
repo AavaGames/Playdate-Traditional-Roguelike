@@ -51,3 +51,22 @@ end
 function math.lerp(theStart, theEnd, time)
     return theStart * (1.0 - time) + (theEnd * time);
 end
+
+function math.findAllCirclePos(xCenter, yCenter, radius)
+    local positions = {} --table.create(radius*radius)
+    for x = xCenter - radius, xCenter, 1 do
+        for y = yCenter - radius, yCenter, 1 do
+            if ((x - xCenter)*(x - xCenter) + (y - yCenter)*(y - yCenter) <= radius*radius) then
+                local xSym = xCenter - (x - xCenter);
+                local ySym = yCenter - (y - yCenter);
+                -- (x, y), (x, ySym), (xSym , y), (xSym, ySym) are in the circle
+
+                table.insert(positions, {x, y})
+                table.insert(positions, {x, ySym})
+                table.insert(positions, {xSym, y})
+                table.insert(positions, {xSym, ySym})
+            end
+        end
+    end
+    return positions
+end

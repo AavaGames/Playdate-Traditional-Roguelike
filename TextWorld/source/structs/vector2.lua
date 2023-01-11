@@ -225,7 +225,7 @@ function Vector2.dot(vector1, vector2)
 end
 
 function Vector2.distance(vector1, vector2)
-	return Vector2.new(Vector2.getMagnitude((a-b)))
+	return Vector2.getMagnitude((vector1-vector2))
 end
 
 -- "Static"

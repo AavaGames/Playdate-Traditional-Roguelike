@@ -7,9 +7,12 @@ function player:init(theWorld, startPosition)
     self.description = "A striking individual, who seems to be quite powerful!"
 
     self.moveDir = { x = 0, y = 0 }
+    self.state = INACTIVE
+
+    self.visionRange = 5
+    self.lightRange = 3
 
     self.kb = false
-
     local menu = playdate.getSystemMenu()
     local inventoryMenu, error = menu:addMenuItem("Inventory", function()
         print("inventory opened")

@@ -7,11 +7,13 @@ import "CoreLibs/timer"
 import "CoreLibs/keyboard"
 
 import "/extensions/math"
-import "/extensions//dm/enum"
-import "/extensions//dm/filepath"
-import "/extensions//dm/table"
-import "/extensions//dm/sampler"
+import "/extensions/dm/enum"
+import "/extensions/dm/filepath"
+import "/extensions/dm/table"
+import "/extensions/dm/sampler"
 import "/structs/vector2"
+
+import "/extensions/chunkTimer"
 
 import "gameManager"
 import "screenManager"

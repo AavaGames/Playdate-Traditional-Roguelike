@@ -52,36 +52,104 @@ end
 
 function world:round()
     --print("round")
-    for x = 1, self.gridDimensions.x, 1 do
-        for y = 1, self.gridDimensions.y, 1 do
-            local tile = self.grid[x][y]
-            if (tile ~= nil and tile.actor ~= nil and not tile.actor.isa(player)) then
-                if tile.actor.updated == false then
-                    tile.actor:update()
-                else
-                    --print("cant update")
-                end
-            end
-        end
-    end
 
-    for x = 1, self.gridDimensions.x, 1 do
-        for y = 1, self.gridDimensions.y, 1 do
-            local tile = self.grid[x][y]
-            if (tile ~= nil and tile.actor ~= nil) then
-                tile.actor.updated = false
+    self:tileLoop(function (tile)
+        if (tile ~= nil and tile.actor ~= nil and not tile.actor.isa(player)) then
+            if tile.actor.updated == false then
+                tile.actor:update()
+            else
+                --print("cant update")
             end
         end
-    end
+    end)
+
+    self:tileLoop(function (tile)
+        if (tile ~= nil and tile.actor ~= nil) then
+            tile.actor.updated = false
+        end
+    end)
+
 
     self.camera:update() -- must update last to follow
     screenManager:redrawWorld()
 end
 
-function world:draw()
-    print("World Drawn")
+--Pass in a function for the the tile to run through ( function(tile) )
+function world:tileLoop(func)
+    for x = 1, self.gridDimensions.x, 1 do
+        for y = 1, self.gridDimensions.y, 1 do
+            local tile = self.grid[x][y]
+            if (tile ~= nil) then
+                func(tile)
+            end
+        end
+    end
+end
 
-    gfx.setImageDrawMode(playdate.graphics.kDrawModeNXOR)
+function world:updateLighting()
+    if (self.player.state ~= INACTIVE) then
+        
+        -- find light source, if on screen + range
+
+        --[[
+            1. iterate through light sources
+            2. check if they are on screen + light range
+            3. take their top left most square [x - range][y - range]
+            4. iterate a 2D square of range on grid[x + position.x][y + position.y]
+            5. FRAME RATE
+
+            or create a Vector2.circle type function which finds all the coords of the circle and itterate through that
+        ]]
+
+        -- count how long it takes to do this
+
+        local timer = chunkTimer("Lighting Calculations")
+
+        self:tileLoop(function (tile)
+            tile.currentVisibilityState = tile.visibilityState.seen
+        end)
+
+        local positions = math.findAllCirclePos(self.player.position.x, self.player.position.y, self.player.visionRange)
+
+        for index, pos in ipairs(positions) do
+            local x, y = pos[1], pos[2]
+
+            if (not (x < 1) and not (x > self.gridDimensions.x) and not (y < 1) and not (y > self.gridDimensions.y)) then
+                local tile = self.grid[pos[1]][pos[2]]
+                if (tile ~= nil) then
+                    tile.currentVisibilityState = tile.visibilityState.dim
+                end
+            end
+            
+        end
+
+        local positions = math.findAllCirclePos(self.player.position.x, self.player.position.y, self.player.lightRange)
+
+        for index, pos in ipairs(positions) do
+            local x, y = pos[1], pos[2]
+
+            if (not (x < 1) and not (x > self.gridDimensions.x) and not (y < 1) and not (y > self.gridDimensions.y)) then
+                local tile = self.grid[pos[1]][pos[2]]
+                if (tile ~= nil) then
+                    tile.currentVisibilityState = tile.visibilityState.lit
+                end
+            end
+        end
+       
+
+        timer:print()
+    end
+end
+
+function world:draw()
+    print("\n")
+    local timer = chunkTimer("World Draw")
+
+    if (not playdate.buttonIsPressed(playdate.kButtonA)) then
+        self:updateLighting()
+    end
+
+    gfx.setImageDrawMode(gfx.kDrawModeNXOR)
 
     gfx.setFont(screenManager.currentWorldFont.font)
 
@@ -131,8 +199,19 @@ function world:draw()
                 elseif tile.decoration ~= nil then
                     char = tile.decoration.char
                 end
-    
-                gfx.drawText(char, drawCoord.x, drawCoord.y)
+                
+                local image = screenManager:getGlyph(char, tile.currentVisibilityState)
+
+                if (tile.currentVisibilityState == 1) then
+                    gfx.setColor(gfx.kColorWhite)
+                elseif (tile.currentVisibilityState == 2) then
+                    gfx.setColor(gfx.kColorBlack)
+                elseif (tile.currentVisibilityState == 3) then
+                    gfx.setColor(gfx.kColorBlack)
+                end
+                
+                gfx.fillRect(drawCoord.x, drawCoord.y, screenManager.currentWorldFont.size, screenManager.currentWorldFont.size)
+                image:draw(drawCoord.x, drawCoord.y)
             end
 
             yOffset += 1
@@ -142,4 +221,6 @@ function world:draw()
     end
 
     gfx.setImageDrawMode(screenManager.defaultDrawMode)
+
+    timer:print()
 end
