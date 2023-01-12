@@ -164,7 +164,5 @@ end
 function screenManager:clearGlyphs()
     self.worldGlyphs = {}
     self.worldGlyphs_dim = {}
+    collectgarbage()
 end
-
--- function screenManager:getGlyph(char, state)
--- end
