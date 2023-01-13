@@ -13,8 +13,6 @@ import "/extensions/dm/table"
 import "/extensions/dm/sampler"
 import "/structs/vector2"
 
-import "/extensions/csv"
-
 import "/extensions/chunkTimer"
 
 import "gameManager"
