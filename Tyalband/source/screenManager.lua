@@ -93,7 +93,7 @@ function screenManager:draw()
             gfx.sprite.update()
     
             self.worldManager:draw()
-            self.logManager:draw()
+            --self.logManager:draw()
             self._drawWorld = false
         end
     

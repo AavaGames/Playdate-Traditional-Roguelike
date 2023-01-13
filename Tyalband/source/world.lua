@@ -137,7 +137,7 @@ function world:updateLighting()
         end
        
 
-        timer:print()
+        --timer:print()
     end
 end
 
@@ -166,6 +166,10 @@ function world:draw()
 
     local xOffset = 0
     local yOffset = 0
+
+    local worldImage = gfx.image.new(viewport.width, viewport.height)
+    gfx.lockFocus(worldImage)
+
     for xPos = 0, screenManager.gridScreenMax.x, 1 do
         for yPos = 0, screenManager.gridScreenMax.y, 1 do
 
@@ -220,7 +224,9 @@ function world:draw()
         yOffset = 0
     end
 
-    gfx.setImageDrawMode(screenManager.defaultDrawMode)
+    gfx.unlockFocus()
+    worldImage:draw(0, 0)
 
-    timer:print()
+    gfx.setImageDrawMode(screenManager.defaultDrawMode)
+    --timer:print()
 end
