@@ -227,6 +227,5 @@ function world:draw()
     --gfx.unlockFocus()
     --worldImage:draw(0, 0)
 
-    gfx.setImageDrawMode(screenManager.defaultDrawMode)
     --timer:print()
 end

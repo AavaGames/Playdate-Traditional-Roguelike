@@ -5,6 +5,8 @@ import "CoreLibs/graphics"
 import "CoreLibs/sprites"
 import "CoreLibs/timer"
 import "CoreLibs/keyboard"
+import "CoreLibs/crank"
+import "CoreLibs/ui"
 
 import "/extensions/math"
 import "/extensions/dm/enum"

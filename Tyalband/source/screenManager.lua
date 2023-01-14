@@ -18,15 +18,15 @@ function screenManager:init()
     self.logFont_6px = { font = playdate.graphics.font.newFamily({
         [playdate.graphics.font.kVariantNormal] = "assets/fonts/DOS/dos-jpn12-6x12",
         [playdate.graphics.font.kVariantBold] = "assets/fonts/DOS/dos-jpn12-6x12", -- TODO make bold
-    }), size = 6 }
+    }), size = 6, lineCount = 5 }
     self.logFont_8px = { font = playdate.graphics.font.newFamily({
         [playdate.graphics.font.kVariantNormal] = "assets/fonts/Log/CompaqThin_8x16",
         [playdate.graphics.font.kVariantBold] = "assets/fonts/Log/Nix8810_M15",
-    }), size = 8 }
+    }), size = 8, lineCount = 4 }
     self.logFont_12px = { font = playdate.graphics.font.newFamily({
-        [playdate.graphics.font.kVariantNormal] = "assets/fonts/Portfolio_6x8_2x",
-        [playdate.graphics.font.kVariantBold] = "assets/fonts/Portfolio_6x8_2x", -- TODO make bold
-    }), size = 12 }
+        [playdate.graphics.font.kVariantNormal] = "assets/fonts/Log/Portfolio_6x8_2x",
+        [playdate.graphics.font.kVariantBold] = "assets/fonts/Log/Portfolio_6x8_2x", -- TODO make bold
+    }), size = 12, lineCount = 4 }
 
     self.currentWorldFont, self.currentLogFont = nil, nil
 
@@ -35,7 +35,7 @@ function screenManager:init()
 
     -- lit, dim but seen, unseen but known
     self.worldGlyphs = {} -- alloc an estimate?
-    self.worldGlyphs_dim = {}
+    self.worldGlyphs_faded = {}
 
     -- change viewports states this way? can use something similar for font sizes
     self.screenState = {
@@ -93,12 +93,15 @@ function screenManager:draw()
             gfx.sprite.update()
     
             self.worldManager:draw()
-            --self.logManager:draw()
+            self.logManager:draw()
             self._drawWorld = false
+            self._redrawLog = false
         end
     
+        --self.logManager:draw()
         if self._redrawLog then
             -- clear log
+            print("draw log")
             self.logManager:draw()
             self._redrawLog = false
         end
@@ -117,8 +120,9 @@ function screenManager:redrawWorld(redrawEverything)
 end
 
 function screenManager:redrawLog(redrawEverything)
-    self._drawLog = true
-    if redrawScreen then self._redrawScreen = true end
+    self._redrawLog = true
+    --if redrawScreen then self._redrawScreen = true end -- TODO uncomment when drawing is done
+    self._redrawScreen = true
 end
 
 function screenManager:setWorldFont(value)
@@ -143,26 +147,29 @@ function screenManager:setLogFont(value)
     elseif value == "12px" then
         self.currentLogFont = self.logFont_12px
     end
+    if (self.logManager ~= nil) then
+        self.logManager:resplitLines()
+    end
     self:redrawLog(false)
 end
 
 function screenManager:getGlyph(char, visibility)
     if (self.worldGlyphs[char] == nil) then
         self.worldGlyphs[char] = self.currentWorldFont.font:getGlyph(char)
-        self.worldGlyphs_dim[char] = self.worldGlyphs[char]:fadedImage(0.5, playdate.graphics.image.kDitherTypeBayer2x2)
+        self.worldGlyphs_faded[char] = self.worldGlyphs[char]:fadedImage(0.5, playdate.graphics.image.kDitherTypeBayer2x2)
     end
     
     if visibility == 1 then -- lit
         return self.worldGlyphs[char]
     elseif visibility == 2 then -- dim
         return self.worldGlyphs[char]
-    else
-        return self.worldGlyphs_dim[char] -- replace with SEEN
+    else -- seen
+        return self.worldGlyphs_faded[char] -- replace with SEEN
     end
 end
 
 function screenManager:clearGlyphs()
     self.worldGlyphs = {}
-    self.worldGlyphs_dim = {}
-    collectgarbage()
+    self.worldGlyphs_faded = {}
+    --collectgarbage()
 end
