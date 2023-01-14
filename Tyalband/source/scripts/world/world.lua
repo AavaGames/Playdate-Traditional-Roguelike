@@ -167,8 +167,8 @@ function world:draw()
     local xOffset = 0
     local yOffset = 0
 
-    local worldImage = gfx.image.new(viewport.width, viewport.height)
-    gfx.lockFocus(worldImage)
+    --local worldImage = gfx.image.new(viewport.width, viewport.height)
+    --gfx.lockFocus(worldImage)
 
     for xPos = 0, screenManager.gridScreenMax.x, 1 do
         for yPos = 0, screenManager.gridScreenMax.y, 1 do
@@ -224,8 +224,8 @@ function world:draw()
         yOffset = 0
     end
 
-    gfx.unlockFocus()
-    worldImage:draw(0, 0)
+    --gfx.unlockFocus()
+    --worldImage:draw(0, 0)
 
     gfx.setImageDrawMode(screenManager.defaultDrawMode)
     --timer:print()
