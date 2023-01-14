@@ -32,7 +32,7 @@ function tile:exit(actor)
 end
 
 function tile:addItem(item)
-
+    -- chjeck if possible otherwise move to another tile
 end
 
 function tile:removeItem(item)
