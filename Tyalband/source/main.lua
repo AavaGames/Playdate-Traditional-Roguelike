@@ -60,4 +60,17 @@ function playdate.keyPressed(key)
 		local color = screenManager.bgColor == gfx.kColorWhite and gfx.kColorBlack or gfx.kColorWhite
 		screenManager:setWorldColor(color)
 	end
+
+	if key == "9" then
+		if (gameManager.worldManager.currentWorld.name ~= "Floor 1 (50 feet)") then
+			print("Changed world to dungeon")
+			gameManager.worldManager:loadWorld(dungeon)
+		end
+	end
+	if key == "0" then
+		if (gameManager.worldManager.currentWorld.name ~= "Base Camp") then
+			print("Changed world to town")
+			gameManager.worldManager:loadWorld(town)
+		end
+	end
 end

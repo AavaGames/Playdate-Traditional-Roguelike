@@ -28,6 +28,7 @@ import "logManager"
 import "border"
 
 import "/scripts/worlds/town"
+import "/scripts/worlds/dungeon"
 
 import "/scripts/actors/actor"
 import "player"

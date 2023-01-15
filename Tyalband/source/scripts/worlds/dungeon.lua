@@ -1,27 +1,25 @@
 local gfx <const> = playdate.graphics
 
-class("town").extends(world)
+class("dungeon").extends(world)
 
-function town:init(theWorldManager, thePlayer)
-    town.super.init(self, theWorldManager, thePlayer)
-    self.name = "Base Camp"
-    self.worldIsLit = true
-    self.worldIsSeen = true
-    self.playerSpawnPosition = { x = 16, y = 53 }
+function dungeon:init(theWorldManager, thePlayer)
+    dungeon.super.init(self, theWorldManager, thePlayer)
+    self.name = "Floor 1 (50 feet)"
 
-    animal(self, Vector2.new(6, 43))
-    animal(self, Vector2.new(7, 43))
+    self.playerSpawnPosition = { x = 17, y = 19 }
 
-    town.super.finishInit(self)
+    animal(self, Vector2.new(1, 12))
+
+    dungeon.super.finishInit(self)
 end
 
-function town:create()
+function dungeon:create()
     -- var tile = array[y * width + x]
     -- 0 = empty, 1 = wall, 2 = ?, 3 = ?, 4 = grass
-    local townFile = playdate.file.open("assets/maps/town.json")
-    local townJson = json.decodeFile(townFile)
-    local townArray = townJson.layers[1].data
-    self.gridDimensions = { x = townJson.width, y = townJson.height }
+    local dungeonFile = playdate.file.open("assets/maps/dungeon.json")
+    local dungeonJson = json.decodeFile(dungeonFile)
+    local dungeonArray = dungeonJson.layers[1].data
+    self.gridDimensions = { x = dungeonJson.width, y = dungeonJson.height }
     
     -- init table
     self.grid = table.create(self.gridDimensions.x)
@@ -34,7 +32,7 @@ function town:create()
         for y = 1, self.gridDimensions.y, 1 do
             local width = self.gridDimensions.x
             local index = x + width * (y-1)
-            local type = townArray[index]
+            local type = dungeonArray[index]
 
             if (type > 0) then
                 self.grid[x][y] = tile(x, y)
@@ -46,8 +44,6 @@ function town:create()
             if (tile ~= nil) then
                 if type == 1 then
                     wall(self, Vector2.new(x,y))
-                elseif type == 4 then
-                    tile.decoration = grass()
                 end
             end
         end
