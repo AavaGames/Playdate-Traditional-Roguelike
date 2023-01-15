@@ -9,6 +9,7 @@ function camera:init(target, theWorld, startPosition)
         self.world = theWorld
         self.position = startPosition
     end
+    self:update()
 end
 
 function camera:update()

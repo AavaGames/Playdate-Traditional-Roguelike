@@ -54,5 +54,5 @@ end
 function worldManager:setViewport(viewport)
     -- IDEA: Coroutine to have smooth transition
     self.viewport = viewport or self.defaultViewport
-    screenManager:redrawWorld(true)
+    screenManager:redrawScreen()
 end

@@ -49,7 +49,7 @@ function logManager:showLog()
         self.worldManager:setViewport(self.logVisibleViewport)
         self.showingLog = true
         self.currentLineOffset = 0
-        screenManager:redrawLog()
+        screenManager:redrawScreen()
     end
 end
 
@@ -95,7 +95,7 @@ function logManager:update()
     if crankTick ~= 0 then
         self.currentLineOffset -= crankTick
         self.currentLineOffset = math.clamp(self.currentLineOffset, 0, #self.log - screenManager.currentLogFont.lineCount)
-        screenManager:redrawLog()
+        screenManager:redrawScreen()
     end
 end
 
@@ -106,7 +106,7 @@ function logManager:add(text)
 
     if (self.showingLog) then
         self.currentLineOffset = 0
-        screenManager:redrawLog()
+        screenManager:redrawScreen()
     end
 end
 

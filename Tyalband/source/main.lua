@@ -57,6 +57,7 @@ end
 
 function playdate.keyPressed(key) 
 	if key == "N" then
-		screenManager:invertColors()
+		local color = screenManager.bgColor == gfx.kColorWhite and gfx.kColorBlack or gfx.kColorWhite
+		screenManager:setWorldColor(color)
 	end
 end

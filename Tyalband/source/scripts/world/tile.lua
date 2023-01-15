@@ -6,12 +6,13 @@ function tile:init(x, y)
     self.position = Vector2.new(x, y)
     self.decoration = ground()
     self.actor = nil
-    self.items = {}
+    self.item = nil
     self.effects = {}
     self.triggers = {}
 
-    self.visibilityState = { lit = 1, dim = 2, seen = 3 }
-    self.currentVisibilityState = dim
+    self.seen = false
+    self.visibilityState = { unknown = 0, lit = 1, dim = 2, seen = 3 }
+    self.currentVisibilityState = unknown
 end
 
 function tile:update()
@@ -32,7 +33,7 @@ function tile:exit(actor)
 end
 
 function tile:addItem(item)
-    -- chjeck if possible otherwise move to another tile
+    -- if have item, move to another tile
 end
 
 function tile:removeItem(item)

@@ -11,9 +11,9 @@ function screenManager:init()
         y = 240
     }
 
-    self.worldFont_8px = { font = gfx.font.new('assets/fonts/IBM/final/IBM_EGA_8x8'), size = 8 }
+    self.worldFont_8px = { font = gfx.font.new('assets/fonts/IBM/IBM_EGA_8x8'), size = 8 }
     self.worldFont_10px = { font = gfx.font.new('assets/fonts/Rainbow100_re_40'), size = 10 }
-    self.worldFont_16px = { font = gfx.font.new('assets/fonts/IBM/final/IBM_EGA_8x8_2x'), size = 16 }
+    self.worldFont_16px = { font = gfx.font.new('assets/fonts/IBM/IBM_EGA_8x8_2x'), size = 16 }
 
     self.logFont_6px = { font = playdate.graphics.font.newFamily({
         [playdate.graphics.font.kVariantNormal] = "assets/fonts/DOS/dos-jpn12-6x12",
@@ -53,24 +53,20 @@ function screenManager:init()
     self.defaultDrawMode = playdate.graphics.kDrawModeNXOR -- change to color
 
     playdate.display.setRefreshRate(self.targetFPS)
-	gfx.setBackgroundColor(gfx.kColorBlack)
+
+    self.bgColor = gfx.kColorBlack
 
     self.worldManager, self.logManager = nil, nil
-    self._drawWorld = true;
-    self._drawLog = false;
+    self._redrawScreen = true
 
     self:setWorldFont("16px")
     self:setLogFont("8px")
-
-    self.bgBlack= true;
 end
 
-function screenManager:invertColors()
-    gfx.setBackgroundColor(self.bgBlack and gfx.kColorBlack or gfx.kColorWhite)
-    self.bgBlack = not self.bgBlack
-    print("invert")
+function screenManager:setWorldColor(color)
+    self.bgColor = color
+    gfx.setBackgroundColor(self.bgColor)
     self._redrawScreen = true
-    --playdate.timer.performAfterDelay(10000, invertColors)
 end
 
 function screenManager:update() end
@@ -82,28 +78,9 @@ function screenManager:draw()
         if self._redrawScreen then
             gfx.clear()
             gfx.sprite.update()
-            self._drawWorld = true
-            self._drawLog = true
-            self._redrawScreen = false
-        end
-    
-        if self._drawWorld then
-            -- replace with clear world
-            gfx.clear()
-            gfx.sprite.update()
-    
             self.worldManager:draw()
             self.logManager:draw()
-            self._drawWorld = false
-            self._redrawLog = false
-        end
-    
-        --self.logManager:draw()
-        if self._redrawLog then
-            -- clear log
-            print("draw log")
-            self.logManager:draw()
-            self._redrawLog = false
+            self._redrawScreen = false
         end
     
         if self.fps then
@@ -113,15 +90,7 @@ function screenManager:draw()
     
 end
 
--- 
-function screenManager:redrawWorld(redrawEverything)
-    self._drawWorld = true
-    if redrawScreen then self._redrawScreen = true end
-end
-
-function screenManager:redrawLog(redrawEverything)
-    self._redrawLog = true
-    --if redrawScreen then self._redrawScreen = true end -- TODO uncomment when drawing is done
+function screenManager:redrawScreen()
     self._redrawScreen = true
 end
 
@@ -135,8 +104,8 @@ function screenManager:setWorldFont(value)
     end
     self.gridScreenMax.x = math.floor(self.screenDimensions.x / self.currentWorldFont.size)
     self.gridScreenMax.y = math.floor(self.screenDimensions.y / self.currentWorldFont.size)
-    self:clearGlyphs()
-    self:redrawWorld(false)
+    self:resetGlyphs()
+    self:redrawScreen()
 end
 
 function screenManager:setLogFont(value)
@@ -150,7 +119,7 @@ function screenManager:setLogFont(value)
     if (self.logManager ~= nil) then
         self.logManager:resplitLines()
     end
-    self:redrawLog(false)
+    self:redrawScreen()
 end
 
 function screenManager:getGlyph(char, visibility)
@@ -168,7 +137,7 @@ function screenManager:getGlyph(char, visibility)
     end
 end
 
-function screenManager:clearGlyphs()
+function screenManager:resetGlyphs()
     self.worldGlyphs = {}
     self.worldGlyphs_faded = {}
     --collectgarbage()

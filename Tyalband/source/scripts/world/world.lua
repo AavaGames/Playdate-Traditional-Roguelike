@@ -9,21 +9,25 @@ function world:init(theWorldManager, thePlayer)
     self.grid = nil
     self.gridDimensions = Vector2.zero()
 
-    if (self.name == nil) then
-        self.name = "World"
-    end
-    if (self.playerSpawnPosition == nil) then
-        self.playerSpawnPosition = Vector2.zero()
-    end
-    
-    -- var tile = array[y * width + x]
-    -- 0 = empty, 1 = wall, 2 = ?, 3 = ?, 4 = grass
-    self:create()
+    self.name = "World" -- Floor X (Depth 50*X)
+    self.playerSpawnPosition = Vector2.zero()
 
+    self.worldIsLit = false
+    self.worldIsSeen = false
+
+    self:create()
+end
+
+function world:finishInit()
+    if (self.worldIsSeen == true) then
+        self:tileLoop(function (tile)
+            tile.seen = true
+        end)
+    end
+    screenManager:setWorldColor(self.worldIsLit == true and gfx.kColorWhite or gfx.kColorBlack)
     self.player:spawn(self, self.playerSpawnPosition)
-    animal(self, Vector2.new(6, 43))
     self.camera = camera(self.player)
-    self.camera:update()
+    self:updateLighting()
 end
 
 function world:create()
@@ -68,10 +72,12 @@ function world:round()
             tile.actor.updated = false
         end
     end)
-
-
+    
     self.camera:update() -- must update last to follow
-    screenManager:redrawWorld()
+    if (not playdate.buttonIsPressed(playdate.kButtonA)) then
+        self:updateLighting()
+    end
+    screenManager:redrawScreen()
 end
 
 --Pass in a function for the the tile to run through ( function(tile) )
@@ -88,25 +94,17 @@ end
 
 function world:updateLighting()
     if (self.player.state ~= INACTIVE) then
-        
-        -- find light source, if on screen + range
-
-        --[[
-            1. iterate through light sources
-            2. check if they are on screen + light range
-            3. take their top left most square [x - range][y - range]
-            4. iterate a 2D square of range on grid[x + position.x][y + position.y]
-            5. FRAME RATE
-
-            or create a Vector2.circle type function which finds all the coords of the circle and itterate through that
-        ]]
-
-        -- count how long it takes to do this
+     
+        -- find light sources, if on screen + range then calc
 
         local timer = chunkTimer("Lighting Calculations")
 
         self:tileLoop(function (tile)
-            tile.currentVisibilityState = tile.visibilityState.seen
+            if (tile.seen == true) then
+                tile.currentVisibilityState = tile.visibilityState.seen
+            else
+                tile.currentVisibilityState = tile.visibilityState.unknown
+            end
         end)
 
         local positions = math.findAllCirclePos(self.player.position.x, self.player.position.y, self.player.visionRange)
@@ -118,9 +116,9 @@ function world:updateLighting()
                 local tile = self.grid[pos[1]][pos[2]]
                 if (tile ~= nil) then
                     tile.currentVisibilityState = tile.visibilityState.dim
+                    tile.seen = true
                 end
             end
-            
         end
 
         local positions = math.findAllCirclePos(self.player.position.x, self.player.position.y, self.player.lightRange)
@@ -132,10 +130,10 @@ function world:updateLighting()
                 local tile = self.grid[pos[1]][pos[2]]
                 if (tile ~= nil) then
                     tile.currentVisibilityState = tile.visibilityState.lit
+                    tile.seen = true
                 end
             end
         end
-       
 
         --timer:print()
     end
@@ -145,14 +143,6 @@ function world:draw()
     print("\n")
     local timer = chunkTimer("World Draw")
 
-    if (not playdate.buttonIsPressed(playdate.kButtonA)) then
-        self:updateLighting()
-    end
-
-    gfx.setImageDrawMode(gfx.kDrawModeNXOR)
-
-    gfx.setFont(screenManager.currentWorldFont.font)
-
     local viewport = self.worldManager.viewport
     local fontSize = screenManager.currentWorldFont.size
 
@@ -160,15 +150,14 @@ function world:draw()
     local screenYSize = math.floor(viewport.height / fontSize)
     -- TODO replace this math with pre-calcuated shit per font so that the screen is properly placed
 
-    -- +1?
     local startGridX = math.clamp(self.camera.position.x - math.floor(screenXSize*0.5), 1, self.gridDimensions.x-screenXSize + 1)
     local startGridY = math.clamp(self.camera.position.y - math.floor(screenYSize*0.5), 1, self.gridDimensions.y-screenYSize + 1)
 
     local xOffset = 0
     local yOffset = 0
 
-    --local worldImage = gfx.image.new(viewport.width, viewport.height)
-    --gfx.lockFocus(worldImage)
+    gfx.setImageDrawMode(gfx.kDrawModeNXOR)
+    gfx.setFont(screenManager.currentWorldFont.font)
 
     for xPos = 0, screenManager.gridScreenMax.x, 1 do
         for yPos = 0, screenManager.gridScreenMax.y, 1 do
@@ -203,19 +192,15 @@ function world:draw()
                 elseif tile.decoration ~= nil then
                     char = tile.decoration.char
                 end
-                
-                local image = screenManager:getGlyph(char, tile.currentVisibilityState)
 
-                if (tile.currentVisibilityState == 1) then
-                    gfx.setColor(gfx.kColorWhite)
-                elseif (tile.currentVisibilityState == 2) then
-                    gfx.setColor(gfx.kColorBlack)
-                elseif (tile.currentVisibilityState == 3) then
-                    gfx.setColor(gfx.kColorBlack)
+                if (tile.currentVisibilityState ~= tile.visibilityState.unknown) then
+                    local glyph = screenManager:getGlyph(char, tile.currentVisibilityState)
+                    if (tile.currentVisibilityState == tile.visibilityState.lit) then -- draw light around rect
+                        gfx.setColor(gfx.kColorWhite)
+                        gfx.fillRect(drawCoord.x, drawCoord.y, screenManager.currentWorldFont.size, screenManager.currentWorldFont.size)
+                    end
+                    glyph:draw(drawCoord.x, drawCoord.y)
                 end
-                
-                gfx.fillRect(drawCoord.x, drawCoord.y, screenManager.currentWorldFont.size, screenManager.currentWorldFont.size)
-                image:draw(drawCoord.x, drawCoord.y)
             end
 
             yOffset += 1
@@ -223,9 +208,6 @@ function world:draw()
         xOffset += 1
         yOffset = 0
     end
-
-    --gfx.unlockFocus()
-    --worldImage:draw(0, 0)
 
     --timer:print()
 end
