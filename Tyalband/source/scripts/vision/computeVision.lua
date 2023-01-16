@@ -52,8 +52,8 @@ function ComputeVision(position, rangeLimit, world)
         elseif octant == 7 then nx += x ny += y
         end
 
-        nx = math.floor(math.clamp(nx, 1, world.gridDimensions.x))
-        ny = math.floor(math.clamp(ny, 1, world.gridDimensions.y))
+        nx = math.clamp(nx, 1, world.gridDimensions.x)
+        ny = math.clamp(ny, 1, world.gridDimensions.y)
         return _blocksLight(nx, ny)
     end
 
@@ -71,8 +71,8 @@ function ComputeVision(position, rangeLimit, world)
         elseif octant == 7 then nx += x ny += y
         end
 
-        nx = math.floor(math.clamp(nx, 1, world.gridDimensions.x))
-        ny = math.floor(math.clamp(ny, 1, world.gridDimensions.y))
+        nx = math.clamp(nx, 1, world.gridDimensions.x)
+        ny = math.clamp(ny, 1, world.gridDimensions.y)
         _setVisible(nx, ny)
     end
 
@@ -87,7 +87,7 @@ function ComputeVision(position, rangeLimit, world)
             if (top.x == 1) then        
                 topY = x
             else
-                topY = ((x*2-1) * top.y + top.x) / (top.x*2)
+                topY = ((x*2-1) * top.y + top.x) // (top.x*2)
                 print(topY)
                 if BlocksLight(x, topY, octant, position) then
                     if (top:greaterOrEqual(topY*2+1, x*2) and not BlocksLight(x, topY+1, octant, position)) then
@@ -110,7 +110,7 @@ function ComputeVision(position, rangeLimit, world)
             if(bottom.y == 0) then
                 bottomY = 0
             else
-                bottomY = ((x*2-1) * bottom.y + bottom.x) / (bottom.x*2)
+                bottomY = ((x*2-1) * bottom.y + bottom.x) // (bottom.x*2)
                 print(bottomY)
                 if(bottom:greaterOrEqual(bottomY*2+1, x*2) and BlocksLight(x, bottomY, octant, position)
                     and not BlocksLight(x, bottomY+1, octant, position)) then

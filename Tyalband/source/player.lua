@@ -9,8 +9,8 @@ function player:init(theWorld, startPosition)
     self.moveDir = { x = 0, y = 0 }
     self.state = INACTIVE
 
-    self.visionRange = 20
-    self.lightRange = 3
+    self.visionRange = 5
+    self.lightRange = 3 -- create light source with Light and Dim
 
     self.kb = false
     local menu = playdate.getSystemMenu()
