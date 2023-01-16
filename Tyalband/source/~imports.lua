@@ -39,3 +39,6 @@ import "/scripts/actors/animal"
 import "/scripts/entities/entity"
 import "/scripts/entities/grass"
 import "/scripts/entities/ground"
+
+
+import "frameProfiler"

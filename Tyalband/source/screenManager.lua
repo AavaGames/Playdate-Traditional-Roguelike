@@ -76,11 +76,16 @@ function screenManager:draw()
     draw = true
     if draw then
         if self._redrawScreen then
+            frameProfiler:startTimer("Drawing")
+
             gfx.clear()
             gfx.sprite.update()
             self.worldManager:draw()
             self.logManager:draw()
             self._redrawScreen = false
+
+            frameProfiler:endTimer("Drawing")
+            frameProfiler:frameEnd()
         end
     
         if self.fps then

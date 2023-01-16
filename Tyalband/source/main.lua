@@ -5,6 +5,7 @@ local gfx <const> = playdate.graphics
 local function initializeGame()
 	math.randomseed(playdate.getSecondsSinceEpoch())
 
+	frameProfiler = frameProfiler()
 	screenManager = screenManager()
 	gameManager = gameManager()
 
@@ -37,10 +38,15 @@ local function initializeGame()
 end
 
 local function updateGame()
+	frameProfiler:frameStart()
+	frameProfiler:startTimer("Logic")
+
 	gameManager:update()
 	gameManager:lateUpdate()
 	screenManager:update()
 	screenManager:lateUpdate()
+
+	frameProfiler:endTimer("Logic")
 end
 
 local function drawGame()

@@ -57,6 +57,9 @@ end
 function world:round()
     --print("round")
 
+    frameProfiler:startTimer("Logic: Actor Update")
+
+    -- TODO optimize, takes about 77ms to calculate. Could keep all actors / effects in a table and just iterate that
     self:tileLoop(function (tile)
         if (tile ~= nil and tile.actor ~= nil and not tile.actor.isa(player)) then
             if tile.actor.updated == false then
@@ -74,6 +77,9 @@ function world:round()
     end)
     
     self.camera:update() -- must update last to follow
+
+    frameProfiler:endTimer("Logic: Actor Update")
+
     if (not playdate.buttonIsPressed(playdate.kButtonA)) then
         self:updateLighting()
     end
@@ -97,7 +103,7 @@ function world:updateLighting()
      
         -- find light sources, if on screen + range then calc
 
-        local timer = chunkTimer("Lighting Calculations")
+        frameProfiler:startTimer("Logic: Lighting")
 
         self:tileLoop(function (tile)
             if (tile.seen == true) then
@@ -135,14 +141,12 @@ function world:updateLighting()
             end
         end
 
-        --timer:print()
+        frameProfiler:endTimer("Logic: Lighting")
     end
 end
 
 function world:draw()
     print("\n")
-    local timer = chunkTimer("World Draw")
-
     local viewport = self.worldManager.viewport
     local fontSize = screenManager.currentWorldFont.size
 
@@ -208,6 +212,4 @@ function world:draw()
         xOffset += 1
         yOffset = 0
     end
-
-    --timer:print()
 end
