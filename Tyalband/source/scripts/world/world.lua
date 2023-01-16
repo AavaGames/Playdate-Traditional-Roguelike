@@ -112,34 +112,38 @@ function world:updateLighting()
                 tile.currentVisibilityState = tile.visibilityState.unknown
             end
         end)
+        
+        ComputeVision(self.player.position, self.player.visionRange, self)
 
-        local positions = math.findAllCirclePos(self.player.position.x, self.player.position.y, self.player.visionRange)
+        
 
-        for index, pos in ipairs(positions) do
-            local x, y = pos[1], pos[2]
+        -- local positions = math.findAllCirclePos(self.player.position.x, self.player.position.y, self.player.visionRange)
 
-            if (not (x < 1) and not (x > self.gridDimensions.x) and not (y < 1) and not (y > self.gridDimensions.y)) then
-                local tile = self.grid[pos[1]][pos[2]]
-                if (tile ~= nil) then
-                    tile.currentVisibilityState = tile.visibilityState.dim
-                    tile.seen = true
-                end
-            end
-        end
+        -- for index, pos in ipairs(positions) do
+        --     local x, y = pos[1], pos[2]
 
-        local positions = math.findAllCirclePos(self.player.position.x, self.player.position.y, self.player.lightRange)
+        --     if (not (x < 1) and not (x > self.gridDimensions.x) and not (y < 1) and not (y > self.gridDimensions.y)) then
+        --         local tile = self.grid[pos[1]][pos[2]]
+        --         if (tile ~= nil) then
+        --             tile.currentVisibilityState = tile.visibilityState.dim
+        --             tile.seen = true
+        --         end
+        --     end
+        -- end
 
-        for index, pos in ipairs(positions) do
-            local x, y = pos[1], pos[2]
+        -- local positions = math.findAllCirclePos(self.player.position.x, self.player.position.y, self.player.lightRange)
 
-            if (not (x < 1) and not (x > self.gridDimensions.x) and not (y < 1) and not (y > self.gridDimensions.y)) then
-                local tile = self.grid[pos[1]][pos[2]]
-                if (tile ~= nil) then
-                    tile.currentVisibilityState = tile.visibilityState.lit
-                    tile.seen = true
-                end
-            end
-        end
+        -- for index, pos in ipairs(positions) do
+        --     local x, y = pos[1], pos[2]
+
+        --     if (not (x < 1) and not (x > self.gridDimensions.x) and not (y < 1) and not (y > self.gridDimensions.y)) then
+        --         local tile = self.grid[pos[1]][pos[2]]
+        --         if (tile ~= nil) then
+        --             tile.currentVisibilityState = tile.visibilityState.lit
+        --             tile.seen = true
+        --         end
+        --     end
+        -- end
 
         frameProfiler:endTimer("Logic: Lighting")
     end
@@ -154,8 +158,10 @@ function world:draw()
     local screenYSize = math.floor(viewport.height / fontSize)
     -- TODO replace this math with pre-calcuated shit per font so that the screen is properly placed
 
-    local startGridX = math.clamp(self.camera.position.x - math.floor(screenXSize*0.5), 1, self.gridDimensions.x-screenXSize + 1)
-    local startGridY = math.clamp(self.camera.position.y - math.floor(screenYSize*0.5), 1, self.gridDimensions.y-screenYSize + 1)
+    local startGridX = math.clamp(self.camera.position.x - math.floor(screenXSize*0.5), 1, 
+        math.clamp(self.gridDimensions.x-screenXSize + 1, 1, 9999999)) -- hard code screen size to font
+    local startGridY = math.clamp(self.camera.position.y - math.floor(screenYSize*0.5), 1, 
+        math.clamp(self.gridDimensions.y-screenYSize + 1, 1, 9999999))
 
     local xOffset = 0
     local yOffset = 0

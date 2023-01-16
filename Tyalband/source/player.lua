@@ -9,7 +9,7 @@ function player:init(theWorld, startPosition)
     self.moveDir = { x = 0, y = 0 }
     self.state = INACTIVE
 
-    self.visionRange = 5
+    self.visionRange = 20
     self.lightRange = 3
 
     self.kb = false

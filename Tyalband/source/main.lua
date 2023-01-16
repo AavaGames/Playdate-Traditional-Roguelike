@@ -35,6 +35,19 @@ local function initializeGame()
 	-- printTable(fileTable)
 
 	--timer:print()
+
+	-- local v1 = Vector2.new(5, 10)
+	-- local v2 = Vector2.new(2, 5)
+	-- local v3 = Vector2.new(8, 12)
+
+	-- print(Vector2.distance(v1, v2))
+	-- print(Vector2.chebyshev_distance(v1,v2))
+
+	-- print(Vector2.distance(v2, v1))
+	-- print(Vector2.chebyshev_distance(v2,v1))
+
+	-- print(Vector2.distance(v1, v3))
+	-- print(Vector2.chebyshev_distance(v1,v3))
 end
 
 local function updateGame()

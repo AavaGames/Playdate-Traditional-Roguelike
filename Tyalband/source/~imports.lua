@@ -40,5 +40,6 @@ import "/scripts/entities/entity"
 import "/scripts/entities/grass"
 import "/scripts/entities/ground"
 
-
+import "/scripts/vision/slope"
+import "/scripts/vision/computeVision.lua"
 import "frameProfiler"

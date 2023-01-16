@@ -3,9 +3,9 @@ function math.round(value)
 end
 
 function math.clamp(value, min, max)
-    if value < min then
+    if value <= min then
         value = min
-    elseif value > max then
+    elseif value >= max then
         value = max
     end
     return value

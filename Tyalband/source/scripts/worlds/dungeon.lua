@@ -6,9 +6,9 @@ function dungeon:init(theWorldManager, thePlayer)
     dungeon.super.init(self, theWorldManager, thePlayer)
     self.name = "Floor 1 (50 feet)"
 
-    self.playerSpawnPosition = { x = 17, y = 19 }
-
-    animal(self, Vector2.new(1, 12))
+    --self.playerSpawnPosition = { x = 17, y = 19 }
+    self.playerSpawnPosition = { x = 14, y = 14 }
+    animal(self, Vector2.new(2, 13))
 
     dungeon.super.finishInit(self)
 end
@@ -44,6 +44,7 @@ function dungeon:create()
             if (tile ~= nil) then
                 if type == 1 then
                     wall(self, Vector2.new(x,y))
+                    tile.blocksLight = true
                 end
             end
         end

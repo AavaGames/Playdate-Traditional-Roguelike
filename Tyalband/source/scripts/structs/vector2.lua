@@ -228,6 +228,24 @@ function Vector2.distance(vector1, vector2)
 	return Vector2.getMagnitude((vector1-vector2))
 end
 
+-- TODO test
+-- Chebyshev distance (fixes diagonal distance of Manhattan distance)
+function Vector2.chebyshev_distance(vector1, vector2)
+	-- does it need a greater check?
+	return math.max(vector2.x - vector1.x, vector2.y - vector1.y)
+end
+
+-- A cheaper distance check without a sqrt
+function Vector2.withinDistance(vector1, vector2, distance)
+	local offset = vector2 - vector1
+	local squared = offset.x*offset.x + offset.y*offset.y
+	if squared <= distance*distance then
+		return true -- print("The points are within " .. distance .. " units")
+	else
+		return false -- print("The points are farther than " .. distance .. " units apart")
+	end
+end
+
 -- "Static"
 
 function Vector2.zero()

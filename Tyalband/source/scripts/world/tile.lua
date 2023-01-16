@@ -13,6 +13,8 @@ function tile:init(x, y)
     self.seen = false
     self.visibilityState = { unknown = 0, lit = 1, dim = 2, seen = 3 }
     self.currentVisibilityState = unknown
+
+    self.blocksLight = false
 end
 
 function tile:update()
