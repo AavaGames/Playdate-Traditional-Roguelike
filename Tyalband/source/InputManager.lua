@@ -1,8 +1,8 @@
 class("InputManager").extends()
 
 function InputManager:init()
-    self.timer = chunkTimer("deltaTime")
-    self.deltaTime = 0 -- ms
+    self.startFrameTime = playdate.getCurrentTimeMilliseconds()
+    self.deltaTime = 0
 
     self.buttonCount = 6
     self.buttons = {
@@ -23,15 +23,15 @@ function InputManager:init()
             was = false
         }
     end
-    -- ms
+
+    -- In Milliseconds
     self.holdBufferTime = 300
     self.longHoldBufferTime = 1000
 end
 
 function InputManager:update()
-    -- get time since last call and restart timer
-    self.deltaTime = self.timer:getTime()
-    self.timer:startTimer()
+    self.deltaTime = playdate.getCurrentTimeMilliseconds() - self.startFrameTime
+    self.startFrameTime = playdate.getCurrentTimeMilliseconds()
 
     for index, button in ipairs(self.buttons) do
 
@@ -66,7 +66,6 @@ end
 
 function InputManager:JustReleased(button)
     return self.held[button].was == false and playdate.buttonJustReleased(button)
-
 end
 
 function InputManager:Held(button) 

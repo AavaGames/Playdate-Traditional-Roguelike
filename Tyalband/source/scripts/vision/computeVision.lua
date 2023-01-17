@@ -3,7 +3,7 @@
 local symmetry = false
 local sqrt = true
 
--- Based on Matt Millazo's Roguelike Vision Algorithm
+-- Based on Adam Milazzo's Roguelike Vision Algorithm
 -- http://www.adammil.net/blog/v125_Roguelike_Vision_Algorithms.html
 
 --[[

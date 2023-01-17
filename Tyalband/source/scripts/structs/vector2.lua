@@ -228,14 +228,14 @@ function Vector2.distance(vector1, vector2)
 	return Vector2.getMagnitude((vector1-vector2))
 end
 
--- TODO test
 -- Chebyshev distance (fixes diagonal distance of Manhattan distance)
 function Vector2.chebyshev_distance(vector1, vector2)
-	-- does it need a greater check?
 	return math.max(vector2.x - vector1.x, vector2.y - vector1.y)
 end
 
--- A cheaper distance check without a sqrt
+
+-- Checks whether vector1 is within distance of vector2 and returns bool
+-- NOTE: Cheaper distance check without a sqrt
 function Vector2.withinDistance(vector1, vector2, distance)
 	local offset = vector2 - vector1
 	local squared = offset.x*offset.x + offset.y*offset.y
