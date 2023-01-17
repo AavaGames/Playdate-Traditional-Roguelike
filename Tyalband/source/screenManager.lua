@@ -6,7 +6,7 @@ function screenManager:init()
     self.fps = true
     self.profiler = false
     self.targetFPS = 30
-
+    
     self.screenDimensions = {
         x = 400,
         y = 240

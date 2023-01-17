@@ -28,11 +28,8 @@ function ComputeVision(position, visionRange, lightSource, world, setVisible, bl
             --tile.currentVisibilityState = tile.visibilityState.seen
 
             if (tile.actor ~= nil) then
-                if (tile.actor.name == "Wall") then
-                    return true
-                end
+                return tile.actor.blockVision
             end
-            --return tile.blocksVision
         end
         return false
     end

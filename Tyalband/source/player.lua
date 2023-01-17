@@ -94,7 +94,7 @@ function player:spawn(theWorld, startPosition)
     self.world = theWorld
     self.tile = nil
     if (theWorld ~= nil and startPosition ~= nil) then
-        self:move(startPosition) -- TODO: can spawn on top of another actor overwriting their pos (SpawnAt)
+        self:moveTo(Vector2.new(startPosition.x, startPosition.y)) -- TODO: can spawn on top of another actor overwriting their pos (SpawnAt)
     else
         print("SPAWNING ERROR: ", theWorld.name, startPosition, " parameters failed to find appropriate location.")
     end

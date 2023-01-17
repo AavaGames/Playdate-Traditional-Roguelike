@@ -34,18 +34,6 @@ function world:create()
     -- abstract function to create grid
 end
 
-function world:setPosition(actor, position)
-    position = Vector2.clamp(position, Vector2.one(), self.gridDimensions)
-
-    local tile = self.grid[position.x][position.y]
-    if tile.actor == nil then
-        actor:updateTile(tile)
-        return true
-    else
-        return false
-    end
-end
-
 function world:update()
 
 end
@@ -84,17 +72,7 @@ function world:round()
     screenManager:redrawScreen()
 end
 
---Pass in a function for the the tile to run through ( function(tile) )
-function world:tileLoop(func)
-    for x = 1, self.gridDimensions.x, 1 do
-        for y = 1, self.gridDimensions.y, 1 do
-            local tile = self.grid[x][y]
-            if (tile ~= nil) then
-                func(tile)
-            end
-        end
-    end
-end
+--region Drawing & Lighting
 
 function world:updateLighting()
     if (self.player.state ~= INACTIVE) then
@@ -117,8 +95,6 @@ function world:updateLighting()
             end
         end)
 
-        
-        
         ComputeVision(self.player.position, self.player.visionRange, self.player.equipped.lightSource, self,
         function (x, y, distance) -- set visible
 
@@ -223,14 +199,18 @@ function world:draw()
                 local char = ""
 
                 if tile.actor ~= nil and tile.inView and tile.lightLevel > 0 then
-                    char = tile.actor.char
-                --elseif table.getsize(tile.effects) > 0 then
+                    char = tile.actor:getChar()
+                elseif tile.actor ~= nil and tile.actor.renderWhenSeen and tile.seen then
+                    char = tile.actor:getChar()
+                elseif #tile.effects > 0 then
+                    -- TODO
                 elseif tile.item ~= nil and (tile.lightLevel > 0 or tile.item.seen == true) then
                     char = tile.item.char
                     tile.item.seen = true -- probably move this somewhere else
                 elseif tile.decoration ~= nil then
                     char = tile.decoration.char
                 end
+                
 
                 local glyph = screenManager:getGlyph(char, tile.inView, tile.lightLevel)
                 if (tile.currentVisibilityState == tile.visibilityState.lit or tile.currentVisibilityState == tile.visibilityState.dim) then -- draw light around rect
@@ -244,5 +224,54 @@ function world:draw()
         end
         xOffset += 1
         yOffset = 0
+    end
+end
+
+--#endregion
+
+--Pass in a function for the the tile to run through ( function(tile) )
+function world:tileLoop(func)
+    for x = 1, self.gridDimensions.x, 1 do
+        for y = 1, self.gridDimensions.y, 1 do
+            local tile = self.grid[x][y]
+            if (tile ~= nil) then
+                func(tile)
+            end
+        end
+    end
+end
+
+-- Check tile in the world for collision. Returns { bool: collision?, [empty tile, actor collision or nil] }
+function world:collisionCheck(position)
+    if (math.isClamped(position.x, 1, self.gridDimensions.x) or math.isClamped(position.y, 1, self.gridDimensions.y)) then
+        return { true, nil } -- oob
+    end
+    local tile = self.grid[position.x][position.y]
+    if (tile ~= nil) then
+        if (tile.actor ~= nil) then
+            if (tile.actor.collision == true) then
+                return { true, tile.actor }
+            else
+                return { false, tile }-- no collision with actor
+            end
+        else
+            return { false, tile } -- no actor to collide with
+        end
+    else
+        return { true, nil } -- nil tile
+    end
+end
+
+function world:spawnAt(position)
+    --[[
+        collision check spawn area
+        What to do if something blocks the area? spawn in a sweeping circle around it.
+            same code at item placement
+    ]]
+
+    if (self:collisionCheck(position)) then
+        
+    else
+        return true
     end
 end

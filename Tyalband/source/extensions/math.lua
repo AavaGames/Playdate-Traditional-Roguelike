@@ -11,6 +11,11 @@ function math.clamp(value, min, max)
     return value
 end
 
+function math.isClamped(value, min, max)
+    local v = value
+    return v ~= math.clamp(value, min, max)
+end
+
 function math.ring(a, min, max)
     if min > max then
         min, max = max, min
