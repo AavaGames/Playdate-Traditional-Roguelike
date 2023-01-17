@@ -4,6 +4,7 @@ class("screenManager").extends()
 
 function screenManager:init()
     self.fps = true
+    self.profiler = false
     self.targetFPS = 30
 
     self.screenDimensions = {
@@ -127,19 +128,20 @@ function screenManager:setLogFont(value)
     self:redrawScreen()
 end
 
-function screenManager:getGlyph(char, visibility)
+function screenManager:getGlyph(char, inView, lightLevel)
     if (self.worldGlyphs[char] == nil) then
         self.worldGlyphs[char] = self.currentWorldFont.font:getGlyph(char)
         self.worldGlyphs_faded[char] = self.worldGlyphs[char]:fadedImage(0.5, playdate.graphics.image.kDitherTypeBayer2x2)
     end
     
-    if visibility == 1 then -- lit
-        return self.worldGlyphs[char]
-    elseif visibility == 2 then -- dim
-        return self.worldGlyphs[char]
-    else -- seen
-        return self.worldGlyphs_faded[char] -- replace with SEEN
+    if (inView) then
+        if lightLevel >= 2 then -- lit
+            return self.worldGlyphs[char]
+        elseif lightLevel == 1 then -- dim
+            return self.worldGlyphs_faded[char]
+        end
     end
+    return self.worldGlyphs_faded[char] -- seen but not inview
 end
 
 function screenManager:resetGlyphs()

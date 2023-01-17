@@ -20,15 +20,17 @@ function frameProfiler:endTimer(purpose)
 end
 
 function frameProfiler:frameEnd()
-    print("-- Frame Profile --")
-    for index, purpose in ipairs(self.purposes) do 
-        if (self.timers[purpose] ~= nil) then
-            self.timers[purpose]:print(false)
-        else
-            print(purpose .. " is nil")
+    if (screenManager.profiler == true) then
+        print("-- Frame Profile --")
+        for index, purpose in ipairs(self.purposes) do 
+            if (self.timers[purpose] ~= nil) then
+                self.timers[purpose]:print(false)
+            else
+                print(purpose .. " is nil")
+            end
         end
+        self.frameTime:print()
+        print(1000 / (self.frameTime.endTime - self.frameTime.startTime) .. " fps")
+        print("----")
     end
-    self.frameTime:print()
-    print(1000 / (self.frameTime.endTime - self.frameTime.startTime) .. " fps")
-    print("----")
 end

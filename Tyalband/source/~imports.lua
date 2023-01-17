@@ -19,6 +19,9 @@ import "/extensions/chunkTimer"
 
 import "gameManager"
 import "screenManager"
+import "frameProfiler"
+
+import "/scripts/vision/computeVision.lua"
 
 import "/scripts/world/world"
 import "worldManager"
@@ -40,6 +43,8 @@ import "/scripts/entities/entity"
 import "/scripts/entities/grass"
 import "/scripts/entities/ground"
 
-import "/scripts/vision/slope"
-import "/scripts/vision/computeVision.lua"
-import "frameProfiler"
+import "/scripts/items/item"
+import "/scripts/items/lightSource"
+
+-- to order
+

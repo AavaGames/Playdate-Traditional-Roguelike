@@ -105,15 +105,44 @@ function world:updateLighting()
 
         frameProfiler:startTimer("Logic: Lighting")
 
+        -- reset tiles
         self:tileLoop(function (tile)
             if (tile.seen == true) then
                 tile.currentVisibilityState = tile.visibilityState.seen
             else
                 tile.currentVisibilityState = tile.visibilityState.unknown
             end
+            tile.inView = false
+            tile.lightLevel = 0
+            if (self.worldIsLit) then
+                tile:addLightLevel(2)
+            end
         end)
+
         
-        ComputeVision(self.player.position, self.player.visionRange, self)
+        
+        ComputeVision(self.player.position, self.player.visionRange, self.player.equipped.lightSource, self,
+        function (x, y, distance) -- set visible
+
+            local tile = self.grid[x][y]
+            if (tile ~= nil) then
+                tile.inView = true
+
+                if (distance <= self.player.equipped.lightSource.litRange) then
+                    tile.currentVisibilityState = tile.visibilityState.lit
+                    tile:addLightLevel(2)
+                    tile.seen = true
+                elseif (distance <= self.player.equipped.lightSource.dimRange) then
+                    tile.currentVisibilityState = tile.visibilityState.dim
+                    tile:addLightLevel(1)
+                    tile.seen = true
+                else
+                    -- in view but not light
+                end
+                
+            end
+
+        end)
 
         
 
@@ -188,29 +217,29 @@ function world:draw()
             if drawCoord.y > (viewport.height) then
                 break
             end
-            
-            -- actor > effect > item > deco
-                -- flip flop between actor and effect over time?
-            local char = ""
 
             local tile = self.grid[x][y]
-            if (tile ~= nil) then
-                if tile.actor ~= nil then
+            if (tile ~= nil and tile.currentVisibilityState ~= tile.visibilityState.unknown) then
+                -- actor > effect > item > deco
+                    -- flip flop between actor and effect over time?
+                local char = ""
+
+                if tile.actor ~= nil and tile.inView and tile.lightLevel > 0 then
                     char = tile.actor.char
                 --elseif table.getsize(tile.effects) > 0 then
-                --elseif table.getsize(tile.items) > 0 then
+                elseif tile.item ~= nil and (tile.lightLevel > 0 or tile.item.seen == true) then
+                    char = tile.item.char
+                    tile.item.seen = true -- probably move this somewhere else
                 elseif tile.decoration ~= nil then
                     char = tile.decoration.char
                 end
 
-                if (tile.currentVisibilityState ~= tile.visibilityState.unknown) then
-                    local glyph = screenManager:getGlyph(char, tile.currentVisibilityState)
-                    if (tile.currentVisibilityState == tile.visibilityState.lit) then -- draw light around rect
-                        gfx.setColor(gfx.kColorWhite)
-                        gfx.fillRect(drawCoord.x, drawCoord.y, screenManager.currentWorldFont.size, screenManager.currentWorldFont.size)
-                    end
-                    glyph:draw(drawCoord.x, drawCoord.y)
+                local glyph = screenManager:getGlyph(char, tile.inView, tile.lightLevel)
+                if (tile.currentVisibilityState == tile.visibilityState.lit or tile.currentVisibilityState == tile.visibilityState.dim) then -- draw light around rect
+                    gfx.setColor(gfx.kColorWhite)
+                    gfx.fillRect(drawCoord.x, drawCoord.y, screenManager.currentWorldFont.size, screenManager.currentWorldFont.size)
                 end
+                glyph:draw(drawCoord.x, drawCoord.y)
             end
 
             yOffset += 1
