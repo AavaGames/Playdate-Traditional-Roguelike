@@ -20,6 +20,11 @@ function chunkTimer:getMilliseconds()
     -- bugs out if time frame starts on previous hour
 end
 
+function chunkTimer:getTime()
+    self:endTimer()
+    return self.endTime - self.startTime
+end
+
 function chunkTimer:print(endingTimer)
     if (endingTimer == nil or endingTimer == true) then
         self:endTimer()

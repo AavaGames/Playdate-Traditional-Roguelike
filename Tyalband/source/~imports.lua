@@ -20,6 +20,7 @@ import "/extensions/chunkTimer"
 import "gameManager"
 import "screenManager"
 import "frameProfiler"
+import "InputManager"
 
 import "/scripts/vision/computeVision.lua"
 

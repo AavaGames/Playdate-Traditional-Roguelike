@@ -5,6 +5,7 @@ local gfx <const> = playdate.graphics
 local function initializeGame()
 	math.randomseed(playdate.getSecondsSinceEpoch())
 
+	inputManager = InputManager()
 	frameProfiler = frameProfiler()
 	screenManager = screenManager()
 	gameManager = gameManager()
@@ -48,7 +49,6 @@ local function initializeGame()
 
 	-- print(Vector2.distance(v1, v3))
 	-- print(Vector2.chebyshev_distance(v1,v3))
-
 end
 
 local function updateGame()
@@ -71,6 +71,7 @@ initializeGame()
 
 function playdate.update()
 	playdate.timer.updateTimers()
+	inputManager:update()
 	updateGame()
 	drawGame()
 end

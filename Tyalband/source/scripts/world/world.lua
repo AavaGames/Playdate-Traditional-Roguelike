@@ -80,9 +80,7 @@ function world:round()
 
     frameProfiler:endTimer("Logic: Actor Update")
 
-    if (not playdate.buttonIsPressed(playdate.kButtonA)) then
-        self:updateLighting()
-    end
+    self:updateLighting()
     screenManager:redrawScreen()
 end
 

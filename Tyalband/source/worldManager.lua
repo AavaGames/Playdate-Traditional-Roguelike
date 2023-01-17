@@ -25,7 +25,7 @@ function worldManager:update()
     self.player:update()
     self.currentWorld:update()
 
-    if (playdate.buttonJustPressed(playdate.kButtonB)) then
+    if (inputManager:HeldLong(playdate.kButtonB)) then
         local view = {
             x = 12,
             y = 12,
@@ -34,6 +34,7 @@ function worldManager:update()
         }
         self:setViewport(view)
     end
+
 end
 
 function worldManager:lateUpdate()
