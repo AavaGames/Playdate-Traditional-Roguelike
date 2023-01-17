@@ -23,5 +23,5 @@ function chunkTimer:print(endingTimer)
     if (endingTimer == nil or endingTimer == true) then
         self:endTimer()
     end
-    print(self.purpose .. " took " .. self.endTime - self.startTime .. "m")
+    print(self.purpose .. " took " .. self.endTime - self.startTime .. "ms")
 end

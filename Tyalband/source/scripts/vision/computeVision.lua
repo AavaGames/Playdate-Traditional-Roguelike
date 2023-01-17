@@ -1,7 +1,8 @@
 -- Takes a Vector2 Origin and an int RangeLimit
 
-local symmetry = false
-local sqrt = true
+symmetry = true -- symmetry looks better and makes more sense
+perfectSym = false -- causes less expansive wall and causes artifacts
+sqrt = true
 
 -- Based on Adam Milazzo's Roguelike Vision Algorithm
 -- http://www.adammil.net/blog/v125_Roguelike_Vision_Algorithms.html
@@ -22,11 +23,8 @@ function ComputeVision(position, visionRange, lightSource, world, setVisible, bl
     -- A function that accepts the X and Y coordinates of a tile and determines whether the
     -- given tile blocks the passage of light. The function must be able to accept coordinates that are out of bounds.
     local _blocksVision = blocksVision or function (x, y)
-
         local tile = world.grid[x][y]
         if (tile ~= nil) then
-            --tile.currentVisibilityState = tile.visibilityState.seen
-
             if (tile.actor ~= nil) then
                 return tile.actor.blockVision
             end
@@ -37,14 +35,15 @@ function ComputeVision(position, visionRange, lightSource, world, setVisible, bl
     -- A function that takes the X and Y coordinate of a point where X >= 0,
     -- Y >= 0, and X >= Y, and returns the distance from the point to the origin (0,0).
     local GetDistance = function (x, y)
+
         if sqrt then
-            return math.sqrt(x^2 + y^2)
+            return math.floor(math.sqrt(x^2 + y^2))
         else
-            return math.max(x,y) -- distance is much larger than expecteds
+            return math.max(x,y)
         end
     end
 
-    local function BlocksVision(x, y, octant, position) 
+    local function BlocksVision(x, y, octant, position)
         local nx = position.x
         local ny = position.y
 
@@ -83,6 +82,7 @@ function ComputeVision(position, visionRange, lightSource, world, setVisible, bl
     end
 
     local function Compute(octant, position, visionRange, lightSource, xx, top, bottom)  
+        local t = chunkTimer("Octant" .. octant)
         for x = xx, visionRange, 1 do
 
             local topY
@@ -127,11 +127,15 @@ function ComputeVision(position, visionRange, lightSource, world, setVisible, bl
 
                     local isVisible
                     if (not symmetry) then
-                        isVisible = isOpaque or ((y ~= topY or top:greater(y*4-1, x*4+1)) and (y ~= bottomY or bottom:less(y*4+1, x*4-1)))
+                        --isVisible = isOpaque or ((y ~= topY or top:greater(y*4-1, x*4+1)) and (y ~= bottomY or bottom:less(y*4+1, x*4-1)))
                     else
                         --the line ensures that a clear tile is visible only if there's an unobstructed line to its center.
                         -- NOTE: completely symmetrical remove "isOpaque or"
-                        isVisible = isOpaque or ((y ~= topY or top:greaterOrEqual(y, x)) and (y ~= bottomY or bottom:lessOrEqual(y, x)))
+                        if (perfectSym) then
+                            isVisible = ((y ~= topY or top:greaterOrEqual(y, x)) and (y ~= bottomY or bottom:lessOrEqual(y, x)))
+                        else
+                            isVisible = isOpaque or ((y ~= topY or top:greaterOrEqual(y, x)) and (y ~= bottomY or bottom:lessOrEqual(y, x)))
+                        end
                     end
                     
 
@@ -197,6 +201,7 @@ function ComputeVision(position, visionRange, lightSource, world, setVisible, bl
                 break
             end
         end
+        t:print()
     end
 
     _setVisible(position.x, position.y, 0)

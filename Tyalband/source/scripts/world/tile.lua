@@ -14,8 +14,11 @@ function tile:init(x, y)
     self.visibilityState = { unknown = 0, lit = 1, dim = 2, seen = 3 }
     self.currentVisibilityState = unknown
 
+    self.glow = false
+
     self.inView = false
     self.lightLevel = 0
+    self.lightSources = {}
 
     self.blocksLight = false
 end
@@ -45,6 +48,17 @@ function tile:removeItem(item)
 
 end
 
-function tile:addLightLevel(level)
-    self.lightLevel += level
+function tile:resetLightLevel(baseLight)
+    self.lightLevel = baseLight or 0
+    self.lightSources = {}
+end
+
+function tile:addLightLevel(level, source)
+    if (self.lightSources[source] == nil) then
+        self.lightSources[source] = source
+        self.lightLevel += level
+        -- TODO could optimize vis calls, if tile already had been called ignore (but what if the first check was dim and then lit)
+    else
+        --print("source attempting to apply again")
+    end
 end

@@ -79,39 +79,53 @@ function world:updateLighting()
      
         -- find light sources, if on screen + range then calc
 
-        frameProfiler:startTimer("Logic: Lighting")
+        frameProfiler:startTimer("Logic: Vision")
 
         -- reset tiles
         self:tileLoop(function (tile)
+            tile.inView = false
             if (tile.seen == true) then
                 tile.currentVisibilityState = tile.visibilityState.seen
             else
                 tile.currentVisibilityState = tile.visibilityState.unknown
             end
-            tile.inView = false
-            tile.lightLevel = 0
+            if (tile.glow == true) then
+                tile:resetLightLevel(2)
+            else
+                tile:resetLightLevel()
+            end
             if (self.worldIsLit) then
-                tile:addLightLevel(2)
+                tile:addLightLevel(2, "World")
             end
         end)
 
         ComputeVision(self.player.position, self.player.visionRange, self.player.equipped.lightSource, self,
         function (x, y, distance) -- set visible
 
+            -- move this to player? 
+
+            --Infravision - sight of heat in the dark
+            --Darkvision - farther dim sight
+    
             local tile = self.grid[x][y]
             if (tile ~= nil) then
                 tile.inView = true
 
                 if (distance <= self.player.equipped.lightSource.litRange) then
                     tile.currentVisibilityState = tile.visibilityState.lit
-                    tile:addLightLevel(2)
+                    tile:addLightLevel(2, self.player.equipped.lightSource)
                     tile.seen = true
                 elseif (distance <= self.player.equipped.lightSource.dimRange) then
                     tile.currentVisibilityState = tile.visibilityState.dim
-                    tile:addLightLevel(1)
+                    tile:addLightLevel(1, self.player.equipped.lightSource)
+                    tile.seen = true
+                elseif (tile.lightLevel > 0) then
+                    -- in view but lightSource
+                    tile.currentVisibilityState = tile.visibilityState.lit
+
                     tile.seen = true
                 else
-                    -- in view but not light
+
                 end
                 
             end
@@ -148,7 +162,7 @@ function world:updateLighting()
         --     end
         -- end
 
-        frameProfiler:endTimer("Logic: Lighting")
+        frameProfiler:endTimer("Logic: Vision")
     end
 end
 

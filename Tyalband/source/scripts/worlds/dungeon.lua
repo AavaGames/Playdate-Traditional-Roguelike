@@ -6,9 +6,14 @@ function dungeon:init(theWorldManager, thePlayer)
     dungeon.super.init(self, theWorldManager, thePlayer)
     self.name = "Floor 1 (50 feet)"
 
-    self.playerSpawnPosition = { x = 18, y = 19 }
-    --self.playerSpawnPosition = { x = 14, y = 14 }
+    --self.playerSpawnPosition = { x = 18, y = 19 }
+    self.playerSpawnPosition = { x = 29, y = 12 }
     animal(self, Vector2.new(2, 13))
+
+    self.grid[9][18].glow = true
+    self.grid[9][19].glow = true
+    self.grid[10][18].glow = true
+    self.grid[10][19].glow = true
 
     dungeon.super.finishInit(self)
 end

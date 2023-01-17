@@ -39,7 +39,6 @@ function player:update()
             self.kb = false
         end
     end
-    
 
     if (self.state == ACTIVE) then
         self.moveDir = Vector2.zero()
