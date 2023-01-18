@@ -9,7 +9,6 @@ function actor:init(theWorld, startPosition)
     self.description = "An actor"
     
     self.position = Vector2.zero()
-    self.updated = false
     self.state = INACTIVE
 
     self.world = theWorld
@@ -20,13 +19,13 @@ function actor:init(theWorld, startPosition)
     self.blockVision = false
 
     if (theWorld ~= nil and startPosition ~= nil) then
-        self:moveTo(startPosition) -- TODO: can spawn on top of another actor overwriting their pos (SpawnAt)
+        self.world:spawnAt(startPosition, self) -- TODO: can spawn on top of another actor overwriting their pos (SpawnAt)
         self.state = ACTIVE
     end
 end
 
 function actor:update()
-    self.updated = true
+
 end
 
 function actor:interact()

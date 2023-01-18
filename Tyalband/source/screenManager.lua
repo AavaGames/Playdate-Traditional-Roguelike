@@ -37,6 +37,8 @@ function screenManager:init()
     -- lit, dim but seen, unseen but known
     self.worldGlyphs = {} -- alloc an estimate?
     self.worldGlyphs_faded = {}
+    self.drawnGlyphs = {}
+    self:resetDrawnGlyphs()
 
     -- change viewports states this way? can use something similar for font sizes
     self.screenState = {
@@ -97,6 +99,7 @@ function screenManager:draw()
 end
 
 function screenManager:redrawScreen()
+    self:resetDrawnGlyphs()
     self._redrawScreen = true
 end
 
@@ -110,7 +113,7 @@ function screenManager:setWorldFont(value)
     end
     self.gridScreenMax.x = math.floor(self.screenDimensions.x / self.currentWorldFont.size)
     self.gridScreenMax.y = math.floor(self.screenDimensions.y / self.currentWorldFont.size)
-    self:resetGlyphs()
+    self:resetFontGlyphs()
     self:redrawScreen()
 end
 
@@ -144,8 +147,35 @@ function screenManager:getGlyph(char, inView, lightLevel)
     return self.worldGlyphs_faded[char] -- seen but not inview
 end
 
-function screenManager:resetGlyphs()
+function screenManager:drawGlyph(char, tile, drawCoord)
+    local glyph = self:getGlyph(char, tile.inView, tile.lightLevel)
+
+    local drawnGlyph = self.drawnGlyphs[drawCoord.x][drawCoord.y]
+    if (drawnGlyph == nil or drawnGlyph ~= glyph) then
+        self.drawnGlyphs[drawCoord.x][drawCoord.y] = glyph
+
+        if (tile.currentVisibilityState == tile.visibilityState.lit or tile.currentVisibilityState == tile.visibilityState.dim) then -- draw light around rect
+            gfx.setColor(gfx.kColorWhite)
+            gfx.fillRect(drawCoord.x, drawCoord.y, self.currentWorldFont.size, self.currentWorldFont.size)
+        end
+        glyph:draw(drawCoord.x, drawCoord.y)
+
+    end
+end
+
+function screenManager:resetFontGlyphs()
     self.worldGlyphs = {}
     self.worldGlyphs_faded = {}
     --collectgarbage()
+end
+
+function screenManager:resetDrawnGlyphs()
+    for x = 0, self.gridScreenMax.x, 1 do
+        self.drawnGlyphs[x] = {}
+        for y = 0, self.gridScreenMax.y, 1 do
+            self.drawnGlyphs[x][y] = ""
+            print(x, y)
+        end
+    end
+
 end

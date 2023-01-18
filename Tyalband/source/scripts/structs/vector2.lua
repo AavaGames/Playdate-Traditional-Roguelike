@@ -235,7 +235,10 @@ end
 
 
 -- Checks whether vector1 is within distance of vector2 and returns bool
--- NOTE: Cheaper distance check without a sqrt
+-- NOTE: Note way slower even with skirting around SQRT
+--1000x on device
+--distance took 533ms
+--within took 785ms
 function Vector2.withinDistance(vector1, vector2, distance)
 	local offset = vector2 - vector1
 	local squared = offset.x*offset.x + offset.y*offset.y

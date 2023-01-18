@@ -6,14 +6,17 @@ function world:init(theWorldManager, thePlayer)
     self.worldManager = theWorldManager
     self.player = thePlayer
 
-    self.grid = nil
-    self.gridDimensions = Vector2.zero()
-
     self.name = "World" -- Floor X (Depth 50*X)
     self.playerSpawnPosition = Vector2.zero()
 
     self.worldIsLit = false
     self.worldIsSeen = false
+
+    self.grid = nil
+    self.gridDimensions = Vector2.zero()
+
+    self.actors = {}
+    self.effects = {}
 
     self:create()
 end
@@ -47,22 +50,9 @@ function world:round()
 
     frameProfiler:startTimer("Logic: Actor Update")
 
-    -- TODO optimize, takes about 77ms to calculate. Could keep all actors / effects in a table and just iterate that
-    self:tileLoop(function (tile)
-        if (tile ~= nil and tile.actor ~= nil and not tile.actor.isa(player)) then
-            if tile.actor.updated == false then
-                tile.actor:update()
-            else
-                --print("cant update")
-            end
-        end
-    end)
-
-    self:tileLoop(function (tile)
-        if (tile ~= nil and tile.actor ~= nil) then
-            tile.actor.updated = false
-        end
-    end)
+    for index, actor in ipairs(self.actors) do
+        actor:update()
+    end
     
     self.camera:update() -- must update last to follow
 
@@ -99,7 +89,9 @@ function world:updateLighting()
             end
         end)
 
-        ComputeVision(self.player.position, self.player.visionRange, self.player.equipped.lightSource, self,
+        --ComputeShadow(self.player.position, self)
+
+        ComputeVision(self.player.position, self.player.visionRange, self,
         function (x, y, distance) -- set visible
 
             -- move this to player? 
@@ -110,7 +102,6 @@ function world:updateLighting()
             local tile = self.grid[x][y]
             if (tile ~= nil) then
                 tile.inView = true
-
                 if (distance <= self.player.equipped.lightSource.litRange) then
                     tile.currentVisibilityState = tile.visibilityState.lit
                     tile:addLightLevel(2, self.player.equipped.lightSource)
@@ -122,14 +113,10 @@ function world:updateLighting()
                 elseif (tile.lightLevel > 0) then
                     -- in view but lightSource
                     tile.currentVisibilityState = tile.visibilityState.lit
-
                     tile.seen = true
                 else
-
                 end
-                
             end
-
         end)
 
         
@@ -225,13 +212,7 @@ function world:draw()
                     char = tile.decoration.char
                 end
                 
-
-                local glyph = screenManager:getGlyph(char, tile.inView, tile.lightLevel)
-                if (tile.currentVisibilityState == tile.visibilityState.lit or tile.currentVisibilityState == tile.visibilityState.dim) then -- draw light around rect
-                    gfx.setColor(gfx.kColorWhite)
-                    gfx.fillRect(drawCoord.x, drawCoord.y, screenManager.currentWorldFont.size, screenManager.currentWorldFont.size)
-                end
-                glyph:draw(drawCoord.x, drawCoord.y)
+                screenManager:drawGlyph(char, tile, drawCoord)
             end
 
             yOffset += 1
@@ -276,16 +257,26 @@ function world:collisionCheck(position)
     end
 end
 
-function world:spawnAt(position)
+function world:spawnAt(position, actor)
+
+    table.insert(self.actors, actor)
+    actor:moveTo(position)
+
     --[[
         collision check spawn area
         What to do if something blocks the area? spawn in a sweeping circle around it.
             same code at item placement
     ]]
 
-    if (self:collisionCheck(position)) then
-        
-    else
-        return true
-    end
+    -- if (self:collisionCheck(position)) then
+    --     table.insert(self.actors, actor)
+    --     -- give actor the index so it can then remove itself?
+    --     -- keep track of an index and place actors there to make sure no interferance
+    -- else
+    --     return true
+    -- end
+end
+
+function world:despawn(actor)
+    --table.remove(self.actors, actor.index)
 end

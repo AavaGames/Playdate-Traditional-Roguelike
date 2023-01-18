@@ -23,6 +23,8 @@ import "frameProfiler"
 import "InputManager"
 
 import "/scripts/vision/computeVision.lua"
+--import "/scripts/vision/computeShadow.lua"
+
 
 import "/scripts/world/world"
 import "worldManager"
@@ -48,4 +50,3 @@ import "/scripts/items/item"
 import "/scripts/items/lightSource"
 
 -- to order
-
