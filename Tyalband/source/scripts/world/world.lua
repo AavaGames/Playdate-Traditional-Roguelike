@@ -87,10 +87,11 @@ function world:updateLighting()
             end
         end)
 
+        
+
         --ComputeShadow(self.player.position, self)
 
-        ComputeVision(self.player.position, self.player.visionRange, self,
-        function (x, y, distance) -- set visible
+        local isVis = function (x, y, distance) -- set visible
 
             -- move this to player? 
 
@@ -115,7 +116,8 @@ function world:updateLighting()
                 else
                 end
             end
-        end)
+        end
+        ComputeVision(self.player.position, self.player.visionRange, self, isVis)
 
         -- local positions = math.findAllCirclePos(self.player.position.x, self.player.position.y, self.player.visionRange)
 

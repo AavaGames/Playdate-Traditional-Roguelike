@@ -1,5 +1,3 @@
-need to convert tiles to some class cause otherwise id have to index them all
-
 function ComputeShadow(origin, world, is_blocking, mark_visible)
 
     local mark_visible = function (x, y) -- set visible
@@ -55,17 +53,23 @@ function ComputeShadow(origin, world, is_blocking, mark_visible)
             return not is_blocking(quad[1], quad[2])
         end
         
-        local function scan(row)
-            
-            local prev_tile = nil
+        local curRow = 0
 
+        local function scan(row)
+            curRow += 1
+            if (curRow > 6) then
+                return
+            end
+
+            local prev_tile = nil
+            
             local tiles = row:tiles()
             for index, tile in ipairs(tiles) do
 
                 if is_wall(tile) or is_symmetric(row, tile) then
                     reveal(tile)
                 end
-                nil check on prev
+                -- nil check on prev
                 if is_wall(prev_tile) and is_floor(tile) then
                     row.start_slope = slope(tile)
                 end
@@ -78,7 +82,6 @@ function ComputeShadow(origin, world, is_blocking, mark_visible)
             end
             if is_floor(prev_tile) then
                 scan(row:next())
-                r += 1
             end
         end
         
