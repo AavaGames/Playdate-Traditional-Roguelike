@@ -49,6 +49,8 @@ local function initializeGame()
 
 	-- print(Vector2.distance(v1, v3))
 	-- print(Vector2.chebyshev_distance(v1,v3))
+
+	print("hello: ", hello(true))
 end
 
 local function updateGame()

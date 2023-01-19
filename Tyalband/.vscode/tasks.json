@@ -10,9 +10,9 @@
 		"args": [
 			"${workspaceFolder}\\Build and Run (Simulator).ps1",
 			"-build",
-			"'${workspaceFolder}\\builds'",
+			"'${workspaceFolder}\\LuaBuilds'",
 			"-source",
-			"'${workspaceFolder}\\source'",
+			"'${workspaceFolder}\\Source'",
 			"-name",
 			"'${workspaceFolderBasename}'"
 		],
@@ -29,9 +29,9 @@
 		"args": [
 			"${workspaceFolder}\\Build and Run (Simulator).ps1",
 			"-build",
-			"'${workspaceFolder}\\builds'",
+			"'${workspaceFolder}\\LuaBuilds'",
 			"-source",
-			"'${workspaceFolder}\\source'",
+			"'${workspaceFolder}\\Source'",
 			"-name",
 			"'${workspaceFolderBasename}'",
 			"-dontbuild"

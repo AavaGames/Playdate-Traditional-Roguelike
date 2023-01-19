@@ -1,3 +1,5 @@
 *\.sentry-native
 *\builds
 *\.pdx
+*\build
+*\builddevice
