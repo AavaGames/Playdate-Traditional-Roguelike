@@ -70,10 +70,10 @@ end
 initializeGame()
 
 function playdate.update()
-	playdate.timer.updateTimers()
+	-- playdate.timer.updateTimers()
 	inputManager:update()
 
-	if inputManager:HeldLong(playdate.kButtonA) and not inputManager:HeldLong(playdate.kButtonDown) then
+	if inputManager:HeldLong(playdate.kButtonA) and inputManager:HeldLong(playdate.kButtonUp) then
 		if (gameManager.worldManager.currentWorld.name ~= "Floor 1 (50 feet)") then
 			print("Changed world to dungeon")
 			gameManager.worldManager:loadWorld(dungeon)

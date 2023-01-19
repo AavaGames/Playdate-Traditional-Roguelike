@@ -38,7 +38,6 @@ function screenManager:init()
     self.worldGlyphs = {} -- alloc an estimate?
     self.worldGlyphs_faded = {}
     self.drawnGlyphs = {}
-    self:resetDrawnGlyphs()
 
     -- change viewports states this way? can use something similar for font sizes
     self.screenState = {
@@ -62,8 +61,14 @@ function screenManager:init()
     self.worldManager, self.logManager = nil, nil
     self._redrawScreen = true
 
+    self._redrawWorld = false
+    self._redrawLog = false
+
+    self.screenBorder = border(2, 2, 400-4, 240-4, 4, gfx.kColorBlack)
+
     self:setWorldFont("16px")
     self:setLogFont("8px")
+    self:resetDrawnGlyphs()
 end
 
 function screenManager:setWorldColor(color)
@@ -78,22 +83,52 @@ function screenManager:lateUpdate() end
 function screenManager:draw()
     draw = true
     if draw then
+
         if self._redrawScreen then
-            frameProfiler:startTimer("Drawing")
+            frameProfiler:startTimer("Draw: Screen")
 
             gfx.clear()
-            gfx.sprite.update()
+            --gfx.sprite.update()
             self.worldManager:draw()
             self.logManager:draw()
+            self.screenBorder:draw()
+            
             self._redrawScreen = false
 
-            frameProfiler:endTimer("Drawing")
+            self._redrawWorld = false
+            self._redrawLog = false
+
+            frameProfiler:endTimer("Draw: Screen")
+            frameProfiler:frameEnd()
+        end
+
+        if (self._redrawWorld == true) then
+            frameProfiler:startTimer("Draw: World")
+
+            self.worldManager:draw()
+            self._redrawWorld = false
+
+            frameProfiler:endTimer("Draw: World")
+            if (self._redrawLog == false) then
+                frameProfiler:frameEnd()
+            end
+        end
+
+        if (self._redrawLog == true) then
+            frameProfiler:startTimer("Draw: Log")
+
+            self.logManager:draw()
+            self._redrawLog = false
+
+            frameProfiler:endTimer("Draw: Log")
             frameProfiler:frameEnd()
         end
     
         if self.fps then
             playdate.drawFPS(0,0)
         end
+
+        
     end
     
 end
@@ -101,6 +136,14 @@ end
 function screenManager:redrawScreen()
     self:resetDrawnGlyphs()
     self._redrawScreen = true
+end
+
+function screenManager:redrawWorld()
+    self._redrawWorld = true
+end
+
+function screenManager:redrawLog()
+    self._redrawLog = true
 end
 
 function screenManager:setWorldFont(value)
@@ -115,6 +158,7 @@ function screenManager:setWorldFont(value)
     self.gridScreenMax.y = math.floor(self.screenDimensions.y / self.currentWorldFont.size)
     self:resetFontGlyphs()
     self:redrawScreen()
+    collectgarbage()
 end
 
 function screenManager:setLogFont(value)
@@ -147,35 +191,59 @@ function screenManager:getGlyph(char, inView, lightLevel)
     return self.worldGlyphs_faded[char] -- seen but not inview
 end
 
-function screenManager:drawGlyph(char, tile, drawCoord)
-    local glyph = self:getGlyph(char, tile.inView, tile.lightLevel)
+function screenManager:drawGlyph(char, tile, drawCoord, screenCoord)
+    local drawnGlyph = self.drawnGlyphs[screenCoord.x][screenCoord.y]
 
-    local drawnGlyph = self.drawnGlyphs[drawCoord.x][drawCoord.y]
-    if (drawnGlyph == nil or drawnGlyph ~= glyph) then
-        self.drawnGlyphs[drawCoord.x][drawCoord.y] = glyph
+    if (drawnGlyph.char == "" and char == "") then
+        -- nothing changed
+    else
+        local tileLit = tile ~= nil and tile.lightLevel > 0
+        local tileLightLevel = tile ~= nil and tile.lightLevel or 0
+        if (drawnGlyph.char == char and drawnGlyph.lightLevel == tileLightLevel) then
+            -- no need to redraw if everything is the same
+        else
+            -- TODO figure out if this could work. Using glyph as eraser rather than a rect
 
-        if (tile.currentVisibilityState == tile.visibilityState.lit or tile.currentVisibilityState == tile.visibilityState.dim) then -- draw light around rect
-            gfx.setColor(gfx.kColorWhite)
+            -- if (drawnGlyph.lit == true and tileLit == false) then
+            --     -- tile is now NOT lit, needs to be filled in, no need to erase glyph
+            --     gfx.setColor(screenManager.bgColor)
+            --     gfx.fillRect(drawCoord.x, drawCoord.y, self.currentWorldFont.size, self.currentWorldFont.size)
+            -- elseif (drawnGlyph.glyph ~= nil) then
+            --     -- lit state the same as previous
+            --     print("erasing " .. drawnGlyph.char)
+            --     gfx.setImageDrawMode(gfx.kDrawModeXOR) -- same color as bg
+            --     local glyph = self:getGlyph(drawnGlyph.char, true, 2)
+            --     glyph:draw(drawCoord.x, drawCoord.y)
+            -- end
+
+            gfx.setColor(screenManager.bgColor)
             gfx.fillRect(drawCoord.x, drawCoord.y, self.currentWorldFont.size, self.currentWorldFont.size)
-        end
-        glyph:draw(drawCoord.x, drawCoord.y)
 
+            -- draw new and update table
+            self.drawnGlyphs[screenCoord.x][screenCoord.y] = { char = char, lightLevel = tileLightLevel, lit = tileLit, glyph = nil}
+            if (char ~= "") then
+                local glyph = self:getGlyph(char, tile.inView, tile.lightLevel)
+                self.drawnGlyphs[screenCoord.x][screenCoord.y].glyph = glyph
+                if (tile.lightLevel > 0) then -- draw light around rect
+                    gfx.setColor(gfx.kColorWhite)
+                    gfx.fillRect(drawCoord.x, drawCoord.y, self.currentWorldFont.size, self.currentWorldFont.size)
+                end
+                glyph:draw(drawCoord.x, drawCoord.y)
+            end
+        end
     end
 end
 
 function screenManager:resetFontGlyphs()
     self.worldGlyphs = {}
     self.worldGlyphs_faded = {}
-    --collectgarbage()
 end
 
 function screenManager:resetDrawnGlyphs()
     for x = 0, self.gridScreenMax.x, 1 do
         self.drawnGlyphs[x] = {}
         for y = 0, self.gridScreenMax.y, 1 do
-            self.drawnGlyphs[x][y] = ""
-            print(x, y)
+            self.drawnGlyphs[x][y] = { char = "", lightLevel = 0, lit = false, glyph = nil}
         end
     end
-
 end

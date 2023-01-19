@@ -25,7 +25,8 @@ function logManager:init(theWorldManager)
         height = screenManager.screenDimensions.y * 0.6
     }
 
-    self.logBorder = border(8, 162, 400-16, 70, 2, gfx.kColorBlack)
+    self.dimensions = { x = 8, y = 162, width = 400-16, height = 70 }
+    self.logBorder = border(self.dimensions.x, self.dimensions.y, self.dimensions.width, self.dimensions.height, 2, gfx.kColorBlack)
 
     self:hideLog()
 
@@ -63,6 +64,10 @@ end
 
 function logManager:draw()
     if (self.showingLog) then
+        -- Clear --
+        gfx.setColor(screenManager.bgColor)
+        gfx.fillRect(self.dimensions.x, self.dimensions.y, self.dimensions.width, self.dimensions.height)
+        --
         gfx.setImageDrawMode(playdate.graphics.kDrawModeNXOR)
         gfx.setFont(screenManager.currentLogFont.font)
 
@@ -93,9 +98,12 @@ function logManager:update()
     local ticks = 12
     local crankTick = playdate.getCrankTicks(ticks)
     if crankTick ~= 0 then
-        self.currentLineOffset -= crankTick
+        local prevOffset = self.currentLineOffset
+        self.currentLineOffset -= crankTick       
         self.currentLineOffset = math.clamp(self.currentLineOffset, 0, #self.log - screenManager.currentLogFont.lineCount)
-        screenManager:redrawScreen()
+        if (self.currentLineOffset ~= prevOffset) then
+            screenManager:redrawLog()
+        end
     end
 end
 
@@ -106,7 +114,7 @@ function logManager:add(text)
 
     if (self.showingLog) then
         self.currentLineOffset = 0
-        screenManager:redrawScreen()
+        screenManager:redrawLog()
     end
 end
 

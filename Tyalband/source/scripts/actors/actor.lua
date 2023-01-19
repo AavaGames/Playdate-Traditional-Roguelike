@@ -44,7 +44,7 @@ function actor:moveTo(position)
         if collision[1] == false then
             self:updateTile(collision[2])
             return true
-        elseif collision[2] ~= false then
+        elseif collision[2] ~= nil then
             collision[2]:interact(self) -- interact with actor
         end
     end

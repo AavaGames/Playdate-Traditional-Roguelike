@@ -46,20 +46,18 @@ function world:lateUpdate()
 end
 
 function world:round()
-    --print("round")
-
     frameProfiler:startTimer("Logic: Actor Update")
 
     for index, actor in ipairs(self.actors) do
         actor:update()
     end
-    
     self.camera:update() -- must update last to follow
 
     frameProfiler:endTimer("Logic: Actor Update")
 
     self:updateLighting()
-    screenManager:redrawScreen()
+
+    screenManager:redrawWorld()
 end
 
 --region Drawing & Lighting
@@ -119,8 +117,6 @@ function world:updateLighting()
             end
         end)
 
-        
-
         -- local positions = math.findAllCirclePos(self.player.position.x, self.player.position.y, self.player.visionRange)
 
         -- for index, pos in ipairs(positions) do
@@ -162,9 +158,9 @@ function world:draw()
     local screenYSize = math.floor(viewport.height / fontSize)
     -- TODO replace this math with pre-calcuated shit per font so that the screen is properly placed
 
-    local startGridX = math.clamp(self.camera.position.x - math.floor(screenXSize*0.5), 1, 
+    local startTileX = math.clamp(self.camera.position.x - math.floor(screenXSize*0.5), 1, 
         math.clamp(self.gridDimensions.x-screenXSize + 1, 1, 9999999)) -- hard code screen size to font
-    local startGridY = math.clamp(self.camera.position.y - math.floor(screenYSize*0.5), 1, 
+    local startTileY = math.clamp(self.camera.position.y - math.floor(screenYSize*0.5), 1, 
         math.clamp(self.gridDimensions.y-screenYSize + 1, 1, 9999999))
 
     local xOffset = 0
@@ -176,8 +172,8 @@ function world:draw()
     for xPos = 0, screenManager.gridScreenMax.x, 1 do
         for yPos = 0, screenManager.gridScreenMax.y, 1 do
 
-            local x = startGridX + xOffset
-            local y = startGridY + yOffset
+            local x = startTileX + xOffset
+            local y = startTileY + yOffset
 
             if (x > self.gridDimensions.x or y > self.gridDimensions.y) then
                 break
@@ -193,27 +189,32 @@ function world:draw()
                 break
             end
 
+            local char = ""
             local tile = self.grid[x][y]
-            if (tile ~= nil and tile.currentVisibilityState ~= tile.visibilityState.unknown) then
-                -- actor > effect > item > deco
-                    -- flip flop between actor and effect over time?
-                local char = ""
-
+            if (tile ~= nil and tile.currentVisibilityState ~= tile.visibilityState.unknown) then 
                 if tile.actor ~= nil and tile.inView and tile.lightLevel > 0 then
                     char = tile.actor:getChar()
                 elseif tile.actor ~= nil and tile.actor.renderWhenSeen and tile.seen then
                     char = tile.actor:getChar()
                 elseif #tile.effects > 0 then
-                    -- TODO
+                    -- TODO add effects & drawing
                 elseif tile.item ~= nil and (tile.lightLevel > 0 or tile.item.seen == true) then
                     char = tile.item.char
-                    tile.item.seen = true -- probably move this somewhere else
+                    tile.item.seen = true 
+                        -- probably move this somewhere else
+                        -- item checks if tile is seen every frame? seems inefficient
                 elseif tile.decoration ~= nil then
                     char = tile.decoration.char
                 end
-                
-                screenManager:drawGlyph(char, tile, drawCoord)
             end
+
+            screenManager:drawGlyph(char, tile, drawCoord, { 
+                x = xPos,
+                y = yPos
+            })
+        
+            -- gfx.setFont(screenManager.logFont_6px.font)
+            -- gfx.drawText((xPos), drawCoord.x, drawCoord.y)
 
             yOffset += 1
         end
@@ -245,7 +246,7 @@ function world:collisionCheck(position)
     if (tile ~= nil) then
         if (tile.actor ~= nil) then
             if (tile.actor.collision == true) then
-                return { true, tile.actor }
+                return { true, tile.actor } -- collision with actor
             else
                 return { false, tile }-- no collision with actor
             end

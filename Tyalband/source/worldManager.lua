@@ -8,7 +8,6 @@ function worldManager:init(player)
     screenManager.worldManager = self
     self.player = player
     self.currentWorld = nil
-    self.worldBorder = border(2, 2, 400-4, 240-4, 4, gfx.kColorBlack)
 
     self.defaultViewport = {
         x = screenManager.currentWorldFont.size,
@@ -16,6 +15,12 @@ function worldManager:init(player)
         width = screenManager.screenDimensions.x - screenManager.currentWorldFont.size * 2,
         height = screenManager.screenDimensions.y - screenManager.currentWorldFont.size * 2
     }
+    -- self.defaultViewport = {
+    --         x = 0,
+    --         y = 0,
+    --         width = screenManager.screenDimensions.x;
+    --         height = screenManager.screenDimensions.y;
+    --     }
     self.viewport = self.defaultViewport
 
     self:loadWorld(dungeon)
@@ -43,7 +48,6 @@ end
 
 function worldManager:draw()
     self.currentWorld:draw()
-    self.worldBorder:draw()
 end
 
 function worldManager:loadWorld(world)

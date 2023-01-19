@@ -274,7 +274,7 @@ function ComputeVision(position, visionRange, world, setVisible, blocksVision)
                 break
             end
         end
-        t:print()
+        --t:print()
     end
 
     _setVisible(position.x, position.y, 0)
