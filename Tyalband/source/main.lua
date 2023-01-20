@@ -10,47 +10,11 @@ local function initializeGame()
 	screenManager = screenManager()
 	gameManager = gameManager()
 
-
-	-- CSV to 2D table --
-
-	--local timer = chunkTimer("reading ")
-
-	-- local file = playdate.file.open("/assets/filesmonsters.csv")
-	-- assert(f, "no csv")
-
-	-- local fileTable = {}
-	-- local i = 1
-	-- while true do
-	-- 	local line = f:readline()
-	-- 	fileTable[i] = {}
-	-- 	if line ~= nil then
-	-- 		for str in string.gmatch(line, "([^,]+)") do
-    --             table.insert(fileTable[i], str)
-    --     	end
-	-- 		print(fileTable[i])
-	-- 	else
-	-- 		break
-	-- 	end
-	-- 	i += 1
-	-- end
-	-- printTable(fileTable)
-
-	--timer:print()
-
-	-- local v1 = Vector2.new(5, 10)
-	-- local v2 = Vector2.new(2, 5)
+	-- local v1 = Vector2.new(15, 10)
+	-- local v2 = Vector2.new(32, 15)
 	-- local v3 = Vector2.new(8, 12)
 
-	-- print(Vector2.distance(v1, v2))
-	-- print(Vector2.chebyshev_distance(v1,v2))
-
-	-- print(Vector2.distance(v2, v1))
-	-- print(Vector2.chebyshev_distance(v2,v1))
-
-	-- print(Vector2.distance(v1, v3))
-	-- print(Vector2.chebyshev_distance(v1,v3))
-
-	print("hello: ", hello(true))
+	--print("hello: ", hello(true))
 end
 
 local function updateGame()
