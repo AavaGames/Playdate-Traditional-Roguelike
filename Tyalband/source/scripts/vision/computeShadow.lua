@@ -1,166 +1,98 @@
--- function ComputeShadow(origin, world, is_blocking, mark_visible)
+function ComputeShadow(position, visionRange, world, setVisible, blocksVision)
 
---     local mark_visible = function (x, y) -- set visible
---         if (math.isClamped(x, 1, world.gridDimensions.x) or math.isClamped(y, 1, world.gridDimensions.y)) then
---             return false
---         end
---         local tile = world.grid[x][y]
---         if (tile ~= nil) then
---             tile.inView = true
+    -- A function that sets a tile to be visible, given its X and Y coordinates. The function
+    -- must ignore coordinates that are out of bounds.
+    local _setVisible = setVisible or print("Compute Vision requires a setVisible function")
+    -- local _setVisible = function (x, y, distance) -- set visible
+    --     local tile = world.grid[x][y]
+    --     if (tile ~= nil) then
+    --         tile.inView = true
+    --         print("tile visible")
+    --         if (distance <= world.player.visionRange) then
+    --             tile.currentVisibilityState = tile.visibilityState.lit
+    --             tile:addLightLevel(2, world.player.equipped.lightSource)
+    --             tile.seen = true
+    --         else
+    --         end
+    --     end
+    -- end
 
---             tile.currentVisibilityState = tile.visibilityState.lit
---             tile:addLightLevel(2, world.player.equipped.lightSource)
---             tile.seen = true
---         end
---     end
 
---     local is_blocking = function (x, y)
---         if (math.isClamped(x, 1, world.gridDimensions.x) or math.isClamped(y, 1, world.gridDimensions.y)) then
---             return false
---         end
---         local tile = world.grid[x][y]
---         if (tile ~= nil) then
---             if (tile.actor ~= nil) then
---                 return tile.actor.blockVision
---             end
---         end
---         return false
---     end
+    -- A function that accepts the X and Y coordinates of a tile and determines whether the
+    -- given tile blocks the passage of light. The function must be able to accept coordinates that are out of bounds.
+    local _blocksVision = blocksVision or function (x, y)
+        local tile = world.grid[x][y]
+        if (tile ~= nil) then
+            if (tile.actor ~= nil) then
+                return tile.actor.blockVision
+            end
+        end
+        return false
+    end
 
---     mark_visible(origin.x, origin.y)
---     for i = 1, 4, 1 do
---         local quadrant = Quadrant(i, origin)
+    local GetDistanceToOrigin = function (x, y, origin)
+        return Vector2.distance_taxi(Vector2.new(x, y), Vector2.new(origin.x, origin.y))
+    end
 
---         local function reveal(tile)
---             local quad = quadrant:transform(tile)
---             mark_visible(quad[1], quad[2])
---         end
+    local function Compute(octant, origin, rangeLimit, xx, top, bottom)
 
---         local function is_wall(tile) 
---             if tile == nil then
---                 return false
---             end
---             local quad = quadrant:transform(tile)
---             return is_blocking(quad[1], quad[2])
---         end
+        for x = xx, rangeLimit, 1 do
+            local topY = top.x == 1 and x or ((x*2+1) * top.y + top.x - 1) // (top.x*2)
+            local bottomY = bottom.y == 0 and 0 or ((x*2-1) * bottom.y + bottom.x) // (bottom.x*2)
 
---         local function is_floor(tile)
---             if tile == nil then
---                 return false
---             end
---             local quad = quadrant:transform(tile)
+            local wasOpaque = -1
+            for y = topY, bottomY, -1 do
+                local nx = origin.x
+                local ny = origin.y
 
---             return not is_blocking(quad[1], quad[2])
---         end
-        
---         local curRow = 0
+                if octant == 0 then     nx += x ny -= y
+                elseif octant == 1 then nx += y ny -= x
+                elseif octant == 2 then nx -= y ny -= x
+                elseif octant == 3 then nx -= x ny -= y
+                elseif octant == 4 then nx -= x ny += y
+                elseif octant == 5 then nx -= y ny += x
+                elseif octant == 6 then nx += y ny += x
+                elseif octant == 7 then nx += x ny += y
+                end
 
---         local function scan(row)
---             curRow += 1
---             if (curRow > 6) then
---                 return
---             end
+                local distance = GetDistanceToOrigin(nx, ny, origin)
+                local inRange = rangeLimit < 0 or distance <= rangeLimit
 
---             local prev_tile = nil
-            
---             local tiles = row:tiles()
---             for index, tile in ipairs(tiles) do
+                if (inRange == true) then
+                    _setVisible(nx, ny, distance)
+                end 
+                local blocksVision = _blocksVision(nx, ny)
+                local isOpaque = not inRange or blocksVision
 
---                 if is_wall(tile) or is_symmetric(row, tile) then
---                     reveal(tile)
---                 end
---                 -- nil check on prev
---                 if is_wall(prev_tile) and is_floor(tile) then
---                     row.start_slope = slope(tile)
---                 end
---                 if is_floor(prev_tile) and is_wall(tile) then
---                     local next_row = row:next()
---                     next_row.end_slope = slope(tile)
---                     scan(next_row)
---                 end
---                 prev_tile = tile
---             end
---             if is_floor(prev_tile) then
---                 scan(row:next())
---             end
---         end
-        
---         local first_row = Row(1, -1, 1)
---         scan(first_row)
---     end
--- end
+                if (x ~= rangeLimit) then
+                    if (isOpaque == true) then
+                        if (wasOpaque == 0) then
+                            local newBottom = slope(y*2+1, x*2+1)
+                            if (not inRange or y == bottomY) then
+                                bottom = newBottom
+                                break
+                            else
+                                Compute(octant, origin, rangeLimit, x+1, top, newBottom)
+                            end
+                        end
+                        wasOpaque = 1
+                    else
+                        if (wasOpaque > 0) then
+                            top = slope(y*2+1, x*2+1)
+                            wasOpaque = 0
+                        end
+                    end
+                end
+                if (wasOpaque ~= 0) then
+                    break
+                end
+            end        
+        end
+    end
 
--- class("Quadrant").extends()
+    _setVisible(position.x, position.y, 0)
 
--- function Quadrant:init(cardinal, origin)
---     self.north = 1
---     self.east  = 2
---     self.south = 3
---     self.west  = 4
-
---     self.cardinal = cardinal
---     self.ox = origin.x
---     self.oy = origin.y
--- end
--- function Quadrant:transform(tile)
-
---     local row = tile[1]
---     local col = tile[2]
-
---     if self.cardinal == self.north then
---         return {self.ox + col, self.oy - row}
---     end
---     if self.cardinal == self.south then
---         return {self.ox + col, self.oy + row}
---     end
---     if self.cardinal == self.east then
---         return {self.ox + row, self.oy + col}
---     end
---     if self.cardinal == self.west then
---         return {self.ox - row, self.oy + col}
---     end
--- end
-
--- class("Row").extends()
-
--- function Row:init(depth, start_slope, end_slope) 
---     self.depth = depth
---     self.start_slope = start_slope
---     self.end_slope = end_slope
--- end
-
--- function Row:tiles()
---     local min_col = round_ties_up(self.depth * self.start_slope)
---     local max_col = round_ties_down(self.depth * self.end_slope)
---     local tiles = {}
---     for col = min_col, max_col + 1, 1 do
---         table.insert(tiles, {self.depth, col})
---     end
---     return tiles
--- end
--- function Row:next()
---     return Row(
---         self.depth + 1,
---         self.start_slope,
---         self.end_slope)
--- end
-
--- function slope(tile)
---     local row_depth = tile[1]
---     local col = tile[2]
-
---     return 2 * col - 1 // 2 * row_depth
--- end
-
--- function is_symmetric(row, tile)
---     local col = tile[2]
---     return (col >= row.depth * row.start_slope and col <= row.depth * row.end_slope)
--- end
-
--- function round_ties_up(n)
---     return math.floor(n + 0.5)
--- end
-
--- function round_ties_down(n)
---     return math.ceil(n - 0.5)
--- end
+    for octant = 0, 7, 1 do
+        Compute(octant, position, visionRange, 1, slope(1, 1), slope(0, 1))
+    end
+end

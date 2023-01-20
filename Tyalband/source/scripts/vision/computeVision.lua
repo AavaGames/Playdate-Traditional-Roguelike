@@ -98,63 +98,7 @@ function ComputeVision(position, visionRange, world, setVisible, blocksVision)
         _setVisible(nx, ny, distance)
     end
 
-    local function ComputeShadow(octant, origin, rangeLimit, xx, top, bottom)
-
-        for x = xx, rangeLimit, 1 do
-            local topY = top.x == 1 and x or ((x*2+1) * top.y + top.x - 1) // (top.x*2)
-            local bottomY = bottom.y == 0 and 0 or ((x*2-1) * bottom.y + bottom.x) // (bottom.x*2)
-
-            local wasOpaque = -1
-            for y = topY, bottomY, -1 do
-                local nx = origin.x
-                local ny = origin.y
-
-                if octant == 0 then     nx += x ny -= y
-                elseif octant == 1 then nx += y ny -= x
-                elseif octant == 2 then nx -= y ny -= x
-                elseif octant == 3 then nx -= x ny -= y
-                elseif octant == 4 then nx -= x ny += y
-                elseif octant == 5 then nx -= y ny += x
-                elseif octant == 6 then nx += y ny += x
-                elseif octant == 7 then nx += x ny += y
-                end
-
-                local distance = GetDistanceToOrigin(nx, ny, origin)
-                local inRange = rangeLimit < 0 or distance <= rangeLimit
-
-                if (inRange == true) then
-                    _setVisible(nx, ny, distance)
-                end 
-                local blocksVision = _blocksVision(nx, ny)
-                local isOpaque = not inRange or blocksVision
-
-                if (x ~= rangeLimit) then
-                    if (isOpaque == true) then
-                        if (wasOpaque == 0) then
-                            local newBottom = slope(y*2+1, x*2+1)
-                            if (not inRange or y == bottomY) then
-                                bottom = newBottom
-                                break
-                            else
-                                ComputeShadow(octant, origin, rangeLimit, x+1, top, newBottom)
-                            end
-                        end
-                        wasOpaque = 1
-                    else
-                        if (wasOpaque > 0) then
-                            top = slope(y*2+1, x*2+1)
-                            wasOpaque = 0
-                        end
-                    end
-                end
-                if (wasOpaque ~= 0) then
-                    break
-                end
-            end        
-        end
-    end
-
-    local function ComputeComplex(octant, position, visionRange, xx, top, bottom)  
+    local function Compute(octant, position, visionRange, xx, top, bottom)  
         local t = chunkTimer("Octant" .. octant)
         for x = xx, visionRange, 1 do
 
@@ -237,7 +181,7 @@ function ComputeVision(position, visionRange, world, setVisible, blocksVision)
                                         bottom = slope(ny, nx) 
                                         break
                                     else 
-                                        ComputeComplex(octant, position, visionRange, x+1, top, slope(ny, nx))
+                                        Compute(octant, position, visionRange, x+1, top, slope(ny, nx))
                                     end
                                 else 
                                     if(y == bottomY) then
@@ -280,7 +224,7 @@ function ComputeVision(position, visionRange, world, setVisible, blocksVision)
     _setVisible(position.x, position.y, 0)
 
     for octant = 0, 7, 1 do
-        ComputeComplex(octant, position, visionRange, 1, slope(1, 1), slope(0, 1))
+        Compute(octant, position, visionRange, 1, slope(1, 1), slope(0, 1))
     end
 end
 
