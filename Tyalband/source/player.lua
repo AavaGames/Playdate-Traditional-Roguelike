@@ -43,11 +43,11 @@ function player:update()
     if (self.state == ACTIVE) then
         self.moveDir = Vector2.zero()
         local actionTaken = false
-        -- diagonals are difficult with this movement
 
-        if inputManager:JustPressed(playdate.kButtonB) then
-            self.diagonalMove = not self.diagonalMove
-        end
+        -- diagonals are difficult with a dpad
+        -- if inputManager:JustPressed(playdate.kButtonB) then
+        --     self.diagonalMove = not self.diagonalMove
+        -- end
 
         if inputManager:JustReleased(playdate.kButtonRight) then
             self.moveDir.x += 1

@@ -197,8 +197,9 @@ function screenManager:drawGlyph(char, tile, drawCoord, screenCoord)
     if (drawnGlyph.char == "" and char == "") then
         -- nothing changed
     else
-        local tileLit = tile ~= nil and tile.lightLevel > 0
-        local tileLightLevel = tile ~= nil and tile.lightLevel or 0
+        local tileLit = tile ~= nil and tile.inView and tile.lightLevel > 0
+        local tileLightLevel = (tile ~= nil and tile.inView) and tile.lightLevel or 0
+
         if (drawnGlyph.char == char and drawnGlyph.lightLevel == tileLightLevel) then
             -- no need to redraw if everything is the same
         else
@@ -224,7 +225,7 @@ function screenManager:drawGlyph(char, tile, drawCoord, screenCoord)
             if (char ~= "") then
                 local glyph = self:getGlyph(char, tile.inView, tile.lightLevel)
                 self.drawnGlyphs[screenCoord.x][screenCoord.y].glyph = glyph
-                if (tile.lightLevel > 0) then -- draw light around rect
+                if (tile.inView and tile.lightLevel > 0) then -- draw light around rect
                     gfx.setColor(gfx.kColorWhite)
                     gfx.fillRect(drawCoord.x, drawCoord.y, self.currentWorldFont.size, self.currentWorldFont.size)
                 end

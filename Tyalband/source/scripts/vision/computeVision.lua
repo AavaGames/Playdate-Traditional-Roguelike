@@ -2,7 +2,7 @@
 
 symmetry = true -- symmetry looks better and makes more sense
 perfectSym = false -- causes less expansive wall and causes artifacts
-sqrt = true
+sqrt = false
 
 -- Based on Adam Milazzo's Roguelike Vision Algorithm
 -- http://www.adammil.net/blog/v125_Roguelike_Vision_Algorithms.html
@@ -52,7 +52,7 @@ function ComputeVision(position, visionRange, world, setVisible, blocksVision)
         if sqrt then
             return math.floor(math.sqrt(x^2 + y^2))
         else
-            return math.max(x,y)
+            return x + y -- taxicab
         end
     end
 

@@ -108,9 +108,27 @@ function logManager:update()
 end
 
 function logManager:add(text)
-    table.insert(self.cleanLog, text)
-
-    self:splitLine(text)
+    if (text == self.cleanLog[#self.cleanLog]) then
+        -- duplicate message
+        local multiplier = nil
+        for i = -2, -1, 1 do
+            multiplier = tonumber(self.log[#self.log]:sub(i))
+            print(multiplier)
+            if type(multiplier) == "number" then
+                if (multiplier == 99) then --max value
+                    break
+                end
+                multiplier += 1
+                break
+            else
+                multiplier = 2
+            end
+        end
+        self.log[#self.log] = text .. " x" .. multiplier
+    else
+        table.insert(self.cleanLog, text)
+        self:splitLine(text)
+    end
 
     if (self.showingLog) then
         self.currentLineOffset = 0
