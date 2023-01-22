@@ -14,7 +14,9 @@ local function initializeGame()
 	-- local v2 = Vector2.new(32, 15)
 	-- local v3 = Vector2.new(8, 12)
 
-	--print("hello: ", hello(true))
+	--print(Test-C(true))
+
+	--Test_Lua()
 end
 
 local function updateGame()

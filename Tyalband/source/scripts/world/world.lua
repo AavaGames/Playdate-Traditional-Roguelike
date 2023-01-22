@@ -18,6 +18,8 @@ function world:init(theWorldManager, thePlayer)
     self.actors = {}
     self.effects = {}
 
+    globalWorld = self
+
     self:create()
 end
 
@@ -116,39 +118,67 @@ function world:updateLighting()
                 end
             end
         end
+        -- Ray Casting (Expensive)
         --ComputeVision(self.player.position, self.player.visionRange, self, isVis)
-        ComputeShadow(self.player.position, self.player.visionRange, self, isVis)
 
-        -- local positions = math.findAllCirclePos(self.player.position.x, self.player.position.y, self.player.visionRange)
+        -- Shadow Casting Lua (not working)
+        --ComputeShadow(self.player.position, self.player.visionRange, self, isVis)
 
-        -- for index, pos in ipairs(positions) do
-        --     local x, y = pos[1], pos[2]
-
-        --     if (not (x < 1) and not (x > self.gridDimensions.x) and not (y < 1) and not (y > self.gridDimensions.y)) then
-        --         local tile = self.grid[pos[1]][pos[2]]
-        --         if (tile ~= nil) then
-        --             tile.currentVisibilityState = tile.visibilityState.dim
-        --             tile.seen = true
-        --         end
-        --     end
-        -- end
-
-        -- local positions = math.findAllCirclePos(self.player.position.x, self.player.position.y, self.player.lightRange)
-
-        -- for index, pos in ipairs(positions) do
-        --     local x, y = pos[1], pos[2]
-
-        --     if (not (x < 1) and not (x > self.gridDimensions.x) and not (y < 1) and not (y > self.gridDimensions.y)) then
-        --         local tile = self.grid[pos[1]][pos[2]]
-        --         if (tile ~= nil) then
-        --             tile.currentVisibilityState = tile.visibilityState.lit
-        --             tile.seen = true
-        --         end
-        --     end
-        -- end
+        -- C based FOV
+        SetVisible(self.player.position.x, self.player.position.y)
+        Setup_FOV(self.player.position.x, self.player.position.y, self.player.visionRange)
+        Compute_FOV()
 
         frameProfiler:endTimer("Logic: Vision")
     end
+end
+
+function Greeting(string)
+    print(string)
+end
+
+function SetVisible(x, y) -- set visible
+    -- move this to player? 
+
+    --Infravision - sight of heat in the dark
+    --Darkvision - farther dim sight
+    local world = globalWorld
+    if (math.isClamped(x, 1, world.gridDimensions.x) or math.isClamped(y, 1, world.gridDimensions.y)) then
+        return -- oob
+    end
+
+    local v1 = Vector2.new(world.player.position.x, world.player.position.y)
+    local v2 = Vector2.new(x, y)
+
+    local distance = Vector2.distance(v1, v2)
+    local tile = world.grid[x][y]
+    if (tile ~= nil) then
+        tile.inView = true
+        if (distance <= world.player.equipped.lightSource.litRange) then
+            tile.currentVisibilityState = tile.visibilityState.lit
+            tile:addLightLevel(2, world.player.equipped.lightSource)
+            tile.seen = true
+        elseif (distance <= world.player.equipped.lightSource.dimRange) then
+            tile.currentVisibilityState = tile.visibilityState.dim
+            tile:addLightLevel(1, world.player.equipped.lightSource)
+            tile.seen = true
+        elseif (tile.lightLevel > 0) then
+            -- in view but lightSource
+            tile.currentVisibilityState = tile.visibilityState.lit
+            tile.seen = true
+        else
+        end
+    end
+end
+
+function BlocksVision(x, y)
+    local tile = world.grid[x][y]
+    if (tile ~= nil) then
+        if (tile.actor ~= nil) then
+            return tile.actor.blockVision
+        end
+    end
+    return false
 end
 
 function world:draw()
