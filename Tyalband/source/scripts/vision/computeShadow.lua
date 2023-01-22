@@ -36,6 +36,8 @@ function ComputeShadow(position, visionRange, world, setVisible, blocksVision)
 
     local function Compute(octant, origin, rangeLimit, xx, top, bottom)
 
+        rangeLimit = 4
+
         for x = xx, rangeLimit, 1 do
             local topY = top.x == 1 and x or ((x*2+1) * top.y + top.x - 1) // (top.x*2)
             local bottomY = bottom.y == 0 and 0 or ((x*2-1) * bottom.y + bottom.x) // (bottom.x*2)
@@ -55,37 +57,50 @@ function ComputeShadow(position, visionRange, world, setVisible, blocksVision)
                 elseif octant == 7 then nx += x ny += y
                 end
 
-                local distance = GetDistanceToOrigin(nx, ny, origin)
-                local inRange = rangeLimit < 0 or distance <= rangeLimit
+                local distance = rangeLimit < 0 and 0 or GetDistanceToOrigin(nx, ny, origin )
+
+                local inRange = distance <= rangeLimit
 
                 if (inRange == true) then
                     _setVisible(nx, ny, distance)
-                end 
+                end
                 local blocksVision = _blocksVision(nx, ny)
                 local isOpaque = not inRange or blocksVision
 
                 if (x ~= rangeLimit) then
                     if (isOpaque == true) then
                         if (wasOpaque == 0) then
-                            local newBottom = slope(y*2+1, x*2+1)
+
+                            local newBottom = slope_shadow(y*2+1, x*2+1)
+
                             if (not inRange or y == bottomY) then
+
                                 bottom = newBottom
                                 break
-                            else
+
+                            else 
+                                print("recompute")
                                 Compute(octant, origin, rangeLimit, x+1, top, newBottom)
                             end
+
                         end
+
                         wasOpaque = 1
+
                     else
+
                         if (wasOpaque > 0) then
-                            top = slope(y*2+1, x*2+1)
+                            top = slope_shadow(y*2+1, x*2+1)
                             wasOpaque = 0
                         end
+
                     end
                 end
+
                 if (wasOpaque ~= 0) then
                     break
                 end
+
             end        
         end
     end
@@ -93,6 +108,13 @@ function ComputeShadow(position, visionRange, world, setVisible, blocksVision)
     _setVisible(position.x, position.y, 0)
 
     for octant = 0, 7, 1 do
-        Compute(octant, position, visionRange, 1, slope(1, 1), slope(0, 1))
+        Compute(octant, position, visionRange, 1, slope_shadow(1, 1), slope_shadow(0, 1))
     end
+end
+
+class("slope_shadow").extends()
+
+function slope_shadow:init(y, x)
+    self.y = y
+    self.x = x
 end
