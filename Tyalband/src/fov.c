@@ -232,6 +232,9 @@ static float fov_slope(float dx, float dy) {
         case FOV_SHAPE_OCTAGON:                                                                 \
             h = (data->radius - dx)<<1;                                                         \
             break;                                                                              \
+        case FOV_SHAPE_DIAMOND:                                                                 \
+            h = data->radius - dx;                    \
+            break;                                                                              \
         default:                                                                                \
             h = data->radius;                                                                   \
             break;                                                                              \

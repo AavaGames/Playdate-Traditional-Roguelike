@@ -126,7 +126,7 @@ function world:updateLighting()
 
         -- C based FOV
         SetVisible(self.player.position.x, self.player.position.y)
-        Setup_FOV(self.player.position.x, self.player.position.y, self.player.visionRange)
+        Setup_FOV(self.player.position.x, self.player.position.y, 4)
         Compute_FOV()
 
         frameProfiler:endTimer("Logic: Vision")
@@ -137,7 +137,7 @@ function Greeting(string)
     print(string)
 end
 
-function SetVisible(x, y) -- set visible
+function SetVisible(x, y, distance) -- set visible
     -- move this to player? 
 
     --Infravision - sight of heat in the dark
@@ -147,10 +147,7 @@ function SetVisible(x, y) -- set visible
         return -- oob
     end
 
-    local v1 = Vector2.new(world.player.position.x, world.player.position.y)
-    local v2 = Vector2.new(x, y)
-
-    local distance = Vector2.distance(v1, v2)
+    local distance = math.abs((world.player.position.x - x) + (world.player.position.y - y))
     local tile = world.grid[x][y]
     if (tile ~= nil) then
         tile.inView = true

@@ -54,7 +54,8 @@ typedef enum {
     FOV_SHAPE_CIRCLE_PRECALCULATE,
     FOV_SHAPE_SQUARE,
     FOV_SHAPE_CIRCLE,
-    FOV_SHAPE_OCTAGON
+    FOV_SHAPE_OCTAGON,
+    FOV_SHAPE_DIAMOND
 } fov_shape_type;
 
 /** Values for the corner peek setting. */

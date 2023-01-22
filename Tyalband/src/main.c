@@ -71,6 +71,7 @@ int eventHandler(PlaydateAPI* playdate, PDSystemEvent event, uint32_t arg)
 		fov_settings_init(&fov_settings);
 		fov_settings_set_opacity_test_function(&fov_settings, BlocksVision);
 		fov_settings_set_apply_lighting_function(&fov_settings, SetVisible);
+		fov_settings_set_shape(&fov_settings, FOV_SHAPE_DIAMOND);
 
 		const char* err;
 		if (!pd->lua->addFunction(Test_C, "test_c", &err))
@@ -90,8 +91,6 @@ int eventHandler(PlaydateAPI* playdate, PDSystemEvent event, uint32_t arg)
 		pd->system->logToConsole("Initialized C to Lua");
 
 		// Can't call lua functions here because its before LUA initialization
-
-		//fov_circle(&fov_settings, NULL, NULL, 5, 5, 2);
 	}
 
 	return 0;
