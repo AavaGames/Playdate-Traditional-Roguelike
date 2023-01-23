@@ -1,0 +1,17 @@
+{
+  "OutputFoldersPerTargetSystem": {
+    "Local Machine": [
+      "out\\build\\x64-Debug",
+      "out\\install\\x64-Debug"
+    ]
+  },
+  "ExpandedNodes": [
+    "",
+    "\\Source",
+    "\\Source\\assets",
+    "\\Source\\assets\\maps",
+    "\\src"
+  ],
+  "SelectedNode": "\\Source\\assets\\maps\\town.json",
+  "PreviewInSolutionExplorer": false
+}
