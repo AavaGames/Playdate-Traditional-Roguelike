@@ -23,7 +23,11 @@ import "frameProfiler"
 import "InputManager"
 
 import "/scripts/vision/computeVision.lua"
+import "/scripts/vision/computeRay.lua"
+
 import "/scripts/vision/computeShadow.lua"
+import "/scripts/vision/shadowCasting.lua"
+
 
 import "/scripts/world/world"
 import "worldManager"

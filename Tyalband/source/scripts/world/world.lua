@@ -98,7 +98,10 @@ function world:updateLighting()
 
             --Infravision - sight of heat in the dark
             --Darkvision - farther dim sight
-    
+            
+            if (math.isClamped(x, 1, self.gridDimensions.x) or math.isClamped(y, 1, self.gridDimensions.y)) then
+                return
+            end
             local tile = self.grid[x][y]
             if (tile ~= nil) then
                 tile.inView = true
@@ -119,15 +122,22 @@ function world:updateLighting()
             end
         end
         -- Ray Casting (Expensive)
-        --ComputeVision(self.player.position, self.player.visionRange, self, isVis)
+        ComputeVision(self.player.position, self.player.visionRange, self, isVis)
+
+        --ComputeVision_simple(self.player.position, self.player.visionRange, self, isVis)
 
         -- Shadow Casting Lua (not working)
         --ComputeShadow(self.player.position, self.player.visionRange, self, isVis)
 
         -- C based FOV
-        SetVisible(self.player.position.x, self.player.position.y)
-        Setup_FOV(self.player.position.x, self.player.position.y, 4)
-        Compute_FOV()
+        --SetVisible(self.player.position.x, self.player.position.y)
+        --Setup_FOV(self.player.position.x, self.player.position.y, 4)
+        --Compute_FOV()
+
+        -- Simple Shadow Cast
+        --CastShadow(self.player.position, self.player.visionRange, self, isVis)
+
+        --ComputeRay(self.player.position, self.player.visionRange, self, isVis)
 
         frameProfiler:endTimer("Logic: Vision")
     end

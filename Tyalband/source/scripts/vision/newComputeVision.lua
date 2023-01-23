@@ -1,38 +1,9 @@
--- Takes a Vector2 Origin and an int RangeLimit
 
-symmetry = true -- symmetry looks better and makes more sense
-perfectSym = false -- causes less expansive wall and causes artifacts
-sqrt = false
-
--- Based on Adam Milazzo's Roguelike Vision Algorithm
--- http://www.adammil.net/blog/v125_Roguelike_Vision_Algorithms.html
-
---[[
-    Vector2 position, int visionRange, World world, func blocksVision, func setVisible
-
-    setVisible: A function that sets a tile to be visible, given its X and Y coordinates and distance. The function must ignore coordinates that are out of bounds.
-
-    blocksVision: A function that accepts x and y coordinates of a tile and determines whether the tile can block vision or not. May pass in out of bounds coordinates.
-]]
-function ComputeVision(position, visionRange, world, setVisible, blocksVision)
+function ComputeVision_simple(position, visionRange, world, setVisible, blocksVision)
 
     -- A function that sets a tile to be visible, given its X and Y coordinates. The function
     -- must ignore coordinates that are out of bounds.
     local _setVisible = setVisible or print("Compute Vision requires a setVisible function")
-    -- local _setVisible = function (x, y, distance) -- set visible
-    --     local tile = world.grid[x][y]
-    --     if (tile ~= nil) then
-    --         tile.inView = true
-    --         print("tile visible")
-    --         if (distance <= world.player.visionRange) then
-    --             tile.currentVisibilityState = tile.visibilityState.lit
-    --             tile:addLightLevel(2, world.player.equipped.lightSource)
-    --             tile.seen = true
-    --         else
-    --         end
-    --     end
-    -- end
-
 
     -- A function that accepts the X and Y coordinates of a tile and determines whether the
     -- given tile blocks the passage of light. The function must be able to accept coordinates that are out of bounds.
@@ -52,15 +23,7 @@ function ComputeVision(position, visionRange, world, setVisible, blocksVision)
     -- A function that takes the X and Y coordinate of a point where X >= 0,
     -- Y >= 0, and X >= Y, and returns the distance from the point to the position (0,0).
     local GetDistance = function (x, y)
-        if sqrt then
-            return math.floor(math.sqrt(x^2 + y^2))
-        else
-            return x + y -- taxicab
-        end
-    end
-
-    local GetDistanceToOrigin = function (x, y, origin)
-        return Vector2.distance(Vector2.new(x, y), Vector2.new(origin.x, origin.y))
+        return x + y -- taxicab
     end
 
     local function BlocksVision(x, y, octant, position)
@@ -229,27 +192,4 @@ function ComputeVision(position, visionRange, world, setVisible, blocksVision)
     for octant = 0, 7, 1 do
         Compute(octant, position, visionRange, 1, slope(1, 1), slope(0, 1))
     end
-end
-
-class("slope").extends()
-
-function slope:init(y, x)
-    self.y = y
-    self.x = x
-end
-
-function slope:greater(y, x)
-    return self.y*x > self.x*y
-end
-
-function slope:greaterOrEqual(y, x)
-    return self.y*x >= self.x*y
-end
-
-function slope:less(y, x)
-    return self.y*x < self.x*y
-end
-
-function slope:lessOrEqual(y, x)
-    return self.y*x <= self.x*y
 end
