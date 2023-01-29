@@ -217,7 +217,7 @@ function screenManager:drawGlyph(char, tile, drawCoord, screenCoord)
             --     glyph:draw(drawCoord.x, drawCoord.y)
             -- end
 
-            gfx.setColor(screenManager.bgColor)
+            gfx.setColor(self.bgColor)
             gfx.fillRect(drawCoord.x, drawCoord.y, self.currentWorldFont.size, self.currentWorldFont.size)
 
             -- draw new and update table
