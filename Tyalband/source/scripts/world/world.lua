@@ -49,9 +49,10 @@ end
 
 function world:round()
     frameProfiler:startTimer("Logic: Actor Update")
-
-    for index, actor in ipairs(self.actors) do
-        actor:update()
+    
+    local actorMax = #self.actors
+    for i = 1, actorMax, 1 do
+        self.actors[i]:update();
     end
     self.camera:update() -- must update last to follow
 
@@ -187,8 +188,8 @@ function BlocksVision(x, y)
     end
     return false
 end
-
 function world:draw()
+    local screenManager = screenManager
     print("\n")
     local viewport = self.worldManager.viewport
     local fontSize = screenManager.currentWorldFont.size
