@@ -68,24 +68,29 @@ Level* Level_new_json(char* jsonPath)
 
 Level* Level_new()
 {
-	Level level = (Level){ .name = "Level" };
+	Level level;
+	level.name = "Dungeon";
 	level.height = dungeonHeight;
 	level.width = dungeonWidth;
 
-	level.tiles = (Tile**)malloc(level.width * sizeof(Tile));
+	level.tiles = malloc(level.width * sizeof(Tile*));
 	for (int x = 0; x < level.width; x++)
 	{
-		level.tiles[x] = (Tile*)malloc(level.height * sizeof(Tile));
+		level.tiles[x] = malloc(level.height * sizeof(Tile));
 		for (int y = 0; y < level.height; y++) {
-			level.tiles[x][y] = (Tile){ .position = {.x = x, .y = y }, .seen = true };
+			level.tiles[x][y].seen = true;
 		}
+		
 	}
 	return &level;
 }
 
 void Level_free(Level* level)
 {
-
+	free(level->name);
+	free(level->tiles);
+	//list_free(level->features);
+	//list_free(level->actors);
 }
 
 Test* test()

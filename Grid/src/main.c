@@ -74,15 +74,22 @@ int eventHandler(PlaydateAPI* playdate, PDSystemEvent event, uint32_t arg)
 		//Test* tes = test();
 
 		pd->system->logToConsole(level->name);
+		if (level->height == 24)
+			pd->system->logToConsole("24");
+
 		int tiles = 0;
-		for (int x = 0; x < level->width; x++)
+		/*for (int x = 0; x < level->width; x++)
 		{
 			for (int y = 0; y < level->height; y++) {
-				if (level->tiles[x][y].seen) {
+				if (level->tiles[x][y].seen == true) {
 					tiles++;
 				} 
 			}
-		}
+		}*/		
+
+		if (level->tiles == NULL)
+			pd->system->logToConsole("panic");
+
 		char* str;
 		if (tiles > 0) {
 			str = "Tere are tiles";
@@ -91,6 +98,7 @@ int eventHandler(PlaydateAPI* playdate, PDSystemEvent event, uint32_t arg)
 			str = "nil";
 		pd->system->logToConsole(str);
 
+		Level_free(level);
 	}
 
 	if (event == kEventInitLua)
