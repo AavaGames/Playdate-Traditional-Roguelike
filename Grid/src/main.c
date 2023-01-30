@@ -7,7 +7,7 @@
 #include "fov.h"
 #include "level.h"
 
-int update();
+static int Update(lua_State* L);
 static int Test_C(lua_State* L);
 static int Setup_FOV(lua_State* L);
 static int Compute_FOV(lua_State* L);
@@ -55,8 +55,7 @@ bool BlocksVision(void* map, int x, int y) {
 }
 
 Level* level;
-LCDFont* font = NULL;
-
+LCDFont* font;
 
 #ifdef _WINDLL
 __declspec(dllexport)
@@ -73,14 +72,14 @@ int eventHandler(PlaydateAPI* playdate, PDSystemEvent event, uint32_t arg)
 
 		const char* err; 
 		font = pd->graphics->loadFont("assets/fonts/IBM_EGA_8x8_2x", &err);
-
 		if (font == NULL)
 			pd->system->logToConsole("%s:%i: load failed, %s", __FILE__, __LINE__, err);
-
 		pd->graphics->setFont(font);
 
+		//RegisterContainer();
+
 		// Removes lua from being called
-		pd->system->setUpdateCallback(update, NULL);
+		//pd->system->setUpdateCallback(Update, NULL);
 	}
 
 	if (event == kEventKeyPressed) 
@@ -103,18 +102,17 @@ int eventHandler(PlaydateAPI* playdate, PDSystemEvent event, uint32_t arg)
 		const char* err;
 		if (!pd->lua->addFunction(Test_C, "test_c", &err))
 			pd->system->logToConsole("%s:%i: addFunction failed, %s", __FILE__, __LINE__, err);
-
-		if (!pd->lua->addFunction(Setup_FOV, "Setup_FOV", &err))
+		if (!pd->lua->addFunction(Update, "C.Update", &err))
 			pd->system->logToConsole("%s:%i: addFunction failed, %s", __FILE__, __LINE__, err);
-		if (!pd->lua->addFunction(Compute_FOV, "Compute_FOV", &err))
-			pd->system->logToConsole("%s:%i: addFunction failed, %s", __FILE__, __LINE__, err);
+		//if (!pd->lua->addFunction(Setup_FOV, "Setup_FOV", &err))
+		//	pd->system->logToConsole("%s:%i: addFunction failed, %s", __FILE__, __LINE__, err);
+		//if (!pd->lua->addFunction(Compute_FOV, "Compute_FOV", &err))
+		//	pd->system->logToConsole("%s:%i: addFunction failed, %s", __FILE__, __LINE__, err);
+		//if (!pd->lua->addFunction(Test_Lua, "Test_Lua", &err))
+		//	pd->system->logToConsole("%s:%i: addFunction failed, %s", __FILE__, __LINE__, err);
 
-		if (!pd->lua->addFunction(Test_Lua, "Test_Lua", &err))
-			pd->system->logToConsole("%s:%i: addFunction failed, %s", __FILE__, __LINE__, err);
 
-		pd->system->logToConsole("Testing Tyal Func");
 		pd->system->logToConsole("Initialized C to Lua");
-
 		// Can't call lua functions here because its before LUA initialization
 	}
 
@@ -128,7 +126,7 @@ int eventHandler(PlaydateAPI* playdate, PDSystemEvent event, uint32_t arg)
 	return 0;
 }
 
-int update()
+static int Update(lua_State* L)
 {
 	pd->graphics->clear(kColorWhite);
 	pd->system->drawFPS(0, 0);
@@ -144,15 +142,7 @@ int update()
 			Tile* tile = &(level->tiles[x][y]);
 			if (tile->feature != NULL)
 			{
-				/*if (tile->feature->character == '#') {
-					c = '#';
-				}
-				else
-				{
-					c = "O";
-				}*/
 				c = tile->feature->character;
-				//c = ".";
 			}
 			else
 			{
@@ -161,9 +151,7 @@ int update()
 			pd->graphics->drawText(c, 1, kASCIIEncoding, x * 16, y * 16);
 		}
 	}
-
-	// will not update screen with 0
-	return 1;
+	return 0;
 }
 
 // Functions

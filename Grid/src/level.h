@@ -75,4 +75,19 @@ Level* Level_new();
 void Level_free(Level* level);
 
 void json_test(char* jsonPath);
+
+typedef struct Container {
+    char* name;
+    int size;
+    int* numbers;
+    int** grid;
+} Container;
+
+static int Container_new(lua_State* L);
+static int Container_getName(lua_State* L);
+static int Container_getSize(lua_State* L);
+static int Container_getNumbers(lua_State* L);
+static int Container_getGrid(lua_State* L);
+void RegisterContainer();
+
 #endif

@@ -145,3 +145,62 @@ void json_test(char* jsonPath) {
 
 	pd->system->logToConsole("End of test");
 }
+
+static int Container_new(lua_State* L)
+{
+	Container* con = malloc(sizeof(*con));
+	con->name = "Beeg";
+	con->size = 5;
+
+	int* num[] = { 5, 12, 3, 4, 8 };
+	con->numbers = num;
+
+	con->grid = malloc(con->size * sizeof(*(con->grid)));
+	for (int x = 0; x < con->size; x++)
+	{
+		con->grid[x] = malloc(con->size * sizeof(*(con->grid[0])));
+		for (int y = 0; y < con->size; y++) {
+			con->grid[x][y] = x + y;
+		}
+	}
+
+	pd->lua->pushObject(con, "Container", 0);
+	return 1;
+}
+
+static int Container_getName(lua_State* L)
+{
+	// get from args then push X
+	return 1;
+}
+
+static int Container_getSize(lua_State* L)
+{
+	return 1;
+}
+
+static int Container_getNumbers(lua_State* L)
+{
+	return 1;
+}
+
+static int Container_getGrid(lua_State* L)
+{
+	return 1;
+}
+
+static const lua_reg containerLib[] =
+{
+	{ "new", Container_new },
+	{ "getName", Container_getName },
+	{ "getSize", Container_getSize },
+	{ "getNumbers", Container_getNumbers },
+	{ "getGrid", Container_getGrid },
+	{ NULL, NULL }
+};
+
+void RegisterContainer()
+{
+	const char* err;
+	pd->lua->registerClass("Container", containerLib, NULL, 0, err);
+}
