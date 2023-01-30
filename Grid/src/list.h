@@ -4,7 +4,7 @@
  * License: The MIT License (MIT)
  * 
  * Originally VECTOR_H
- * 
+ * https://github.com/eteran/c-vector
  */
 
 #ifndef LIST_H_

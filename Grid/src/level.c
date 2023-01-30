@@ -45,6 +45,15 @@ Vector2 Actor_GetPosition(Actor* actor)
 	return actor->position;
 }
 
+Feature* Feature_new(char* name, char* character, bool collision)
+{
+	Feature* f = malloc(sizeof(*f));
+	f->name = name;
+	f->character = character;
+	f->collision = collision;
+	return f;
+}
+
 Level* Level_new_json(char* jsonPath)
 {
 	char* path = "/assets/dungeon.json";
@@ -68,36 +77,60 @@ Level* Level_new_json(char* jsonPath)
 
 Level* Level_new()
 {
-	Level level;
-	level.name = "Dungeon";
-	level.height = dungeonHeight;
-	level.width = dungeonWidth;
-
-	level.tiles = malloc(level.width * sizeof(Tile*));
-	for (int x = 0; x < level.width; x++)
+	Level* level = malloc(sizeof(*level));
+	if (level)
 	{
-		level.tiles[x] = malloc(level.height * sizeof(Tile));
-		for (int y = 0; y < level.height; y++) {
-			level.tiles[x][y].seen = true;
+		level->name = "Dungeon";
+		level->width = dungeonWidth;
+		level->height = dungeonHeight;
+
+		level->tiles = malloc(level->width * sizeof(*(level->tiles)));
+		for (int x = 0; x < level->width; x++)
+		{
+			level->tiles[x] = malloc(level->height * sizeof(*(level->tiles[0])));
+			for (int y = 0; y < level->height; y++) {
+
+				int d = dungeon[x + y * dungeonWidth];
+				Tile* tile = &(level->tiles[x][y]);
+				Vector2_Set(tile->position, x, y);
+
+				switch (d)
+				{
+				//case 0: // nil
+				//	tile->feature = NULL;
+				//	break;
+				case 1: // wall
+					tile->feature = Feature_new("Wall", "#", true);
+					tile->blocksVision = true;
+					break;
+				//case 2: // nothing
+				//	tile->feature = NULL;
+				//	break;
+				case 3: // ground
+					tile->feature = Feature_new("Ground", ".", false);
+					tile->blocksVision = false;
+					break;
+				default:
+					tile->feature = NULL;
+					break;
+				}
+				level->tiles[x][y].seen = true;
+			}
 		}
-		
+
+		return level;
 	}
-	return &level;
+	else
+		return NULL;
 }
+
+
 
 void Level_free(Level* level)
 {
-	free(level->name);
 	free(level->tiles);
 	//list_free(level->features);
 	//list_free(level->actors);
-}
-
-Test* test()
-{
-	Test test = (Test){ .name = "Name", .active = true };
-	
-	return &test;
 }
 
 void json_test(char* jsonPath) {

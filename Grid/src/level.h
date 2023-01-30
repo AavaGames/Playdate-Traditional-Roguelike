@@ -1,9 +1,6 @@
 #ifndef LEVEL_H
 #define LEVEL_H
 
-#include <stdio.h>
-#include <stdbool.h>
-
 #include "list.h"
 #include "global.h"
 #include "jsonDecoder.h"
@@ -31,12 +28,13 @@ typedef struct Player {
 
 typedef struct Feature {
     char* name;
-    char character;
+    char* character;
+    bool collision;
 } Feature;
 
-typedef struct Wall {
-    Feature super;
-} Wall;
+Feature* Feature_new(char* name, char* character, bool collision);
+
+//make a con for this
 
 typedef struct Tile {
     Vector2 position;
@@ -56,8 +54,6 @@ typedef struct Tile {
     //Sources* []
 } Tile;
 
-//void Shape_ctor(Shape * const me, int16_t x, int16_t y);
-
 typedef struct Level {
     char* name;
     int depth;
@@ -66,18 +62,12 @@ typedef struct Level {
 
     Tile** tiles;
 
-    list_type(Feature*) features;
-    list_type(Actor*) actors;
+    //list_type(Feature*) features;
+    //list_type(Actor*) actors;
 
     int width;
     int height;
 } Level;
-
-typedef struct Test {
-    char* name;
-    bool active;
-} Test;
-Test* test();
 
 //struct Level* Level_new(int height, int width);
 Level* Level_new_json(char* jsonPath);

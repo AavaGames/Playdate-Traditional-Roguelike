@@ -7,6 +7,7 @@
 #include "fov.h"
 #include "level.h"
 
+int update();
 static int Test_C(lua_State* L);
 static int Setup_FOV(lua_State* L);
 static int Compute_FOV(lua_State* L);
@@ -54,6 +55,8 @@ bool BlocksVision(void* map, int x, int y) {
 }
 
 Level* level;
+LCDFont* font = NULL;
+
 
 #ifdef _WINDLL
 __declspec(dllexport)
@@ -65,40 +68,24 @@ int eventHandler(PlaydateAPI* playdate, PDSystemEvent event, uint32_t arg)
 	if (event == kEventInit)
 	{
 		pd = playdate;
-		//pd->system->setUpdateCallback(update, NULL);
+
+		level = Level_new();
+
+		const char* err; 
+		font = pd->graphics->loadFont("assets/fonts/IBM_EGA_8x8_2x", &err);
+
+		if (font == NULL)
+			pd->system->logToConsole("%s:%i: load failed, %s", __FILE__, __LINE__, err);
+
+		pd->graphics->setFont(font);
+
+		// Removes lua from being called
+		pd->system->setUpdateCallback(update, NULL);
 	}
 
 	if (event == kEventKeyPressed) 
 	{
-		level = Level_new();
-		//Test* tes = test();
-
-		pd->system->logToConsole(level->name);
-		if (level->height == 24)
-			pd->system->logToConsole("24");
-
-		int tiles = 0;
-		/*for (int x = 0; x < level->width; x++)
-		{
-			for (int y = 0; y < level->height; y++) {
-				if (level->tiles[x][y].seen == true) {
-					tiles++;
-				} 
-			}
-		}*/		
-
-		if (level->tiles == NULL)
-			pd->system->logToConsole("panic");
-
-		char* str;
-		if (tiles > 0) {
-			str = "Tere are tiles";
-		}
-		else
-			str = "nil";
-		pd->system->logToConsole(str);
-
-		Level_free(level);
+		
 	}
 
 	if (event == kEventInitLua)
@@ -131,8 +118,55 @@ int eventHandler(PlaydateAPI* playdate, PDSystemEvent event, uint32_t arg)
 		// Can't call lua functions here because its before LUA initialization
 	}
 
+	if (event == kEventTerminate)
+	{
+		Level_free(level);
+		level = NULL;
+
+	}
+
 	return 0;
 }
+
+int update()
+{
+	pd->graphics->clear(kColorWhite);
+	pd->system->drawFPS(0, 0);
+
+	static int screenMaxX = 400 / 16;
+	static int screenMaxY = 240 / 16;
+
+	for (int x = 0; x < screenMaxX; x++)
+	{
+		for (int y = 0; y < screenMaxY; y++)
+		{
+			char* c;
+			Tile* tile = &(level->tiles[x][y]);
+			if (tile->feature != NULL)
+			{
+				/*if (tile->feature->character == '#') {
+					c = '#';
+				}
+				else
+				{
+					c = "O";
+				}*/
+				c = tile->feature->character;
+				//c = ".";
+			}
+			else
+			{
+				c = "X";
+			}
+			pd->graphics->drawText(c, 1, kASCIIEncoding, x * 16, y * 16);
+		}
+	}
+
+	// will not update screen with 0
+	return 1;
+}
+
+// Functions
 
 static int Test_C(lua_State* L)
 {
