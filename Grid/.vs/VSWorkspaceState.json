@@ -9,9 +9,10 @@
     "",
     "\\Source",
     "\\Source\\assets",
+    "\\Source\\assets\\fonts",
     "\\Source\\assets\\maps",
     "\\src"
   ],
-  "SelectedNode": "\\Source\\assets\\maps\\town.json",
+  "SelectedNode": "\\src\\main.c",
   "PreviewInSolutionExplorer": false
 }
