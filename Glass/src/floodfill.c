@@ -1,5 +1,7 @@
 #include "floodfill.h"
 
+static PlaydateAPI* pd;
+
 FloodSource* FloodSource_new(int x, int y, int weight)
 {
 	FloodSource* fs = malloc(sizeof(*fs));
@@ -28,17 +30,18 @@ static int FloodMap_new(lua_State* L)
 			fm->map[x][y] = 0;
 		}
 	}
-
+	pd->system->logToConsole("New Floodmap");
 	pd->lua->pushObject(fm, "floodMap", 0);
 	return 1;
 }
 
 static int FloodMap_free(lua_State* L)
 {
+	pd->system->logToConsole("Cleaned Floodmap");
 	FloodMap* fm = pd->lua->getArgObject(1, "floodMap", NULL);
 	free(fm->collisionMask);
 	free(fm->map);
-	//iterate through floodsources?
+	free(fm->source);
 	free(fm);
 	return 0;
 }
@@ -53,11 +56,12 @@ static int FloodMap_addSource(lua_State* L)
 	source->y = pd->lua->getArgInt(2) - 1;
 	source->weight = pd->lua->getArgInt(3);
 	fm->source = source;
+	pd->system->logToConsole("Add source");
 	return 0;
 }
 
 //PARAM: x, y
-static int FloodMap_map(lua_State* L)
+static int FloodMap_getTile(lua_State* L)
 {
 	FloodMap* fm = pd->lua->getArgObject(1, "floodMap", NULL);
 	int x = pd->lua->getArgInt(2);
@@ -92,15 +96,17 @@ static void FloodMap_fill(FloodMap* fm, int x, int y)
 
 static const lua_reg floodMapLib[] =
 {
-	{ "createfm", FloodMap_new },
+	{ "new", FloodMap_new },
 	{ "__gc", FloodMap_free },
 	{ "addSource", FloodMap_addSource },
-	{ "fillfm", FloodMap_fillMap },
+	{ "getTile", FloodMap_getTile },
+	{ "fillMap", FloodMap_fillMap },
 	{ NULL, NULL }
 };
 
-void Register_floodfill()
+void Register_floodfill(PlaydateAPI* api)
 {
+	pd = api;
 	const char* err;
 	if (!pd->lua->registerClass("floodMap", floodMapLib, NULL, 0, &err))
 		pd->system->logToConsole("%s:%i: registerClass failed, %s", __FILE__, __LINE__, err);

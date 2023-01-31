@@ -17,6 +17,12 @@ local function initializeGame()
 	--print(Test-C(true))
 
 	--Test_Lua()
+
+	local map = floodMap.new(10, 10)
+	map:addSource(5, 5, 1)
+
+	print(map:getTile(5,5))
+
 end
 
 local function updateGame()
