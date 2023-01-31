@@ -31,6 +31,7 @@ import "border"
 
 import "/scripts/worlds/town"
 import "/scripts/worlds/dungeon"
+import "/scripts/worlds/testRoom"
 
 import "/scripts/actors/actor"
 import "player"
