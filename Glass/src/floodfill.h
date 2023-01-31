@@ -3,6 +3,8 @@
 
 #include "global.h"
 
+//NOTE: Always subtract X & Y because lua counts from 1
+
 typedef struct FloodSource {
 	int x;
 	int y;
@@ -27,10 +29,14 @@ static int FloodMap_new(lua_State* L);
 static int FloodMap_free(lua_State* L);
 //PARAM: x, y, weight
 static int FloodMap_addSource(lua_State* L);
+
 static int FloodMap_getTile(lua_State* L);
+static int FloodMap_setTileColliding(lua_State* L);
+
 static int FloodMap_fillMap(lua_State* L);
 
-static void FloodMap_fill(FloodMap* map, int x, int y);
+void FloodMap_fill(FloodMap* fm, int x, int y, int weight);
+bool FloodMap_inBounds(FloodMap* fm, int x, int y);
 
 void Register_floodfill(PlaydateAPI* p);
 

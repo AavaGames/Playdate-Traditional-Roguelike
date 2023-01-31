@@ -3,13 +3,13 @@ local gfx <const> = playdate.graphics
 class("testRoom").extends(world)
 
 function testRoom:init(theWorldManager, thePlayer)
-    testRoom.super.init(self, theWorldManager, thePlayer)
+    testRoom.super.init(self, theWorldManager, thePlayer) -- calls create
 
     -- do stuff
     self.name = "Testing Room"
     self.worldIsLit = false
     self.worldIsSeen = false
-    self.playerSpawnPosition = { x = 25, y = 25 }
+    self.playerSpawnPosition = { x = self.gridDimensions.x // 2, y = self.gridDimensions.y // 2 }
 
     testRoom.super.finishInit(self)
 end

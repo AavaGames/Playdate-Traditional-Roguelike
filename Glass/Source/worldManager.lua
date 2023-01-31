@@ -23,7 +23,7 @@ function worldManager:init(player)
     --     }
     self.viewport = self.defaultViewport
 
-    self:loadWorld(testRoom)
+    self:loadWorld(dungeon)
 end
 
 function worldManager:update()

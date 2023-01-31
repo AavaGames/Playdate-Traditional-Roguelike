@@ -20,12 +20,25 @@ function world:init(theWorldManager, thePlayer)
 
     self.visionTiles = {}
 
+    self.floodMap = nil
+
     globalWorld = self
 
     self:create()
 end
 
 function world:finishInit()
+    self.floodMap = floodMap.new(self.gridDimensions.x, self.gridDimensions.y)
+	self.floodMap:addSource(self.playerSpawnPosition.x, self.playerSpawnPosition.y, 1)
+
+    self:tileLoop(function (tile)
+        if (tile.blocksLight) then
+            self.floodMap:setTileColliding(tile.position.x, tile.position.y)
+        end
+    end)
+
+    self.floodMap:fillMap();
+
     if (self.worldIsSeen == true) then
         self:tileLoop(function (tile)
             tile.seen = true
@@ -203,23 +216,30 @@ function world:draw()
             end
 
             local char = ""
-            local tile = self.grid[x][y]
-            if (tile ~= nil and tile.currentVisibilityState ~= tile.visibilityState.unknown) then 
-                if tile.actor ~= nil and tile.inView and tile.lightLevel > 0 then
-                    char = tile.actor:getChar()
-                elseif tile.actor ~= nil and tile.actor.renderWhenSeen and tile.seen then
-                    char = tile.actor:getChar()
-                elseif #tile.effects > 0 then
-                    -- TODO add effects & drawing
-                elseif tile.item ~= nil and (tile.lightLevel > 0 or tile.item.seen == true) then
-                    char = tile.item.char
-                    tile.item.seen = true 
-                        -- probably move this somewhere else
-                        -- item checks if tile is seen every frame? seems inefficient
-                elseif tile.decoration ~= nil then
-                    char = tile.decoration.char
+
+            local tileNum = self.floodMap:getTile(x, y);
+            if (not inputManager:Held(playdate.kButtonA) and tileNum ~= nil) then
+                char = tileNum;
+            else
+                local tile = self.grid[x][y]
+                if (tile ~= nil and tile.currentVisibilityState ~= tile.visibilityState.unknown) then 
+                    if tile.actor ~= nil and tile.inView and tile.lightLevel > 0 then
+                        char = tile.actor:getChar()
+                    elseif tile.actor ~= nil and tile.actor.renderWhenSeen and tile.seen then
+                        char = tile.actor:getChar()
+                    elseif #tile.effects > 0 then
+                        -- TODO add effects & drawing
+                    elseif tile.item ~= nil and (tile.lightLevel > 0 or tile.item.seen == true) then
+                        char = tile.item.char
+                        tile.item.seen = true 
+                            -- probably move this somewhere else
+                            -- item checks if tile is seen every frame? seems inefficient
+                    elseif tile.decoration ~= nil then
+                        char = tile.decoration.char
+                    end
                 end
             end
+            
 
             screenManager:drawGlyph(char, tile, drawCoord, { 
                 x = xPos,
