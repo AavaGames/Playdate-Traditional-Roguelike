@@ -136,8 +136,10 @@ function world:updateLighting()
             end
         end
         frameProfiler:endTimer("Vision: Reset")
+       
+        frameProfiler:startTimer("Vision: Visible")
 
-        local isVis = function (x, y, distance) -- set visible
+        local isVisible = function (x, y, distance) -- set visible
             if (math.isClamped(x, 1, self.gridDimensions.x) or math.isClamped(y, 1, self.gridDimensions.y)) then
                 return
             end
@@ -160,23 +162,22 @@ function world:updateLighting()
                 end
             end
         end
-       
-        frameProfiler:startTimer("Vision: Visible")
+
         -- TODO Change to diamond
-        self.visionTiles = math.findAllCirclePos(self.player.position.x, self.player.position.y, self.player.visionRange)
+        self.visionTiles = math.findAllCirclePos(self.player.position.x, self.player.position.y, self.player.equipped.lightSource.dimRange)--self.player.visionRange)
         local max = #self.visionTiles
         for i = 1, max, 1 do
             local x, y = self.visionTiles[i][1], self.visionTiles[i][2]
             local distance = Vector2.distance_taxi(Vector2.new(x, y), self.player.position)
-            isVis(x, y, distance);
+            isVisible(x, y, distance);
         end
+        
         frameProfiler:endTimer("Vision: Visible")
 
         frameProfiler:startTimer("Vision: Djikstra")
         -- update source and map
         self.floodMap:addSource(self.player.position.x, self.player.position.y, 1)
         self.floodMap:fillMap()
-
         frameProfiler:endTimer("Vision: Djikstra")
 
         frameProfiler:endTimer("Logic: Vision")
