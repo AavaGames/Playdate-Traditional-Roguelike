@@ -27,7 +27,7 @@ static int FloodMap_new(lua_State* L)
 		fm->map[x] = malloc(fm->height * sizeof(*(fm->map[0])));
 		for (int y = 0; y < fm->height; y++) {
 			fm->collisionMask[x][y] = false;
-			fm->map[x][y] = 0;
+			fm->map[x][y] = -1;
 		}
 	}
 	pd->system->logToConsole("New Floodmap");
@@ -50,6 +50,12 @@ static int FloodMap_free(lua_State* L)
 static int FloodMap_addSource(lua_State* L)
 {
 	FloodMap* fm = pd->lua->getArgObject(1, "floodMap", NULL);
+	if (fm->source != NULL)
+	{
+		free(fm->source);
+		fm->source = NULL;
+	}
+
 	FloodSource* source = malloc(sizeof(*source));
 	// NOTE: subtract x and y by 1 because arrays count from 1 in lua
 	source->x = pd->lua->getArgInt(2) - 1;
@@ -84,68 +90,93 @@ static int FloodMap_setTileColliding(lua_State* L)
 	return 0;
 }
 
-static int FloodMap_fillMap(lua_State* L)
-{
-	pd->system->logToConsole("Filling Map");
-	FloodMap* fm = pd->lua->getArgObject(1, "floodMap", NULL);
-	FloodMap_fill(fm, fm->source->x, fm->source->y, fm->source->weight);
-	return 0;
-}
-
-void FloodMap_fill(FloodMap* fm, int x, int y, int weight)
-{
-	// 1 = filled, 0 == not filled
-	// in bounds and zone isn't filled yet (also needs to check collision mask)
-
-	//add weight in new algo
-
-	if (FloodMap_inBounds(fm, x, y))
-	{
-		if (fm->collisionMask[x][y] == false)
-		{
-			fm->map[x][y] = weight;
-
-			int xx = x - 1;
-			int yy = y;
-			int w = weight;// +1;
-
-			if (FloodMap_inBounds(fm, xx, yy) && (fm->map[xx][yy] == 0))
-				FloodMap_fill(fm, xx, yy, w);
-
-			xx = x + 1;
-			yy = y;
-			if (FloodMap_inBounds(fm, xx, yy) && (fm->map[xx][yy] == 0))
-				FloodMap_fill(fm, xx, yy, w);
-
-			xx = x;
-			yy = y - 1;
-			if (FloodMap_inBounds(fm, xx, yy) && (fm->map[xx][yy] == 0))
-				FloodMap_fill(fm, xx, yy, w);
-
-			xx = x;
-			yy = y + 1;
-			if (FloodMap_inBounds(fm, xx, yy) && (fm->map[xx][yy] == 0))
-				FloodMap_fill(fm, xx, yy, w);
-
-			//char str[3];
-			//sprintf(str, "%d", w);
-			//pd->system->logToConsole(str);
-		}
-		else
-		{
-			//pd->system->logToConsole("blocked");
-		}
-	}
-	else
-	{
-		//pd->system->logToConsole("oob");
-	}
-}
-
 bool FloodMap_inBounds(FloodMap* fm, int x, int y)
 {
 	return x >= 0 && x < fm->width && y >= 0 && y < fm->height;
 }
+
+static int Dijkstra_fillMap(lua_State* L)
+{
+	pd->system->logToConsole("Filling Map");
+	FloodMap* fm = pd->lua->getArgObject(1, "floodMap", NULL);
+
+	// reset map
+	for (int x = 0; x < fm->width; x++)
+	{
+		for (int y = 0; y < fm->height; y++) {
+			fm->map[x][y] = -1;
+		}
+	}
+
+	list_type(Vector2*) toCheck = NULL;
+	list_set_elem_destructor(toCheck, Vector2_free);
+	list_push_back(toCheck, Vector2_new(fm->source->x, fm->source->y)); 
+
+	list_type(int) steps = NULL;
+	list_push_back(steps, 0);
+
+	int moveCost = 1;
+	
+	while (list_size(toCheck) != 0)
+	{
+		int x = toCheck[0]->x;
+		int y = toCheck[0]->y;
+
+		// see if blocked and check map again incase it was changed already
+		if (fm->collisionMask[x][y] == false && fm->map[x][y] == -1)
+		{
+			int step = steps[0];
+
+			fm->map[x][y] = step;
+			// set value to CameFrom + 1
+
+			int xx = x - 1;
+			int yy = y;
+
+			if (FloodMap_inBounds(fm, xx, yy) && (fm->map[xx][yy] == -1))
+			{
+				list_push_back(toCheck, Vector2_new(xx, yy));
+				list_push_back(steps, step + 1);
+			}
+				
+
+			xx = x + 1;
+			yy = y;
+			if (FloodMap_inBounds(fm, xx, yy) && (fm->map[xx][yy] == -1))
+			{
+				list_push_back(toCheck, Vector2_new(xx, yy));
+				list_push_back(steps, step + 1);
+			}
+
+			xx = x;
+			yy = y - 1;
+			if (FloodMap_inBounds(fm, xx, yy) && (fm->map[xx][yy] == -1))
+			{
+				list_push_back(toCheck, Vector2_new(xx, yy));
+				list_push_back(steps, step + 1);
+			}
+
+			xx = x;
+			yy = y + 1;
+			if (FloodMap_inBounds(fm, xx, yy) && (fm->map[xx][yy] == -1))
+			{
+				list_push_back(toCheck, Vector2_new(xx, yy));
+				list_push_back(steps, step + 1);
+			}
+		}
+		list_erase(toCheck, 0); // remove first element
+		list_erase(steps, 0);
+	}
+
+	//Dijkstra_fill(fm, fm->source->x, fm->source->y, fm->source->x, fm->source->y);
+	return 0;
+}
+
+void Dijkstra_fill(FloodMap* fm, int x, int y, int fromX, int FromY)
+{
+	
+}
+
 
 //
 
@@ -156,7 +187,7 @@ static const lua_reg floodMapLib[] =
 	{ "addSource", FloodMap_addSource },
 	{ "getTile", FloodMap_getTile },
 	{ "setTileColliding", FloodMap_setTileColliding },
-	{ "fillMap", FloodMap_fillMap },
+	{ "fillMap", Dijkstra_fillMap },
 	{ NULL, NULL }
 };
 

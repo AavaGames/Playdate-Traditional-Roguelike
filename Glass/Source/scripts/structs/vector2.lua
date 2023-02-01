@@ -226,8 +226,6 @@ end
 
 -- Distance Testing (500 iterations on device) --
 -- Euclidean took 258ms
--- Within 5 took 248ms
--- Within 100 took 518ms
 -- Cheby took 24ms
 -- Taxi took 22ms
 
@@ -243,23 +241,12 @@ end
 
 -- Chebyshev distance (fixes diagonal distance of Manhattan distance)
 function Vector2.distance_cheby(vector1, vector2)
-	return math.max(vector2.x - vector1.x, vector2.y - vector1.y)
+	return math.max(math.abs(vector2.x - vector1.x), math.abs(vector2.y - vector1.y))
 end
 
 -- Taxicab distance (cardinal step based distance)
 function Vector2.distance_taxi(vector1, vector2)
-	return math.abs((vector1.x - vector2.x) + (vector1.y - vector2.y))
-end
-
--- Checks whether vector1 is within distance of vector2 and returns bool
-function Vector2.withinDistance(vector1, vector2, distance)
-	local offset = vector2 - vector1
-	local squared = offset.x*offset.x + offset.y*offset.y
-	if squared <= distance*distance then
-		return true
-	else
-		return false
-	end
+	return math.abs(vector2.x - vector1.x) + math.abs(vector2.y - vector1.y)
 end
 
 -- "Static"

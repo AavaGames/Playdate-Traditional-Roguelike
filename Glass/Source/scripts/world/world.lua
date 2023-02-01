@@ -37,7 +37,7 @@ function world:finishInit()
         end
     end)
 
-    self.floodMap:fillMap();
+    self.floodMap:fillMap()
 
     if (self.worldIsSeen == true) then
         self:tileLoop(function (tile)
@@ -162,13 +162,22 @@ function world:updateLighting()
         end
        
         frameProfiler:startTimer("Vision: Visible")
-        self.visionTiles = math.findAllCirclePos(self.player.position.x, self.player.position.y, self.player.equipped.lightSource.dimRange)
+        -- TODO Change to diamond
+        self.visionTiles = math.findAllCirclePos(self.player.position.x, self.player.position.y, self.player.visionRange)
         local max = #self.visionTiles
         for i = 1, max, 1 do
             local x, y = self.visionTiles[i][1], self.visionTiles[i][2]
-            isVis(x, y, 0);
+            local distance = Vector2.distance_taxi(Vector2.new(x, y), self.player.position)
+            isVis(x, y, distance);
         end
         frameProfiler:endTimer("Vision: Visible")
+
+        frameProfiler:startTimer("Vision: Djikstra")
+        -- update source and map
+        self.floodMap:addSource(self.player.position.x, self.player.position.y, 1)
+        self.floodMap:fillMap()
+
+        frameProfiler:endTimer("Vision: Djikstra")
 
         frameProfiler:endTimer("Logic: Vision")
     end
@@ -215,31 +224,35 @@ function world:draw()
                 break
             end
 
+            -- TODO create some sort of dijkstra map debug drawer - can create a debug menu with the cycles of maps
+            
             local char = ""
+            local tile = self.grid[x][y]
+            if (tile ~= nil) then
 
-            local tileNum = self.floodMap:getTile(x, y);
-            if (not inputManager:Held(playdate.kButtonA) and tileNum ~= nil) then
-                char = tileNum;
-            else
-                local tile = self.grid[x][y]
-                if (tile ~= nil and tile.currentVisibilityState ~= tile.visibilityState.unknown) then 
-                    if tile.actor ~= nil and tile.inView and tile.lightLevel > 0 then
-                        char = tile.actor:getChar()
-                    elseif tile.actor ~= nil and tile.actor.renderWhenSeen and tile.seen then
-                        char = tile.actor:getChar()
-                    elseif #tile.effects > 0 then
-                        -- TODO add effects & drawing
-                    elseif tile.item ~= nil and (tile.lightLevel > 0 or tile.item.seen == true) then
-                        char = tile.item.char
-                        tile.item.seen = true 
-                            -- probably move this somewhere else
-                            -- item checks if tile is seen every frame? seems inefficient
-                    elseif tile.decoration ~= nil then
-                        char = tile.decoration.char
+                local tileNum = self.floodMap:getTile(x, y);
+                if (not inputManager:Held(playdate.kButtonA) and tileNum ~= nil) then
+                    char = tileNum;
+                else
+                    if (tile ~= nil and tile.currentVisibilityState ~= tile.visibilityState.unknown) then 
+                        if tile.actor ~= nil and tile.inView and tile.lightLevel > 0 then
+                            char = tile.actor:getChar()
+                        elseif tile.actor ~= nil and tile.actor.renderWhenSeen and tile.seen then
+                            char = tile.actor:getChar()
+                        elseif #tile.effects > 0 then
+                            -- TODO add effects & drawing
+                        elseif tile.item ~= nil and (tile.lightLevel > 0 or tile.item.seen == true) then
+                            char = tile.item.char
+                            tile.item.seen = true 
+                                -- probably move this somewhere else
+                                -- item checks if tile is seen every frame? seems inefficient
+                        elseif tile.decoration ~= nil then
+                            char = tile.decoration.char
+                        end
                     end
                 end
+
             end
-            
 
             screenManager:drawGlyph(char, tile, drawCoord, { 
                 x = xPos,

@@ -2,6 +2,8 @@
 #define FLOODFILL_H
 
 #include "global.h"
+#include "list.h"
+#include "vector2.h"
 
 //NOTE: Always subtract X & Y because lua counts from 1
 
@@ -33,10 +35,9 @@ static int FloodMap_addSource(lua_State* L);
 static int FloodMap_getTile(lua_State* L);
 static int FloodMap_setTileColliding(lua_State* L);
 
-static int FloodMap_fillMap(lua_State* L);
-
-void FloodMap_fill(FloodMap* fm, int x, int y, int weight);
 bool FloodMap_inBounds(FloodMap* fm, int x, int y);
+
+void Dijkstra_fill(FloodMap* fm, int x, int y, int fromX, int FromY);
 
 void Register_floodfill(PlaydateAPI* p);
 
