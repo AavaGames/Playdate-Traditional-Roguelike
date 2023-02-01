@@ -16,7 +16,7 @@ end
 
 function testRoom:create()
     -- abstract function to create grid. JSON or generated
-    self.gridDimensions = { x = 50, y = 50 }
+    self.gridDimensions = { x = 20, y = 20 }
 
     self.grid = table.create(self.gridDimensions.x)
     for x = 1, self.gridDimensions.x, 1 do

@@ -230,7 +230,7 @@ end
 -- Taxi took 22ms
 
 -- Euclidean distance
-function Vector2.distance(vector1, vector2)
+function Vector2.distance_euc(vector1, vector2)
 	return Vector2.getMagnitude((vector1-vector2))
 end
 

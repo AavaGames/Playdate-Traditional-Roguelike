@@ -9,7 +9,7 @@ function player:init(theWorld, startPosition)
     self.moveDir = { x = 0, y = 0 }
     self.state = INACTIVE
 
-    self.visionRange = 6
+    self.visionRange = 4
 
     self.equipped = {
         lightSource = nil
