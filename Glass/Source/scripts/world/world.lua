@@ -20,7 +20,7 @@ function world:init(theWorldManager, thePlayer)
 
     self.visionTiles = nil
 
-    self.floodMap = nil
+    self.toPlayerPathMap = nil
 
     globalWorld = self
 
@@ -28,16 +28,16 @@ function world:init(theWorldManager, thePlayer)
 end
 
 function world:finishInit()
-    self.floodMap = floodMap.new(self.gridDimensions.x, self.gridDimensions.y)
-	self.floodMap:addSource(self.playerSpawnPosition.x, self.playerSpawnPosition.y, 1)
+    self.toPlayerPathMap = floodMap.new(self.gridDimensions.x, self.gridDimensions.y)
+	self.toPlayerPathMap:addSource(self.playerSpawnPosition.x, self.playerSpawnPosition.y, 1)
 
     self:tileLoop(function (tile)
         if (tile.blocksLight) then
-            self.floodMap:setTileColliding(tile.position.x, tile.position.y)
+            self.toPlayerPathMap:setTileColliding(tile.position.x, tile.position.y)
         end
     end)
 
-    self.floodMap:fillMap()
+    self.toPlayerPathMap:fillMap()
 
     if (self.worldIsSeen == true) then
         self:tileLoop(function (tile)
@@ -101,16 +101,13 @@ function world:updateLighting()
     if (self.player.state ~= INACTIVE) then
      
         -- find light sources, if on screen + range then calc
-
         frameProfiler:startTimer("Logic: Vision")
 
         frameProfiler:startTimer("Vision: Reset")
         -- reset tiles
         -- optimize further by just resetting the tiles not seen anymore
         local resetTileLight = function (x, y)
-            if (math.isClamped(x, 1, self.gridDimensions.x) or math.isClamped(y, 1, self.gridDimensions.y)) then
-                return
-            else
+            if (self:inBounds(x, y)) then
                 local tile = self.grid[x][y]
                 if (tile ~= nil) then
                     tile.inView = false
@@ -143,25 +140,24 @@ function world:updateLighting()
         frameProfiler:startTimer("Vision: Visible")
 
         local isVisible = function (x, y, distance) -- set visible
-            if (math.isClamped(x, 1, self.gridDimensions.x) or math.isClamped(y, 1, self.gridDimensions.y)) then
-                return
-            end
-            local tile = self.grid[x][y]
-            if (tile ~= nil) then
-                tile.inView = true
-                if (distance <= self.player.equipped.lightSource.litRange) then
-                    tile.currentVisibilityState = tile.visibilityState.lit
-                    tile:addLightLevel(2, self.player.equipped.lightSource)
-                    tile.seen = true
-                elseif (distance <= self.player.equipped.lightSource.dimRange) then
-                    tile.currentVisibilityState = tile.visibilityState.dim
-                    tile:addLightLevel(1, self.player.equipped.lightSource)
-                    tile.seen = true
-                elseif (tile.lightLevel > 0) then
-                    -- in view but lightSource
-                    tile.currentVisibilityState = tile.visibilityState.lit
-                    tile.seen = true
-                else
+            if (self:inBounds(x, y)) then
+                local tile = self.grid[x][y]
+                if (tile ~= nil) then
+                    tile.inView = true
+                    if (distance <= self.player.equipped.lightSource.litRange) then
+                        tile.currentVisibilityState = tile.visibilityState.lit
+                        tile:addLightLevel(2, self.player.equipped.lightSource)
+                        tile.seen = true
+                    elseif (distance <= self.player.equipped.lightSource.dimRange) then
+                        tile.currentVisibilityState = tile.visibilityState.dim
+                        tile:addLightLevel(1, self.player.equipped.lightSource)
+                        tile.seen = true
+                    elseif (tile.lightLevel > 0) then
+                        -- in view but lightSource
+                        tile.currentVisibilityState = tile.visibilityState.lit
+                        tile.seen = true
+                    else
+                    end
                 end
             end
         end
@@ -178,14 +174,17 @@ function world:updateLighting()
         frameProfiler:endTimer("Vision: Apply Vis")
 
         frameProfiler:startTimer("Vision: Djikstra")
-        -- update source and map
-        self.floodMap:addSource(self.player.position.x, self.player.position.y, 1)
-        self.floodMap:fillMap()
+        -- update source position and fill out map
+        -- TODO update djikstra only when someone asks for it
+        self.toPlayerPathMap:addSource(self.player.position.x, self.player.position.y, 1)
+        self.toPlayerPathMap:fillMap()
         frameProfiler:endTimer("Vision: Djikstra")
 
         frameProfiler:endTimer("Logic: Vision")
     end
 end
+
+
 
 function world:draw()
     local screenManager = screenManager
@@ -234,7 +233,7 @@ function world:draw()
             local tile = self.grid[x][y]
             if (tile ~= nil) then
 
-                local tileNum = self.floodMap:getTile(x, y);
+                local tileNum = self.toPlayerPathMap:getTile(x, y);
                 if (inputManager:Held(playdate.kButtonB) and tileNum ~= nil) then
                     char = tileNum;
                 else
@@ -287,24 +286,29 @@ function world:tileLoop(func)
     end
 end
 
+function world:inBounds(x, y)
+    return x >= 1 and x <= self.gridDimensions.x and y >= 1 and y <= self.gridDimensions.y
+end
+
 -- Check tile in the world for collision. Returns { bool: collision?, [empty tile, actor collision or nil] }
 function world:collisionCheck(position)
-    if (math.isClamped(position.x, 1, self.gridDimensions.x) or math.isClamped(position.y, 1, self.gridDimensions.y)) then
-        return { true, nil } -- oob
-    end
-    local tile = self.grid[position.x][position.y]
-    if (tile ~= nil) then
-        if (tile.actor ~= nil) then
-            if (tile.actor.collision == true) then
-                return { true, tile.actor } -- collision with actor
+    if (self:inBounds(position.x, position.y)) then
+        local tile = self.grid[position.x][position.y]
+        if (tile ~= nil) then
+            if (tile.actor ~= nil) then
+                if (tile.actor.collision == true) then
+                    return { true, tile.actor } -- collision with actor
+                else
+                    return { false, tile }-- no collision with actor
+                end
             else
-                return { false, tile }-- no collision with actor
+                return { false, tile } -- no actor to collide with
             end
         else
-            return { false, tile } -- no actor to collide with
+            return { true, nil } -- nil tile
         end
     else
-        return { true, nil } -- nil tile
+        return { true, nil } -- oob
     end
 end
 
