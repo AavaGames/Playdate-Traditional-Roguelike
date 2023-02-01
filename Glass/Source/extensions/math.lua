@@ -76,27 +76,24 @@ function math.findAllCirclePos(xCenter, yCenter, radius)
     return positions
 end
 
-function math.findAllCirclePos_QuadTables(xCenter, yCenter, radius)
-    -- TODO test variables
-    local positions = table.create(4)
-    local nw, ne, se, sw = {}, {}, {}, {}
-    table.insert(positions, nw)
-    table.insert(positions, ne)
-    table.insert(positions, se)
-    table.insert(positions, sw)
+function math.findAllDiamondPos(xCenter, yCenter, radius)
+    local positions = {} --table.create(radius*radius)
+    local xx = radius
     for x = xCenter - radius, xCenter, 1 do
+        local yy = radius
         for y = yCenter - radius, yCenter, 1 do
-            if ((x - xCenter)*(x - xCenter) + (y - yCenter)*(y - yCenter) <= radius*radius) then
+            local dist = xx + yy
+            if (dist <= radius) then
                 local xSym = xCenter - (x - xCenter);
                 local ySym = yCenter - (y - yCenter);
-                -- (x, y), (x, ySym), (xSym , y), (xSym, ySym) are in the circle
-
-                table.insert(nw, {x, y})
-                table.insert(ne, {x, ySym})
-                table.insert(se, {xSym, y})
-                table.insert(sw, {xSym, ySym})
+                table.insert(positions, {x, y, dist})
+                table.insert(positions, {x, ySym, dist})
+                table.insert(positions, {xSym, y, dist})
+                table.insert(positions, {xSym, ySym, dist})
             end
+            yy -= 1
         end
+        xx -= 1
     end
     return positions
 end

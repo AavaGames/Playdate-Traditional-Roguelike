@@ -18,7 +18,7 @@ function world:init(theWorldManager, thePlayer)
     self.actors = {}
     self.effects = {}
 
-    self.visionTiles = {}
+    self.visionTiles = nil
 
     self.floodMap = nil
 
@@ -107,32 +107,35 @@ function world:updateLighting()
         frameProfiler:startTimer("Vision: Reset")
         -- reset tiles
         -- optimize further by just resetting the tiles not seen anymore
+        local resetTileLight = function (x, y)
+            if (math.isClamped(x, 1, self.gridDimensions.x) or math.isClamped(y, 1, self.gridDimensions.y)) then
+                return
+            else
+                local tile = self.grid[x][y]
+                if (tile ~= nil) then
+                    tile.inView = false
+                    if (tile.seen == true) then
+                        tile.currentVisibilityState = tile.visibilityState.seen
+                    else
+                        tile.currentVisibilityState = tile.visibilityState.unknown
+                    end
+                    if (tile.glow == true) then
+                        tile:resetLightLevel(2)
+                    else
+                        tile:resetLightLevel()
+                    end
+                    if (self.worldIsLit) then
+                        tile:addLightLevel(2, "World")
+                    end
+                end
+            end
+        end
+
         if (self.visionTiles ~= nil) then
             local max = #self.visionTiles
             for i = 1, max, 1 do
                 local x, y = self.visionTiles[i][1], self.visionTiles[i][2]
-                if (math.isClamped(x, 1, self.gridDimensions.x) or math.isClamped(y, 1, self.gridDimensions.y)) then
-                    
-                else
-                    local tile = self.grid[x][y]
-                    if (tile ~= nil) then
-                        tile.inView = false
-                        if (tile.seen == true) then
-                            tile.currentVisibilityState = tile.visibilityState.seen
-                        else
-                            tile.currentVisibilityState = tile.visibilityState.unknown
-                        end
-                        if (tile.glow == true) then
-                            tile:resetLightLevel(2)
-                        else
-                            tile:resetLightLevel()
-                        end
-                        if (self.worldIsLit) then
-                            tile:addLightLevel(2, "World")
-                        end
-                    end
-                    
-                end
+                resetTileLight(x, y)
             end
         end
         frameProfiler:endTimer("Vision: Reset")
@@ -163,16 +166,16 @@ function world:updateLighting()
             end
         end
 
-        -- TODO Change to diamond
-        self.visionTiles = math.findAllCirclePos(self.player.position.x, self.player.position.y, self.player.equipped.lightSource.dimRange)--self.player.visionRange)
+        self.visionTiles = math.findAllDiamondPos(self.player.position.x, self.player.position.y, self.player.equipped.lightSource.dimRange)--self.player.visionRange)
+        frameProfiler:endTimer("Vision: Visible")
+
+        frameProfiler:startTimer("Vision: Apply Vis")
         local max = #self.visionTiles
         for i = 1, max, 1 do
             local x, y = self.visionTiles[i][1], self.visionTiles[i][2]
-            local distance = Vector2.distance_taxi(Vector2.new(x, y), self.player.position)
-            isVisible(x, y, distance);
+            isVisible(x, y, self.visionTiles[i][3]);
         end
-        
-        frameProfiler:endTimer("Vision: Visible")
+        frameProfiler:endTimer("Vision: Apply Vis")
 
         frameProfiler:startTimer("Vision: Djikstra")
         -- update source and map
@@ -232,7 +235,7 @@ function world:draw()
             if (tile ~= nil) then
 
                 local tileNum = self.floodMap:getTile(x, y);
-                if (not inputManager:Held(playdate.kButtonA) and tileNum ~= nil) then
+                if (inputManager:Held(playdate.kButtonB) and tileNum ~= nil) then
                     char = tileNum;
                 else
                     if (tile ~= nil and tile.currentVisibilityState ~= tile.visibilityState.unknown) then 
