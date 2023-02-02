@@ -27,7 +27,7 @@ function testRoom:create()
 
             local tile = self.grid[x][y]
             if (tile ~= nil) then
-                tile.decoration = ground()
+                -- change feature?
             end
         end
     end

@@ -1,16 +1,15 @@
-class("wall").extends(actor)
+class("wall").extends(feature)
 
 function wall:init(theWorld, startPosition)
     wall.super.init(self, theWorld, startPosition)
     self.char = "#"
     self.name = "Crystal"
     self.description = "A cold perfectly transparent crystal."
+    
+    self.collision = true
     self.renderWhenSeen = true
-    self.blockVision = true
-end
 
-function wall:update()
-    wall.super.update(self)
+    self.moveCost = 1
 end
 
 function wall:interact(actor)

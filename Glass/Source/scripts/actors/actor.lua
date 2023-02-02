@@ -1,5 +1,6 @@
 class("actor").extends(entity)
 
+-- TODO move to enum
 ACTIVE = 0
 INACTIVE = 1
 
@@ -12,11 +13,9 @@ function actor:init(theWorld, startPosition)
     self.state = INACTIVE
 
     self.world = theWorld
-    self.tile = nil
+    self.tile = nil -- to let it know its been exited
 
-    self.collision = true
     self.renderWhenSeen = false
-    self.blockVision = false
 
     if (theWorld ~= nil and startPosition ~= nil) then
         self.world:spawnAt(startPosition, self) -- TODO: can spawn on top of another actor overwriting their pos (SpawnAt)
@@ -24,7 +23,7 @@ function actor:init(theWorld, startPosition)
     end
 end
 
-function actor:update()
+function actor:tick()
 
 end
 
@@ -45,7 +44,7 @@ function actor:moveTo(position)
             self:updateTile(collision[2])
             return true
         elseif collision[2] ~= nil then
-            collision[2]:interact(self) -- interact with actor
+            collision[2]:interact(self) -- interact with actor or feature
         end
     end
     return false

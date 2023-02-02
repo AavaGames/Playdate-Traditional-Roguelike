@@ -4,7 +4,7 @@ class("tile").extends()
 
 function tile:init(x, y)
     self.position = Vector2.new(x, y)
-    self.decoration = ground()
+    self.feature = ground(self, Vector2.new(x,y))
     self.actor = nil
     self.item = nil
     self.effects = {}
@@ -16,11 +16,8 @@ function tile:init(x, y)
 
     self.glow = false
 
-    self.inView = false
     self.lightLevel = 0
     self.lightSources = {}
-
-    self.blocksLight = false
 end
 
 function tile:update()

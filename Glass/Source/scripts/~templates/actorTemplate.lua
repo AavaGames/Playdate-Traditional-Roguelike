@@ -7,6 +7,6 @@ function a:init(theWorld, startPosition)
     self.description = "A cold wall."
 end
 
-function a:update()
-    a.super.update(self)
+function a:tick()
+    a.super.tick(self)
 end

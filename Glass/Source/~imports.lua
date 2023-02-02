@@ -1,4 +1,4 @@
--- All Imports --
+-- All Imports -- LOAD ORDER MATTERS FOR CLASSES
 
 import "CoreLibs/object"
 import "CoreLibs/graphics"
@@ -22,28 +22,33 @@ import "screenManager"
 import "frameProfiler"
 import "InputManager"
 
-import "/scripts/world/world"
 import "worldManager"
+import "/scripts/world/world"
 import "/scripts/world/tile"
 
 import "logManager"
 import "border"
 
+import "/scripts/entities/entity"
+import "/scripts/actors/actor"
+import "/scripts/features/feature"
+
+-- Subclasses
+
 import "/scripts/worlds/town"
 import "/scripts/worlds/dungeon"
 import "/scripts/worlds/testRoom"
 
-import "/scripts/actors/actor"
-import "player"
-import "camera"
-import "/scripts/actors/wall"
 import "/scripts/actors/animal"
 
-import "/scripts/entities/entity"
-import "/scripts/entities/grass"
-import "/scripts/entities/ground"
+import "/scripts/features/grass"
+import "/scripts/features/ground"
+import "/scripts/features/wall"
 
 import "/scripts/items/item"
 import "/scripts/items/lightSource"
 
--- to order
+import "player"
+import "camera"
+
+-- unordered

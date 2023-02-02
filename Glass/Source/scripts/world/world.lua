@@ -39,19 +39,24 @@ function world:finishInit()
     self.player:spawn(self, self.playerSpawnPosition)
     self.camera = camera(self.player)
 
-    self:tileLoop(function (tile)tile.inView = false
+    -- setup vision / light
+    self:tileLoop(function (tile)
+        if (tile.glow == true) then
+            tile:resetLightLevel(2)
+            tile.seen = true
+        else
+            tile:resetLightLevel()
+        end
+
+        if (self.worldIsLit) then
+            tile:addLightLevel(2, "World")
+            tile.seen = true
+        end
+
         if (tile.seen == true) then
             tile.currentVisibilityState = tile.visibilityState.seen
         else
             tile.currentVisibilityState = tile.visibilityState.unknown
-        end
-        if (tile.glow == true) then
-            tile:resetLightLevel(2)
-        else
-            tile:resetLightLevel()
-        end
-        if (self.worldIsLit) then
-            tile:addLightLevel(2, "World")
         end
     end)
 
@@ -99,7 +104,7 @@ function world:round()
     
     local actorMax = #self.actors
     for i = 1, actorMax, 1 do
-        self.actors[i]:update(); -- rename to monsters? cause player aint here
+        self.actors[i]:tick(); -- rename to monsters? cause player aint here
     end
     self.camera:update() -- must update last to follow
 
@@ -128,19 +133,20 @@ function world:updateView()
             if (self:inBounds(x, y)) then
                 local tile = self.grid[x][y]
                 if (tile ~= nil) then
-                    tile.inView = false
-                    if (tile.seen == true) then
-                        tile.currentVisibilityState = tile.visibilityState.seen
-                    else
-                        tile.currentVisibilityState = tile.visibilityState.unknown
-                    end
                     if (tile.glow == true) then
                         tile:resetLightLevel(2)
                     else
                         tile:resetLightLevel()
                     end
+
                     if (self.worldIsLit) then
                         tile:addLightLevel(2, "World")
+                    end
+
+                    if (tile.seen == true) then
+                        tile.currentVisibilityState = tile.visibilityState.seen
+                    else
+                        tile.currentVisibilityState = tile.visibilityState.unknown
                     end
                 end
             end
@@ -162,7 +168,6 @@ function world:updateView()
         if (self:inBounds(x, y)) then
             local tile = self.grid[x][y]
             if (tile ~= nil) then
-                tile.inView = true
                 if (distance <= self.player.equipped.lightSource.litRange) then
                     tile.currentVisibilityState = tile.visibilityState.lit
                     tile:addLightLevel(2, self.player.equipped.lightSource)
@@ -172,7 +177,7 @@ function world:updateView()
                     tile:addLightLevel(1, self.player.equipped.lightSource)
                     tile.seen = true
                 elseif (tile.lightLevel > 0) then
-                    -- in view but lightSource
+                    -- in view but out of lightSource
                     tile.currentVisibilityState = tile.visibilityState.lit
                     tile.seen = true
                 else
@@ -248,30 +253,19 @@ function world:draw()
             
             local char = ""
             local tile = self.grid[x][y]
-            if (tile ~= nil) then
-
-                local tileNum = self.toPlayerPathMap:getTile(x, y);
-                if (inputManager:Held(playdate.kButtonB) and tileNum ~= nil) then
-                    char = tileNum;
-                else
-                    if (tile ~= nil and tile.currentVisibilityState ~= tile.visibilityState.unknown) then 
-                        if tile.actor ~= nil and tile.inView and tile.lightLevel > 0 then
-                            char = tile.actor:getChar()
-                        elseif tile.actor ~= nil and tile.actor.renderWhenSeen and tile.seen then
-                            char = tile.actor:getChar()
-                        elseif #tile.effects > 0 then
-                            -- TODO add effects & drawing
-                        elseif tile.item ~= nil and (tile.lightLevel > 0 or tile.item.seen == true) then
-                            char = tile.item.char
-                            tile.item.seen = true 
-                                -- probably move this somewhere else
-                                -- item checks if tile is seen every frame? seems inefficient
-                        elseif tile.decoration ~= nil then
-                            char = tile.decoration.char
-                        end
-                    end
+            if (tile ~= nil and tile.currentVisibilityState ~= tile.visibilityState.unknown) then 
+                if tile.actor ~= nil and tile.lightLevel > 0 then
+                    char = tile.actor:getChar()
+                elseif #tile.effects > 0 then
+                    -- TODO add effects & drawing
+                elseif tile.item ~= nil and (tile.lightLevel > 0 or tile.item.seen == true) then
+                    char = tile.item.char
+                    tile.item.seen = true 
+                        -- probably move this somewhere else
+                        -- item checks if tile is seen every frame? seems inefficient
+                elseif tile.feature ~= nil then -- features: walls, ground
+                    char = tile.feature:getChar()
                 end
-
             end
 
             screenManager:drawGlyph(char, tile, drawCoord, { 
@@ -312,14 +306,12 @@ function world:collisionCheck(position)
     if (self:inBounds(position.x, position.y)) then
         local tile = self.grid[position.x][position.y]
         if (tile ~= nil) then
-            if (tile.actor ~= nil) then
-                if (tile.actor.collision == true) then
-                    return { true, tile.actor } -- collision with actor
-                else
-                    return { false, tile }-- no collision with actor
-                end
+            if (tile.actor ~= nil and tile.actor == true) then
+                return { true, tile.actor } -- collision with actor
+            elseif (tile.feature ~= nil and tile.feature.collision == true) then
+                return { true, tile.feature } -- collision with feature
             else
-                return { false, tile } -- no actor to collide with
+                return { false, tile } -- nothing to collide with
             end
         else
             return { true, nil } -- nil tile

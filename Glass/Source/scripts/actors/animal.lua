@@ -6,8 +6,8 @@ function animal:init(theWorld, startPosition)
     self.description = "A cute cuddly animal."
 end
 
-function animal:update()
-    animal.super.update(self)
+function animal:tick()
+    animal.super.tick(self)
     self:move(Vector2.new(math.random(-1,1), math.random(-1,1)))
 end
 
