@@ -1,12 +1,12 @@
 local gfx <const> = playdate.graphics
 
-class("Town").extends(World)
+class("Town").extends(Level)
 
-function Town:init(theWorldManager, thePlayer)
-    Town.super.init(self, theWorldManager, thePlayer)
+function Town:init(theLevelManager, thePlayer)
+    Town.super.init(self, theLevelManager, thePlayer)
     self.name = "Base Camp"
-    self.worldIsLit = true
-    self.worldIsSeen = true
+    self.levelIsLit = true
+    self.levelIsSeen = true
     self.playerSpawnPosition = { x = 16, y = 53 }
 
     Animal(self, Vector2.new(6, 43))

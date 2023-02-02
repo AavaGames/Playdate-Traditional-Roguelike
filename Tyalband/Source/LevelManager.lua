@@ -1,17 +1,17 @@
 local gfx <const> = playdate.graphics
 
-class("WorldManager").extends()
+class("LevelManager").extends()
 
-function WorldManager:init(player)
-    screenManager.worldManager = self
+function LevelManager:init(player)
+    screenManager.levelManager = self
     self.player = player
-    self.currentWorld = nil
+    self.currentLevel = nil
 
     self.defaultViewport = {
-        x = screenManager.currentWorldFont.size,
-        y = screenManager.currentWorldFont.size,
-        width = screenManager.screenDimensions.x - screenManager.currentWorldFont.size * 2,
-        height = screenManager.screenDimensions.y - screenManager.currentWorldFont.size * 2
+        x = screenManager.currentLevelFont.size,
+        y = screenManager.currentLevelFont.size,
+        width = screenManager.screenDimensions.x - screenManager.currentLevelFont.size * 2,
+        height = screenManager.screenDimensions.y - screenManager.currentLevelFont.size * 2
     }
     -- self.defaultViewport = {
     --         x = 0,
@@ -21,12 +21,12 @@ function WorldManager:init(player)
     --     }
     self.viewport = self.defaultViewport
 
-    self:loadWorld(Dungeon)
+    self:loadLevel(Dungeon)
 end
 
-function WorldManager:update()
+function LevelManager:update()
     self.player:update()
-    self.currentWorld:update()
+    self.currentLevel:update()
 
     if (inputManager:HeldLong(playdate.kButtonB)) then
         local view = {
@@ -40,21 +40,21 @@ function WorldManager:update()
 
 end
 
-function WorldManager:lateUpdate()
-    self.currentWorld:lateUpdate()
+function LevelManager:lateUpdate()
+    self.currentLevel:lateUpdate()
 end
 
-function WorldManager:draw()
-    self.currentWorld:draw()
+function LevelManager:draw()
+    self.currentLevel:draw()
 end
 
-function WorldManager:loadWorld(world)
+function LevelManager:loadLevel(level)
     self.player:despawn()
     --insert transition
-    self.currentWorld = world(self, self.player)
+    self.currentLevel = level(self, self.player)
 end
 
-function WorldManager:setViewport(viewport)
+function LevelManager:setViewport(viewport)
     -- IDEA: Coroutine to have smooth transition
     self.viewport = viewport or self.defaultViewport
     screenManager:redrawScreen()

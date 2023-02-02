@@ -4,7 +4,7 @@ class("Actor").extends(Entity)
 ACTIVE = 0
 INACTIVE = 1
 
-function Actor:init(theWorld, startPosition)
+function Actor:init(theLevel, startPosition)
     self.char = "a"
     self.name = "Actor"
     self.description = "An actor."
@@ -12,13 +12,13 @@ function Actor:init(theWorld, startPosition)
     self.position = Vector2.zero()
     self.state = INACTIVE
 
-    self.world = theWorld
+    self.level = theLevel
     self.tile = nil -- to let it know its been exited
 
     self.renderWhenSeen = false
 
-    if (theWorld ~= nil and startPosition ~= nil) then
-        self.world:spawnAt(startPosition, self) -- TODO: can spawn on top of another actor overwriting their pos (SpawnAt)
+    if (theLevel ~= nil and startPosition ~= nil) then
+        self.level:spawnAt(startPosition, self) -- TODO: can spawn on top of another actor overwriting their pos (SpawnAt)
         self.state = ACTIVE
     end
 end
@@ -39,7 +39,7 @@ end
 function Actor:moveTo(position)
     -- check if position is a vector ?
     if position.x ~= self.position.x or position.y ~= self.position.y then
-        local collision = self.world:collisionCheck(position)
+        local collision = self.level:collisionCheck(position)
         if collision[1] == false then
             self:updateTile(collision[2])
             return true

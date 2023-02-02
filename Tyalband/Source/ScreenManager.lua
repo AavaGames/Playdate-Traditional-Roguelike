@@ -12,9 +12,9 @@ function ScreenManager:init()
         y = 240
     }
 
-    self.worldFont_8px = { font = gfx.font.new('assets/fonts/IBM/IBM_EGA_8x8'), size = 8 }
-    self.worldFont_10px = { font = gfx.font.new('assets/fonts/Rainbow100_re_40'), size = 10 }
-    self.worldFont_16px = { font = gfx.font.new('assets/fonts/IBM/IBM_EGA_8x8_2x'), size = 16 }
+    self.levelFont_8px = { font = gfx.font.new('assets/fonts/IBM/IBM_EGA_8x8'), size = 8 }
+    self.levelFont_10px = { font = gfx.font.new('assets/fonts/Rainbow100_re_40'), size = 10 }
+    self.levelFont_16px = { font = gfx.font.new('assets/fonts/IBM/IBM_EGA_8x8_2x'), size = 16 }
 
     self.logFont_6px = { font = playdate.graphics.font.newFamily({
         [playdate.graphics.font.kVariantNormal] = "assets/fonts/DOS/dos-jpn12-6x12",
@@ -29,14 +29,14 @@ function ScreenManager:init()
         [playdate.graphics.font.kVariantBold] = "assets/fonts/Log/Portfolio_6x8_2x", -- TODO make bold
     }), size = 12, lineCount = 4 }
 
-    self.currentWorldFont, self.currentLogFont = nil, nil
+    self.currentLevelFont, self.currentLogFont = nil, nil
 
     -- Maxmimum characters that can fit on the screen
     self.gridScreenMax = { x = 0, y = 0 }
 
     -- lit, dim but seen, unseen but known
-    self.worldGlyphs = {} -- alloc an estimate?
-    self.worldGlyphs_faded = {}
+    self.levelGlyphs = {} -- alloc an estimate?
+    self.levelGlyphs_faded = {}
     self.drawnGlyphs = {}
 
     -- change viewports states this way? can use something similar for font sizes
@@ -58,20 +58,20 @@ function ScreenManager:init()
 
     self.bgColor = gfx.kColorBlack
 
-    self.worldManager, self.logManager = nil, nil
+    self.levelManager, self.logManager = nil, nil
     self._redrawScreen = true
 
-    self._redrawWorld = false
+    self._redrawLevel = false
     self._redrawLog = false
 
     self.screenBorder = Border(2, 2, 400-4, 240-4, 4, gfx.kColorBlack)
 
-    self:setWorldFont("16px")
+    self:setLevelFont("16px")
     self:setLogFont("8px")
     self:resetDrawnGlyphs()
 end
 
-function ScreenManager:setWorldColor(color)
+function ScreenManager:setLevelColor(color)
     self.bgColor = color
     gfx.setBackgroundColor(self.bgColor)
     self._redrawScreen = true
@@ -88,27 +88,27 @@ function ScreenManager:draw()
 
         gfx.clear()
         --gfx.sprite.update()
-        self.worldManager:draw()
+        self.levelManager:draw()
         self.logManager:draw()
         self.screenBorder:draw()
         
         self._redrawScreen = false
 
-        self._redrawWorld = false
+        self._redrawLevel = false
         self._redrawLog = false
         drew = true
 
         frameProfiler:endTimer("Draw: Screen")
     end
 
-    if (self._redrawWorld == true) then
-        frameProfiler:startTimer("Draw: World")
+    if (self._redrawLevel == true) then
+        frameProfiler:startTimer("Draw: Level")
 
-        self.worldManager:draw()
-        self._redrawWorld = false
+        self.levelManager:draw()
+        self._redrawLevel = false
         drew = true
 
-        frameProfiler:endTimer("Draw: World")
+        frameProfiler:endTimer("Draw: Level")
     end
 
     if (self._redrawLog == true) then
@@ -133,24 +133,24 @@ function ScreenManager:redrawScreen()
     self._redrawScreen = true
 end
 
-function ScreenManager:redrawWorld()
-    self._redrawWorld = true
+function ScreenManager:redrawLevel()
+    self._redrawLevel = true
 end
 
 function ScreenManager:redrawLog()
     self._redrawLog = true
 end
 
-function ScreenManager:setWorldFont(value)
+function ScreenManager:setLevelFont(value)
     if value == "8px" then
-        self.currentWorldFont = self.worldFont_8px
+        self.currentLevelFont = self.levelFont_8px
     elseif value == "10px" then
-        self.currentWorldFont = self.worldFont_10px
+        self.currentLevelFont = self.levelFont_10px
     elseif value == "16px" then
-        self.currentWorldFont = self.worldFont_16px
+        self.currentLevelFont = self.levelFont_16px
     end
-    self.gridScreenMax.x = math.floor(self.screenDimensions.x / self.currentWorldFont.size)
-    self.gridScreenMax.y = math.floor(self.screenDimensions.y / self.currentWorldFont.size)
+    self.gridScreenMax.x = math.floor(self.screenDimensions.x / self.currentLevelFont.size)
+    self.gridScreenMax.y = math.floor(self.screenDimensions.y / self.currentLevelFont.size)
     self:resetFontGlyphs()
     self:redrawScreen()
     collectgarbage()
@@ -171,15 +171,15 @@ function ScreenManager:setLogFont(value)
 end
 
 function ScreenManager:getGlyph(char, lightLevel)
-    if (self.worldGlyphs[char] == nil) then
-        self.worldGlyphs[char] = self.currentWorldFont.font:getGlyph(char)
-        self.worldGlyphs_faded[char] = self.worldGlyphs[char]:fadedImage(0.5, playdate.graphics.image.kDitherTypeBayer2x2)
+    if (self.levelGlyphs[char] == nil) then
+        self.levelGlyphs[char] = self.currentLevelFont.font:getGlyph(char)
+        self.levelGlyphs_faded[char] = self.levelGlyphs[char]:fadedImage(0.5, playdate.graphics.image.kDitherTypeBayer2x2)
     end
     
     if lightLevel >= 2 then -- lit
-        return self.worldGlyphs[char]
+        return self.levelGlyphs[char]
     else -- dim or seen
-        return self.worldGlyphs_faded[char]
+        return self.levelGlyphs_faded[char]
     end
 end
 
@@ -200,7 +200,7 @@ function ScreenManager:drawGlyph(char, tile, drawCoord, screenCoord)
             -- if (drawnGlyph.lit == true and tileLit == false) then
             --     -- tile is now NOT lit, needs to be filled in, no need to erase glyph
             --     gfx.setColor(self.bgColor)
-            --     gfx.fillRect(drawCoord.x, drawCoord.y, self.currentWorldFont.size, self.currentWorldFont.size)
+            --     gfx.fillRect(drawCoord.x, drawCoord.y, self.currentLevelFont.size, self.currentLevelFont.size)
             -- elseif (drawnGlyph.glyph ~= nil) then
             --     -- lit state the same as previous
             --     print("erasing " .. drawnGlyph.char)
@@ -210,7 +210,7 @@ function ScreenManager:drawGlyph(char, tile, drawCoord, screenCoord)
             -- end
 
             gfx.setColor(self.bgColor)
-            gfx.fillRect(drawCoord.x, drawCoord.y, self.currentWorldFont.size, self.currentWorldFont.size)
+            gfx.fillRect(drawCoord.x, drawCoord.y, self.currentLevelFont.size, self.currentLevelFont.size)
             
             -- draw new and update table
             self.drawnGlyphs[screenCoord.x][screenCoord.y] = { char = char, lightLevel = tileLightLevel, lit = tileLit, glyph = nil}
@@ -219,7 +219,7 @@ function ScreenManager:drawGlyph(char, tile, drawCoord, screenCoord)
                 self.drawnGlyphs[screenCoord.x][screenCoord.y].glyph = glyph
                 if (tile.lightLevel > 0) then -- draw light around rect
                     gfx.setColor(gfx.kColorWhite)
-                    gfx.fillRect(drawCoord.x, drawCoord.y, self.currentWorldFont.size, self.currentWorldFont.size)
+                    gfx.fillRect(drawCoord.x, drawCoord.y, self.currentLevelFont.size, self.currentLevelFont.size)
                 end
                 glyph:draw(drawCoord.x, drawCoord.y)
             end
@@ -228,8 +228,8 @@ function ScreenManager:drawGlyph(char, tile, drawCoord, screenCoord)
 end
 
 function ScreenManager:resetFontGlyphs()
-    self.worldGlyphs = {}
-    self.worldGlyphs_faded = {}
+    self.levelGlyphs = {}
+    self.levelGlyphs_faded = {}
 end
 
 function ScreenManager:resetDrawnGlyphs()

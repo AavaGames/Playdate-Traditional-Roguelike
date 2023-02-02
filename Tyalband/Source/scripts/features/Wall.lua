@@ -1,7 +1,7 @@
 class("Wall").extends(Feature)
 
-function Wall:init(theWorld, startPosition)
-    Wall.super.init(self, theWorld, startPosition)
+function Wall:init(theLevel, startPosition)
+    Wall.super.init(self, theLevel, startPosition)
     self.char = "#"
     self.name = "Crystal"
     self.description = "A cold perfectly transparent crystal."

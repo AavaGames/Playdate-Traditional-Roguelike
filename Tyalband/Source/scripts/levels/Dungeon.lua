@@ -1,9 +1,9 @@
 local gfx <const> = playdate.graphics
 
-class("Dungeon").extends(World)
+class("Dungeon").extends(Level)
 
-function Dungeon:init(theWorldManager, thePlayer)
-    Dungeon.super.init(self, theWorldManager, thePlayer)
+function Dungeon:init(theLevelManager, thePlayer)
+    Dungeon.super.init(self, theLevelManager, thePlayer)
     self.name = "Floor 1 (50 feet)"
 
     self.playerSpawnPosition = { x = 18, y = 19 }

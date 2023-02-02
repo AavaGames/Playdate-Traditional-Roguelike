@@ -1,14 +1,14 @@
 local gfx <const> = playdate.graphics
 
-class("TestRoom").extends(World)
+class("TestRoom").extends(Level)
 
-function TestRoom:init(theWorldManager, thePlayer)
-    TestRoom.super.init(self, theWorldManager, thePlayer) -- calls create
+function TestRoom:init(theLevelManager, thePlayer)
+    TestRoom.super.init(self, theLevelManager, thePlayer) -- calls create
 
     -- do stuff
     self.name = "Testing Room"
-    self.worldIsLit = false
-    self.worldIsSeen = false
+    self.levelIsLit = false
+    self.levelIsSeen = false
     self.playerSpawnPosition = { x = self.gridDimensions.x // 2, y = self.gridDimensions.y // 2 }
 
     TestRoom.super.finishInit(self)

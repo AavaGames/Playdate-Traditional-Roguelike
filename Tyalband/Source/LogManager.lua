@@ -2,9 +2,9 @@ class("LogManager").extends()
 
 local gfx <const> = playdate.graphics
 
-function LogManager:init(theWorldManager)
+function LogManager:init(theLevelManager)
     screenManager.logManager = self
-    self.worldManager = theWorldManager
+    self.levelManager = theLevelManager
 
     self.cleanLog = {} -- holds full lines of the log
 	self.log = {} -- holds lines trimmed to fit the log view
@@ -21,9 +21,9 @@ function LogManager:init(theWorldManager)
     self.logCrankTicks = 12
 
     self.logVisibleViewport = {
-        x = screenManager.currentWorldFont.size,
-        y = screenManager.currentWorldFont.size,
-        width = screenManager.screenDimensions.x - screenManager.currentWorldFont.size * 2,
+        x = screenManager.currentLevelFont.size,
+        y = screenManager.currentLevelFont.size,
+        width = screenManager.screenDimensions.x - screenManager.currentLevelFont.size * 2,
         height = screenManager.screenDimensions.y * 0.6
     }
 
@@ -50,7 +50,7 @@ end
 
 function LogManager:showLog()
     if (not self.showingLog) then
-        self.worldManager:setViewport(self.logVisibleViewport) -- log view
+        self.levelManager:setViewport(self.logVisibleViewport) -- log view
         self.showingLog = true
         self.currentLineOffset = 0
         screenManager:redrawScreen()
@@ -59,7 +59,7 @@ end
 
 function LogManager:hideLog()
     if (self.showingLog) then
-        self.worldManager:setViewport() -- default fullscreen view
+        self.levelManager:setViewport() -- default fullscreen view
         self.showingLog = false
     end
 end

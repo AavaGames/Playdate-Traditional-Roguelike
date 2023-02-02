@@ -1,7 +1,7 @@
 class("Player").extends(Actor)
 
-function Player:init(theWorld, startPosition)
-    Player.super.init(self, theWorld, startPosition)
+function Player:init(theLevel, startPosition)
+    Player.super.init(self, theLevel, startPosition)
     self.char = "@"
     self.name = "You"
     self.description = "A striking individual, who seems to be quite powerful!"
@@ -61,7 +61,7 @@ function Player:update()
         end
 
         if actionTaken then
-            self.world:round()
+            self.level:round()
         end
     end
 end
@@ -77,17 +77,17 @@ function Player:inventoryUse()
     playdate.keyboard.hide()
 end
 
-function Player:spawn(theWorld, startPosition)
+function Player:spawn(theLevel, startPosition)
     self.position = Vector2.zero()
     self.updated = false
     self.state = ACTIVE
 
-    self.world = theWorld
+    self.level = theLevel
     self.tile = nil
-    if (theWorld ~= nil and startPosition ~= nil) then
+    if (theLevel ~= nil and startPosition ~= nil) then
         self:moveTo(Vector2.new(startPosition.x, startPosition.y)) -- TODO: can spawn on top of another actor overwriting their pos (SpawnAt)
     else
-        print("SPAWNING ERROR: ", theWorld.name, startPosition, " parameters failed to find appropriate location.")
+        print("SPAWNING ERROR: ", theLevel.name, startPosition, " parameters failed to find appropriate location.")
     end
 end
 

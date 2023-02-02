@@ -1,16 +1,16 @@
 local gfx <const> = playdate.graphics
 
-class("World").extends()
+class("Level").extends()
 
-function World:init(theWorldManager, thePlayer)
-    self.worldManager = theWorldManager
+function Level:init(theLevelManager, thePlayer)
+    self.levelManager = theLevelManager
     self.player = thePlayer
 
-    self.name = "World" -- Floor X (Depth 50*X)
+    self.name = "Level" -- Floor X (Depth 50*X)
     self.playerSpawnPosition = Vector2.zero()
 
-    self.worldIsLit = false
-    self.worldIsSeen = false
+    self.levelIsLit = false
+    self.levelIsSeen = false
 
     self.grid = nil
     self.gridDimensions = Vector2.zero()
@@ -27,13 +27,13 @@ function World:init(theWorldManager, thePlayer)
     self:create()
 end
 
-function World:finishInit()
-    if (self.worldIsSeen == true) then
+function Level:finishInit()
+    if (self.levelIsSeen == true) then
         self:tileLoop(function (tile)
             tile.seen = true
         end)
     end
-    screenManager:setWorldColor(self.worldIsLit == true and gfx.kColorWhite or gfx.kColorBlack)
+    screenManager:setLevelColor(self.levelIsLit == true and gfx.kColorWhite or gfx.kColorBlack)
     self.player:spawn(self, self.playerSpawnPosition)
     self.camera = Camera(self.player)
 
@@ -46,8 +46,8 @@ function World:finishInit()
             tile:resetLightLevel()
         end
 
-        if (self.worldIsLit) then
-            tile:addLightLevel(2, "World")
+        if (self.levelIsLit) then
+            tile:addLightLevel(2, "Level")
             tile.seen = true
         end
 
@@ -76,16 +76,16 @@ function World:finishInit()
     end)
 
     self:updatePathfindingMaps()
-    if (not self.worldIsLit) then
+    if (not self.levelIsLit) then
         self:updateView()
     end
 end
 
-function World:create()
+function Level:create()
     -- abstract function to create grid
 end
 
-function World:update()
+function Level:update()
     -- if (inputManager:JustPressed(playdate.kButtonA)) then
     --     print("up")
     --     self.player.equipped.lightSource.dimRange += 2
@@ -95,11 +95,11 @@ function World:update()
     -- end
 end
 
-function World:lateUpdate()
+function Level:lateUpdate()
     
 end
 
-function World:round()
+function Level:round()
     frameProfiler:startTimer("Logic: Actor Update")
     
     local actorMax = #self.actors
@@ -113,12 +113,12 @@ function World:round()
     self:updatePathfindingMaps()
     self:updateView()
 
-    screenManager:redrawWorld()
+    screenManager:redrawLevel()
 end
 
 --region Drawing & Lighting
 
-function World:updateView()
+function Level:updateView()
     frameProfiler:startTimer("Logic: Vision")
 
     -- TODO loop / find light sources, if on screen + range then calc
@@ -141,8 +141,8 @@ function World:updateView()
                         tile:resetLightLevel()
                     end
 
-                    if (self.worldIsLit) then
-                        tile:addLightLevel(2, "World")
+                    if (self.levelIsLit) then
+                        tile:addLightLevel(2, "Level")
                     end
 
                     if (tile.seen == true) then
@@ -187,7 +187,7 @@ function World:updateView()
     frameProfiler:endTimer("Logic: Vision")
 end
 
-function World:updatePathfindingMaps()
+function Level:updatePathfindingMaps()
     frameProfiler:startTimer("Pathfinding")
     -- update source position and fill out map
     -- TODO update djikstra only when someone asks for it
@@ -204,11 +204,11 @@ function World:updatePathfindingMaps()
     frameProfiler:endTimer("Pathfinding")
 end
 
-function World:draw()
+function Level:draw()
     local screenManager = screenManager
     print("\n")
-    local viewport = self.worldManager.viewport
-    local fontSize = screenManager.currentWorldFont.size
+    local viewport = self.levelManager.viewport
+    local fontSize = screenManager.currentLevelFont.size
 
     local screenXSize = math.floor(viewport.width / fontSize)
     local screenYSize = math.floor(viewport.height / fontSize)
@@ -223,7 +223,7 @@ function World:draw()
     local yOffset = 0
 
     gfx.setImageDrawMode(gfx.kDrawModeNXOR)
-    gfx.setFont(screenManager.currentWorldFont.font)
+    gfx.setFont(screenManager.currentLevelFont.font)
 
     for xPos = 0, screenManager.gridScreenMax.x, 1 do
         for yPos = 0, screenManager.gridScreenMax.y, 1 do
@@ -283,7 +283,7 @@ end
 --#endregion
 
 --Pass in a function for the the tile to run through ( function(tile) )
-function World:tileLoop(func)
+function Level:tileLoop(func)
     for x = 1, self.gridDimensions.x, 1 do
         for y = 1, self.gridDimensions.y, 1 do
             local tile = self.grid[x][y]
@@ -294,12 +294,12 @@ function World:tileLoop(func)
     end
 end
 
-function World:inBounds(x, y)
+function Level:inBounds(x, y)
     return x >= 1 and x <= self.gridDimensions.x and y >= 1 and y <= self.gridDimensions.y
 end
 
--- Check tile in the world for collision. Returns { bool: collision?, [empty tile, actor collision or nil] }
-function World:collisionCheck(position)
+-- Check tile in the level for collision. Returns { bool: collision?, [empty tile, actor collision or nil] }
+function Level:collisionCheck(position)
     if (self:inBounds(position.x, position.y)) then
         local tile = self.grid[position.x][position.y]
         if (tile ~= nil) then
@@ -318,7 +318,7 @@ function World:collisionCheck(position)
     end
 end
 
-function World:spawnAt(position, actor)
+function Level:spawnAt(position, actor)
 
     table.insert(self.actors, actor)
     actor:moveTo(position)
@@ -338,6 +338,6 @@ function World:spawnAt(position, actor)
     -- end
 end
 
-function World:despawn(actor)
+function Level:despawn(actor)
     --table.remove(self.actors, actor.index)
 end

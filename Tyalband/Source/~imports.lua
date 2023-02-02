@@ -22,9 +22,9 @@ import "ScreenManager"
 import "FrameProfiler"
 import "InputManager"
 
-import "WorldManager"
-import "/scripts/world/World"
-import "/scripts/world/Tile"
+import "LevelManager"
+import "Level"
+import "Tile"
 
 import "LogManager"
 import "Border"
@@ -35,9 +35,9 @@ import "/scripts/features/Feature"
 
 -- Subclasses
 
-import "/scripts/worlds/Town"
-import "/scripts/worlds/Dungeon"
-import "/scripts/worlds/TestRoom"
+import "/scripts/levels/Town"
+import "/scripts/levels/Dungeon"
+import "/scripts/levels/TestRoom"
 
 import "/scripts/actors/Animal"
 

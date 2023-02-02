@@ -1,9 +1,9 @@
 class("Feature").extends(Entity)
 
-function Feature:init(theWorld, startPosition)
+function Feature:init(theLevel, startPosition)
     self.char = "F"
     self.name = "Feature"
-    self.description = "A feature of the world."
+    self.description = "A feature of the level."
 
     self.collision = true
     self.renderWhenSeen = true

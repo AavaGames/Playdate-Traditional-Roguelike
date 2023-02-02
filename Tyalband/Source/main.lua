@@ -42,15 +42,15 @@ function playdate.update()
 	inputManager:update()
 
 	if inputManager:HeldLong(playdate.kButtonA) and inputManager:HeldLong(playdate.kButtonUp) then
-		if (gameManager.worldManager.currentWorld.name ~= "Floor 1 (50 feet)") then
-			print("Changed world to dungeon")
-			gameManager.worldManager:loadWorld(Dungeon)
+		if (gameManager.levelManager.currentLevel.name ~= "Floor 1 (50 feet)") then
+			print("Changed level to dungeon")
+			gameManager.levelManager:loadLevel(Dungeon)
 		end
 	end
 	if inputManager:HeldLong(playdate.kButtonA) and inputManager:HeldLong(playdate.kButtonDown) then
-		if (gameManager.worldManager.currentWorld.name ~= "Base Camp") then
-			print("Changed world to town")
-			gameManager.worldManager:loadWorld(Town)
+		if (gameManager.levelManager.currentLevel.name ~= "Base Camp") then
+			print("Changed level to town")
+			gameManager.levelManager:loadLevel(Town)
 		end
 	end
 
@@ -61,19 +61,19 @@ end
 function playdate.keyPressed(key) 
 	if key == "N" then
 		local color = screenManager.bgColor == gfx.kColorWhite and gfx.kColorBlack or gfx.kColorWhite
-		screenManager:setWorldColor(color)
+		screenManager:setLevelColor(color)
 	end
 
 	if key == "9" then
-		if (gameManager.worldManager.currentWorld.name ~= "Floor 1 (50 feet)") then
-			print("Changed world to dungeon")
-			gameManager.worldManager:loadWorld(dungeon)
+		if (gameManager.levelManager.currentLevel.name ~= "Floor 1 (50 feet)") then
+			print("Changed level to dungeon")
+			gameManager.levelManager:loadLevel(dungeon)
 		end
 	end
 	if key == "0" then
-		if (gameManager.worldManager.currentWorld.name ~= "Base Camp") then
-			print("Changed world to town")
-			gameManager.worldManager:loadWorld(town)
+		if (gameManager.levelManager.currentLevel.name ~= "Base Camp") then
+			print("Changed level to town")
+			gameManager.levelManager:loadLevel(town)
 		end
 	end
 end

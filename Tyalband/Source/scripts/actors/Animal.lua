@@ -1,7 +1,7 @@
 class("Animal").extends(Actor)
 
-function Animal:init(theWorld, startPosition)
-    Animal.super.init(self, theWorld, startPosition)
+function Animal:init(theLevel, startPosition)
+    Animal.super.init(self, theLevel, startPosition)
     self.name = "Animal"
     self.description = "A cute cuddly animal."
 end
