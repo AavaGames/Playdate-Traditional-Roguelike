@@ -1,9 +1,9 @@
 local gfx <const> = playdate.graphics
 
-class("entity").extends()
+class("Entity").extends()
 
 --abstract class
-function entity:init()
+function Entity:init()
     self.char = "E"
     self.name = "Entity"
     self.description = "Default Entity"

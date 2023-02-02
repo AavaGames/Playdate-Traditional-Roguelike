@@ -1,10 +1,10 @@
-class("item").extends()
+class("Item").extends()
 
-function item:init()
+function Item:init()
     self.name = "item" -- randomized name
     self.seen = false
 end
 
-function item:use() -- abstract func
+function Item:use() -- abstract func
 
 end

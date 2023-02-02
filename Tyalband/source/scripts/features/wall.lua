@@ -1,7 +1,7 @@
-class("wall").extends(feature)
+class("Wall").extends(Feature)
 
-function wall:init(theWorld, startPosition)
-    wall.super.init(self, theWorld, startPosition)
+function Wall:init(theWorld, startPosition)
+    Wall.super.init(self, theWorld, startPosition)
     self.char = "#"
     self.name = "Crystal"
     self.description = "A cold perfectly transparent crystal."
@@ -12,7 +12,7 @@ function wall:init(theWorld, startPosition)
     self.moveCost = 1
 end
 
-function wall:interact(actor)
+function Wall:interact(actor)
     if (actor.name == "You") then --TODO think through interaction system
         gameManager.logManager:add(self.description)
     end

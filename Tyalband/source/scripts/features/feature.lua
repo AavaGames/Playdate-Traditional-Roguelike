@@ -1,6 +1,6 @@
-class("feature").extends(entity)
+class("Feature").extends(Entity)
 
-function feature:init(theWorld, startPosition)
+function Feature:init(theWorld, startPosition)
     self.char = "F"
     self.name = "Feature"
     self.description = "A feature of the world."
@@ -11,10 +11,10 @@ function feature:init(theWorld, startPosition)
     self.moveCost = 1
 end
 
-function feature:interact(actor)
+function Feature:interact(actor)
     -- abstract func for children
 end
 
-function feature:getChar()
+function Feature:getChar()
     return self.char
 end

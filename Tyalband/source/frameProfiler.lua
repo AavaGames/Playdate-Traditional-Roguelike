@@ -1,25 +1,25 @@
-class("frameProfiler").extends()
+class("FrameProfiler").extends()
 
-function frameProfiler:init()
+function FrameProfiler:init()
     self:frameStart()
 end
 
-function frameProfiler:frameStart()
+function FrameProfiler:frameStart()
     self.timers = {}
     self.purposes = {}
-    self.frameTime = chunkTimer("Frame")
+    self.frameTime = ChunkTimer("Frame")
 end
 
-function frameProfiler:startTimer(purpose)
+function FrameProfiler:startTimer(purpose)
     table.insert(self.purposes, purpose)
-    self.timers[purpose] = chunkTimer(purpose)
+    self.timers[purpose] = ChunkTimer(purpose)
 end
 
-function frameProfiler:endTimer(purpose)
+function FrameProfiler:endTimer(purpose)
     self.timers[purpose]:endTimer()
 end
 
-function frameProfiler:frameEnd()
+function FrameProfiler:frameEnd()
     if (screenManager.profiler == true) then
         print("-- Frame Profile --")
         for index, purpose in ipairs(self.purposes) do 

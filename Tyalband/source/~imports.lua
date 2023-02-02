@@ -13,42 +13,42 @@ import "/extensions/dm/enum"
 import "/extensions/dm/filepath"
 import "/extensions/dm/table"
 import "/extensions/dm/sampler"
-import "/scripts/structs/vector2"
+import "/scripts/structs/Vector2"
 
-import "/extensions/chunkTimer"
+import "/extensions/ChunkTimer"
 
-import "gameManager"
-import "screenManager"
-import "frameProfiler"
+import "GameManager"
+import "ScreenManager"
+import "FrameProfiler"
 import "InputManager"
 
-import "worldManager"
-import "/scripts/world/world"
-import "/scripts/world/tile"
+import "WorldManager"
+import "/scripts/world/World"
+import "/scripts/world/Tile"
 
-import "logManager"
-import "border"
+import "LogManager"
+import "Border"
 
-import "/scripts/entities/entity"
-import "/scripts/actors/actor"
-import "/scripts/features/feature"
+import "/scripts/entities/Entity"
+import "/scripts/actors/Actor"
+import "/scripts/features/Feature"
 
 -- Subclasses
 
-import "/scripts/worlds/town"
-import "/scripts/worlds/dungeon"
-import "/scripts/worlds/testRoom"
+import "/scripts/worlds/Town"
+import "/scripts/worlds/Dungeon"
+import "/scripts/worlds/TestRoom"
 
-import "/scripts/actors/animal"
+import "/scripts/actors/Animal"
 
-import "/scripts/features/grass"
-import "/scripts/features/ground"
-import "/scripts/features/wall"
+import "/scripts/features/Grass"
+import "/scripts/features/Ground"
+import "/scripts/features/Wall"
 
-import "/scripts/items/item"
-import "/scripts/items/lightSource"
+import "/scripts/items/Item"
+import "/scripts/items/LightSource"
 
-import "player"
-import "camera"
+import "Player"
+import "Camera"
 
 -- unordered

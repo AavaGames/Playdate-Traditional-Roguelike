@@ -1,6 +1,6 @@
-class("lightSource").extends(item)
+class("LightSource").extends(Item)
 
-function lightSource:init()
+function LightSource:init()
     self.name = "Light"
 
     self.litRange = 2 -- the range of lit tiles

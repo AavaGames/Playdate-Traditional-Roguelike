@@ -1,10 +1,8 @@
 local gfx <const> = playdate.graphics
 
-class("worldManager").extends()
+class("WorldManager").extends()
 
-currentWorld = nil
-
-function worldManager:init(player)
+function WorldManager:init(player)
     screenManager.worldManager = self
     self.player = player
     self.currentWorld = nil
@@ -23,10 +21,10 @@ function worldManager:init(player)
     --     }
     self.viewport = self.defaultViewport
 
-    self:loadWorld(dungeon)
+    self:loadWorld(Dungeon)
 end
 
-function worldManager:update()
+function WorldManager:update()
     self.player:update()
     self.currentWorld:update()
 
@@ -42,21 +40,21 @@ function worldManager:update()
 
 end
 
-function worldManager:lateUpdate()
+function WorldManager:lateUpdate()
     self.currentWorld:lateUpdate()
 end
 
-function worldManager:draw()
+function WorldManager:draw()
     self.currentWorld:draw()
 end
 
-function worldManager:loadWorld(world)
+function WorldManager:loadWorld(world)
     self.player:despawn()
     --insert transition
     self.currentWorld = world(self, self.player)
 end
 
-function worldManager:setViewport(viewport)
+function WorldManager:setViewport(viewport)
     -- IDEA: Coroutine to have smooth transition
     self.viewport = viewport or self.defaultViewport
     screenManager:redrawScreen()

@@ -1,13 +1,13 @@
-class("actor").extends(entity)
+class("Actor").extends(Entity)
 
 -- TODO move to enum
 ACTIVE = 0
 INACTIVE = 1
 
-function actor:init(theWorld, startPosition)
+function Actor:init(theWorld, startPosition)
     self.char = "a"
     self.name = "Actor"
-    self.description = "An actor"
+    self.description = "An actor."
     
     self.position = Vector2.zero()
     self.state = INACTIVE
@@ -23,20 +23,20 @@ function actor:init(theWorld, startPosition)
     end
 end
 
-function actor:tick()
+function Actor:tick()
 
 end
 
-function actor:interact()
+function Actor:interact()
     -- abstract func for children
 end
 
-function actor:move(moveAmount)
+function Actor:move(moveAmount)
     local newPosition = self.position + Vector2.new(moveAmount.x, moveAmount.y)
     return self:moveTo(newPosition)
 end
 
-function actor:moveTo(position)
+function Actor:moveTo(position)
     -- check if position is a vector ?
     if position.x ~= self.position.x or position.y ~= self.position.y then
         local collision = self.world:collisionCheck(position)
@@ -51,7 +51,7 @@ function actor:moveTo(position)
 end
 
 -- called?
-function actor:updateTile(tile)
+function Actor:updateTile(tile)
     if self.tile ~= nil then
         self.tile:exit(self)
     end
@@ -60,6 +60,6 @@ function actor:updateTile(tile)
     self.tile:enter(self)
 end
 
-function actor:getChar()
+function Actor:getChar()
     return self.char
 end

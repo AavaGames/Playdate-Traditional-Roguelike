@@ -1,8 +1,8 @@
-class("logManager").extends()
+class("LogManager").extends()
 
 local gfx <const> = playdate.graphics
 
-function logManager:init(theWorldManager)
+function LogManager:init(theWorldManager)
     screenManager.logManager = self
     self.worldManager = theWorldManager
 
@@ -28,7 +28,7 @@ function logManager:init(theWorldManager)
     }
 
     self.dimensions = { x = 8, y = 162, width = 384, height = 70 }
-    self.logBorder = border(self.dimensions.x, self.dimensions.y, 
+    self.logBorder = Border(self.dimensions.x, self.dimensions.y, 
         self.dimensions.width, self.dimensions.height, 2, gfx.kColorBlack)
 
     self:hideLog()
@@ -48,7 +48,7 @@ function logManager:init(theWorldManager)
     self:add("You pick up the stone axe of the dwarven kingdom of Irunel. It has 25 blah and can pierce armor of the highest grade. Only those with the mightest of shields can block such a blade.")
 end
 
-function logManager:showLog()
+function LogManager:showLog()
     if (not self.showingLog) then
         self.worldManager:setViewport(self.logVisibleViewport) -- log view
         self.showingLog = true
@@ -57,14 +57,14 @@ function logManager:showLog()
     end
 end
 
-function logManager:hideLog()
+function LogManager:hideLog()
     if (self.showingLog) then
         self.worldManager:setViewport() -- default fullscreen view
         self.showingLog = false
     end
 end
 
-function logManager:draw()
+function LogManager:draw()
     if (self.showingLog) then
         -- Clear
         gfx.setColor(screenManager.bgColor)
@@ -85,7 +85,7 @@ function logManager:draw()
     end
 end
 
-function logManager:update()
+function LogManager:update()
     -- TODO add to input manager
     if not playdate.isCrankDocked() then
         if not self.showingLog then
@@ -108,7 +108,7 @@ function logManager:update()
     end
 end
 
-function logManager:add(text)
+function LogManager:add(text)
     if (text == self.cleanLog[#self.cleanLog]) then
         self.lineMultiple = self.lineMultiple + 1
         text = text .. " <x" .. self.lineMultiple .. ">"
@@ -128,7 +128,7 @@ function logManager:add(text)
     end
 end
 
-function logManager:splitLine(text)
+function LogManager:splitLine(text)
     -- split sentence
     local words = {}
     local sep = " "
@@ -163,7 +163,7 @@ function logManager:splitLine(text)
     return linesCreated
 end
 
-function logManager:resplitLines()
+function LogManager:resplitLines()
     self.log = {}
     self.currentLineOffset = 0
     for i = 1, #self.cleanLog, 1 do

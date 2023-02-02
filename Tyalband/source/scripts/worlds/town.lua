@@ -1,21 +1,21 @@
 local gfx <const> = playdate.graphics
 
-class("town").extends(world)
+class("Town").extends(World)
 
-function town:init(theWorldManager, thePlayer)
-    town.super.init(self, theWorldManager, thePlayer)
+function Town:init(theWorldManager, thePlayer)
+    Town.super.init(self, theWorldManager, thePlayer)
     self.name = "Base Camp"
     self.worldIsLit = true
     self.worldIsSeen = true
     self.playerSpawnPosition = { x = 16, y = 53 }
 
-    animal(self, Vector2.new(6, 43))
-    animal(self, Vector2.new(7, 43))
+    Animal(self, Vector2.new(6, 43))
+    Animal(self, Vector2.new(7, 43))
 
-    town.super.finishInit(self)
+    Town.super.finishInit(self)
 end
 
-function town:create()
+function Town:create()
     -- var tile = array[y * width + x]
     -- 0 = empty, 1 = wall, 2 = ?, 3 = ?, 4 = grass
     local townFile = playdate.file.open("assets/maps/town.json")
@@ -37,7 +37,7 @@ function town:create()
             local type = townArray[index]
 
             if (type > 0) then
-                self.grid[x][y] = tile(x, y)
+                self.grid[x][y] = Tile(x, y)
             else
                 self.grid[x][y] = nil
             end
@@ -45,9 +45,9 @@ function town:create()
             local tile = self.grid[x][y]
             if (tile ~= nil) then
                 if type == 1 then
-                    tile.feature = wall(self, Vector2.new(x,y))
+                    tile.feature = Wall(self, Vector2.new(x,y))
                 elseif type == 4 then
-                    tile.feature = grass(self, Vector2.new(x,y))
+                    tile.feature = Grass(self, Vector2.new(x,y))
                 end
             end
         end

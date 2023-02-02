@@ -1,7 +1,7 @@
 	-- CSV to 2D table --
 
 function readCSV(path)
-	local timer = chunkTimer("reading " .. path)
+	local timer = ChunkTimer("reading " .. path)
 
 	local file = playdate.file.open(path)
 	assert(file, "Failed to retrieve CSV at " .. path)

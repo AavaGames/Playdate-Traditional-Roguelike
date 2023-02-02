@@ -1,7 +1,7 @@
-class("grass").extends(feature)
+class("Grass").extends(Feature)
 
-function grass:init()
-    ground.super:init(self)
+function Grass:init()
+    Grass.super:init(self)
     self.char = "v"
     self.name = "Grass"
     self.description = "Grass swaying in the wind"

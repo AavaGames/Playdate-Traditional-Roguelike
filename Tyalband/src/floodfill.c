@@ -31,14 +31,14 @@ static int FloodMap_new(lua_State* L)
 		}
 	}
 	pd->system->logToConsole("New Floodmap");
-	pd->lua->pushObject(fm, "floodMap", 0);
+	pd->lua->pushObject(fm, "FloodMap", 0);
 	return 1;
 }
 
 static int FloodMap_free(lua_State* L)
 {
 	pd->system->logToConsole("Cleaned Floodmap");
-	FloodMap* fm = pd->lua->getArgObject(1, "floodMap", NULL);
+	FloodMap* fm = pd->lua->getArgObject(1, "FloodMap", NULL);
 	free(fm->collisionMask);
 	free(fm->map);
 	free(fm->source);
@@ -49,7 +49,7 @@ static int FloodMap_free(lua_State* L)
 //PARAM: x, y, weight
 static int FloodMap_addSource(lua_State* L)
 {
-	FloodMap* fm = pd->lua->getArgObject(1, "floodMap", NULL);
+	FloodMap* fm = pd->lua->getArgObject(1, "FloodMap", NULL);
 	if (fm->source != NULL)
 	{
 		free(fm->source);
@@ -69,7 +69,7 @@ static int FloodMap_addSource(lua_State* L)
 //PARAM: x, y
 static int FloodMap_getTile(lua_State* L)
 {
-	FloodMap* fm = pd->lua->getArgObject(1, "floodMap", NULL);
+	FloodMap* fm = pd->lua->getArgObject(1, "FloodMap", NULL);
 	int x = pd->lua->getArgInt(2) - 1;
 	int y = pd->lua->getArgInt(3) - 1;
 	if (FloodMap_inBounds(fm, x, y))
@@ -82,7 +82,7 @@ static int FloodMap_getTile(lua_State* L)
 //PARAM: x, y
 static int FloodMap_setTileColliding(lua_State* L)
 {
-	FloodMap* fm = pd->lua->getArgObject(1, "floodMap", NULL);
+	FloodMap* fm = pd->lua->getArgObject(1, "FloodMap", NULL);
 	int x = pd->lua->getArgInt(2) - 1;
 	int y = pd->lua->getArgInt(3) - 1;
 	if (FloodMap_inBounds(fm, x, y))
@@ -98,7 +98,7 @@ bool FloodMap_inBounds(FloodMap* fm, int x, int y)
 static int Dijkstra_fillMap(lua_State* L)
 {
 	pd->system->logToConsole("Filling Map");
-	FloodMap* fm = pd->lua->getArgObject(1, "floodMap", NULL);
+	FloodMap* fm = pd->lua->getArgObject(1, "FloodMap", NULL);
 
 	// reset map
 	for (int x = 0; x < fm->width; x++)
@@ -180,7 +180,7 @@ void Dijkstra_fill(FloodMap* fm, int x, int y, int fromX, int FromY)
 
 //
 
-static const lua_reg floodMapLib[] =
+static const lua_reg FloodMapLib[] =
 {
 	{ "new", FloodMap_new },
 	{ "__gc", FloodMap_free },
@@ -195,6 +195,6 @@ void Register_floodfill(PlaydateAPI* api)
 {
 	pd = api;
 	const char* err;
-	if (!pd->lua->registerClass("floodMap", floodMapLib, NULL, 0, &err))
+	if (!pd->lua->registerClass("FloodMap", FloodMapLib, NULL, 0, &err))
 		pd->system->logToConsole("%s:%i: registerClass failed, %s", __FILE__, __LINE__, err);
 }

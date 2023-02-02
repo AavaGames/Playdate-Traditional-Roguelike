@@ -1,8 +1,8 @@
 local gfx <const> = playdate.graphics
 
-class("camera").extends()
+class("Camera").extends()
 
-function camera:init(target, theWorld, startPosition)
+function Camera:init(target, theWorld, startPosition)
     self.target = target
     self.position = Vector2.zero()
     if (self.target == nil) then
@@ -12,20 +12,20 @@ function camera:init(target, theWorld, startPosition)
     self:update()
 end
 
-function camera:update()
+function Camera:update()
     if (self.target) then
         self.position = self.target.position
     else
-        if inputManager.JustReleased(playdate.kButtonRight) then
+        if InputManager.JustReleased(playdate.kButtonRight) then
             self.position.x += 1
         end
-        if inputManager.JustReleased(playdate.kButtonLeft) then
+        if InputManager.JustReleased(playdate.kButtonLeft) then
             self.position.x -= 1
         end
-        if inputManager.JustReleased(playdate.kButtonUp) then
+        if InputManager.JustReleased(playdate.kButtonUp) then
             self.position.y -= 1
         end
-        if inputManager.JustReleased(playdate.kButtonDown) then
+        if InputManager.JustReleased(playdate.kButtonDown) then
             self.position.y += 1
         end
         self.position = Vector2.clamp(Vector2.one(), self.world.gridDimensions)

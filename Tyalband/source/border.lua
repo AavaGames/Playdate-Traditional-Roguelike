@@ -1,15 +1,15 @@
-class("border").extends()
+class("Border").extends()
 
 local gfx <const> = playdate.graphics
 
-function border:init( posX, posY, sizeX, sizeY, thickness, color )
+function Border:init( posX, posY, sizeX, sizeY, thickness, color )
 	self.position = { x = posX, y = posY }
 	self.size = { x = sizeX, y = sizeY}
 	self.thickness = thickness
 	self.color = playdate.graphics.kColorXOR
 end
 
-function border:draw()
+function Border:draw()
     gfx.setColor(self.color)
 
 	gfx.fillRect(self.position.x, self.position.y, self.size.x, self.thickness) -- north

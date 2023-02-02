@@ -1,24 +1,24 @@
 local gfx <const> = playdate.graphics
 
-class("dungeon").extends(world)
+class("Dungeon").extends(World)
 
-function dungeon:init(theWorldManager, thePlayer)
-    dungeon.super.init(self, theWorldManager, thePlayer)
+function Dungeon:init(theWorldManager, thePlayer)
+    Dungeon.super.init(self, theWorldManager, thePlayer)
     self.name = "Floor 1 (50 feet)"
 
     self.playerSpawnPosition = { x = 18, y = 19 }
     --self.playerSpawnPosition = { x = 32, y = 16 }
-    animal(self, Vector2.new(2, 13))
+    Animal(self, Vector2.new(2, 13))
 
     self.grid[9][18].glow = true
     self.grid[9][19].glow = true
     self.grid[10][18].glow = true
     self.grid[10][19].glow = true
 
-    dungeon.super.finishInit(self)
+    Dungeon.super.finishInit(self)
 end
 
-function dungeon:create()
+function Dungeon:create()
     -- var tile = array[y * width + x]
     -- 0 = empty, 1 = wall, 2 = ?, 3 = ?, 4 = grass
     local dungeonFile = playdate.file.open("assets/maps/dungeon.json")
@@ -40,7 +40,7 @@ function dungeon:create()
             local type = dungeonArray[index]
 
             if (type > 0) then
-                self.grid[x][y] = tile(x, y)
+                self.grid[x][y] = Tile(x, y)
             else
                 self.grid[x][y] = nil
             end
@@ -48,7 +48,7 @@ function dungeon:create()
             local tile = self.grid[x][y]
             if (tile ~= nil) then
                 if type == 1 then
-                    tile.feature = wall(self, Vector2.new(x,y))
+                    tile.feature = Wall(self, Vector2.new(x,y))
                     tile.blocksLight = true
                 end
             end

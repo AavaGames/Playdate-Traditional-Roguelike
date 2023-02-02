@@ -1,7 +1,7 @@
-class("ground").extends(feature)
+class("Ground").extends(Feature)
 
-function ground:init()
-    ground.super:init(self)
+function Ground:init()
+    Ground.super:init(self)
     self.char = "."
     self.name = "Ground"
     self.description = ""

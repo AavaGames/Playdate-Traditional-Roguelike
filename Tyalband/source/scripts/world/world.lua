@@ -1,8 +1,8 @@
 local gfx <const> = playdate.graphics
 
-class("world").extends()
+class("World").extends()
 
-function world:init(theWorldManager, thePlayer)
+function World:init(theWorldManager, thePlayer)
     self.worldManager = theWorldManager
     self.player = thePlayer
 
@@ -24,12 +24,10 @@ function world:init(theWorldManager, thePlayer)
     self.smellMap = nil
     self.soundMap = nil
 
-    globalWorld = self
-
     self:create()
 end
 
-function world:finishInit()
+function World:finishInit()
     if (self.worldIsSeen == true) then
         self:tileLoop(function (tile)
             tile.seen = true
@@ -37,7 +35,7 @@ function world:finishInit()
     end
     screenManager:setWorldColor(self.worldIsLit == true and gfx.kColorWhite or gfx.kColorBlack)
     self.player:spawn(self, self.playerSpawnPosition)
-    self.camera = camera(self.player)
+    self.camera = Camera(self.player)
 
     -- setup vision / light
     self:tileLoop(function (tile)
@@ -60,13 +58,13 @@ function world:finishInit()
         end
     end)
 
-    self.toPlayerPathMap = floodMap.new(self.gridDimensions.x, self.gridDimensions.y)
+    self.toPlayerPathMap = FloodMap.new(self.gridDimensions.x, self.gridDimensions.y)
 	self.toPlayerPathMap:addSource(self.playerSpawnPosition.x, self.playerSpawnPosition.y, 1)
 
-    self.smellMap = floodMap.new(self.gridDimensions.x, self.gridDimensions.y)
+    self.smellMap = FloodMap.new(self.gridDimensions.x, self.gridDimensions.y)
 	self.smellMap:addSource(self.playerSpawnPosition.x, self.playerSpawnPosition.y, 1)
 
-    self.soundMap = floodMap.new(self.gridDimensions.x, self.gridDimensions.y)
+    self.soundMap = FloodMap.new(self.gridDimensions.x, self.gridDimensions.y)
 	self.soundMap:addSource(self.playerSpawnPosition.x, self.playerSpawnPosition.y, 1)
 
     self:tileLoop(function (tile)
@@ -83,11 +81,11 @@ function world:finishInit()
     end
 end
 
-function world:create()
+function World:create()
     -- abstract function to create grid
 end
 
-function world:update()
+function World:update()
     -- if (inputManager:JustPressed(playdate.kButtonA)) then
     --     print("up")
     --     self.player.equipped.lightSource.dimRange += 2
@@ -97,11 +95,11 @@ function world:update()
     -- end
 end
 
-function world:lateUpdate()
+function World:lateUpdate()
     
 end
 
-function world:round()
+function World:round()
     frameProfiler:startTimer("Logic: Actor Update")
     
     local actorMax = #self.actors
@@ -120,7 +118,7 @@ end
 
 --region Drawing & Lighting
 
-function world:updateView()
+function World:updateView()
     frameProfiler:startTimer("Logic: Vision")
 
     -- TODO loop / find light sources, if on screen + range then calc
@@ -189,7 +187,7 @@ function world:updateView()
     frameProfiler:endTimer("Logic: Vision")
 end
 
-function world:updatePathfindingMaps()
+function World:updatePathfindingMaps()
     frameProfiler:startTimer("Pathfinding")
     -- update source position and fill out map
     -- TODO update djikstra only when someone asks for it
@@ -206,7 +204,7 @@ function world:updatePathfindingMaps()
     frameProfiler:endTimer("Pathfinding")
 end
 
-function world:draw()
+function World:draw()
     local screenManager = screenManager
     print("\n")
     local viewport = self.worldManager.viewport
@@ -248,7 +246,8 @@ function world:draw()
             end
 
             -- TODO create some sort of dijkstra map debug drawer - can create a debug menu with the cycles of maps
-            
+            -- If > 10+ then use letters lowercase -> upper
+
             local char = ""
             local tile = self.grid[x][y]
             if (tile ~= nil and tile.currentVisibilityState ~= tile.visibilityState.unknown) then 
@@ -284,7 +283,7 @@ end
 --#endregion
 
 --Pass in a function for the the tile to run through ( function(tile) )
-function world:tileLoop(func)
+function World:tileLoop(func)
     for x = 1, self.gridDimensions.x, 1 do
         for y = 1, self.gridDimensions.y, 1 do
             local tile = self.grid[x][y]
@@ -295,12 +294,12 @@ function world:tileLoop(func)
     end
 end
 
-function world:inBounds(x, y)
+function World:inBounds(x, y)
     return x >= 1 and x <= self.gridDimensions.x and y >= 1 and y <= self.gridDimensions.y
 end
 
 -- Check tile in the world for collision. Returns { bool: collision?, [empty tile, actor collision or nil] }
-function world:collisionCheck(position)
+function World:collisionCheck(position)
     if (self:inBounds(position.x, position.y)) then
         local tile = self.grid[position.x][position.y]
         if (tile ~= nil) then
@@ -319,7 +318,7 @@ function world:collisionCheck(position)
     end
 end
 
-function world:spawnAt(position, actor)
+function World:spawnAt(position, actor)
 
     table.insert(self.actors, actor)
     actor:moveTo(position)
@@ -339,6 +338,6 @@ function world:spawnAt(position, actor)
     -- end
 end
 
-function world:despawn(actor)
+function World:despawn(actor)
     --table.remove(self.actors, actor.index)
 end

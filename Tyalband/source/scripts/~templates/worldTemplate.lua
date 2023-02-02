@@ -1,9 +1,9 @@
 local gfx <const> = playdate.graphics
 
-class("w").extends(world)
+class("W").extends(World)
 
-function w:init(theWorldManager, thePlayer)
-    w.super.init(self, theWorldManager, thePlayer)
+function W:init(theWorldManager, thePlayer)
+    W.super.init(self, theWorldManager, thePlayer)
 
     -- do stuff
     self.name = "World"
@@ -11,9 +11,9 @@ function w:init(theWorldManager, thePlayer)
     self.worldIsSeen = false
     self.playerSpawnPosition = { x = 16, y = 53 }
     
-    w.super.finishInit(self)
+    W.super.finishInit(self)
 end
 
-function w:create()
+function W:create()
     -- abstract function to create grid. JSON or generated
 end

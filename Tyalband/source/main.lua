@@ -6,9 +6,9 @@ local function initializeGame()
 	math.randomseed(playdate.getSecondsSinceEpoch())
 
 	inputManager = InputManager()
-	frameProfiler = frameProfiler()
-	screenManager = screenManager()
-	gameManager = gameManager()
+	frameProfiler = FrameProfiler()
+	screenManager = ScreenManager()
+	gameManager = GameManager()
 
 	-- local v1 = Vector2.new(15, 10)
 	-- local v2 = Vector2.new(32, 15)
@@ -44,13 +44,13 @@ function playdate.update()
 	if inputManager:HeldLong(playdate.kButtonA) and inputManager:HeldLong(playdate.kButtonUp) then
 		if (gameManager.worldManager.currentWorld.name ~= "Floor 1 (50 feet)") then
 			print("Changed world to dungeon")
-			gameManager.worldManager:loadWorld(dungeon)
+			gameManager.worldManager:loadWorld(Dungeon)
 		end
 	end
 	if inputManager:HeldLong(playdate.kButtonA) and inputManager:HeldLong(playdate.kButtonDown) then
 		if (gameManager.worldManager.currentWorld.name ~= "Base Camp") then
 			print("Changed world to town")
-			gameManager.worldManager:loadWorld(town)
+			gameManager.worldManager:loadWorld(Town)
 		end
 	end
 

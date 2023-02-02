@@ -1,8 +1,8 @@
 local gfx <const> = playdate.graphics
 
-class("screenManager").extends()
+class("ScreenManager").extends()
 
-function screenManager:init()
+function ScreenManager:init()
     self.fps = false
     self.profiler = true
     self.targetFPS = 30
@@ -64,89 +64,84 @@ function screenManager:init()
     self._redrawWorld = false
     self._redrawLog = false
 
-    self.screenBorder = border(2, 2, 400-4, 240-4, 4, gfx.kColorBlack)
+    self.screenBorder = Border(2, 2, 400-4, 240-4, 4, gfx.kColorBlack)
 
     self:setWorldFont("16px")
     self:setLogFont("8px")
     self:resetDrawnGlyphs()
 end
 
-function screenManager:setWorldColor(color)
+function ScreenManager:setWorldColor(color)
     self.bgColor = color
     gfx.setBackgroundColor(self.bgColor)
     self._redrawScreen = true
 end
 
-function screenManager:update() end
-function screenManager:lateUpdate() end
+function ScreenManager:update() end
+function ScreenManager:lateUpdate() end
 
-function screenManager:draw()
-    draw = true
-    if draw then
+function ScreenManager:draw()
+    local drew = false
 
-        if self._redrawScreen then
-            frameProfiler:startTimer("Draw: Screen")
+    if self._redrawScreen then
+        frameProfiler:startTimer("Draw: Screen")
 
-            gfx.clear()
-            --gfx.sprite.update()
-            self.worldManager:draw()
-            self.logManager:draw()
-            self.screenBorder:draw()
-            
-            self._redrawScreen = false
-
-            self._redrawWorld = false
-            self._redrawLog = false
-
-            frameProfiler:endTimer("Draw: Screen")
-            frameProfiler:frameEnd()
-        end
-
-        if (self._redrawWorld == true) then
-            frameProfiler:startTimer("Draw: World")
-
-            self.worldManager:draw()
-            self._redrawWorld = false
-
-            frameProfiler:endTimer("Draw: World")
-            if (self._redrawLog == false) then
-                frameProfiler:frameEnd()
-            end
-        end
-
-        if (self._redrawLog == true) then
-            frameProfiler:startTimer("Draw: Log")
-
-            self.logManager:draw()
-            self._redrawLog = false
-
-            frameProfiler:endTimer("Draw: Log")
-            frameProfiler:frameEnd()
-        end
-    
-        if self.fps then
-            playdate.drawFPS(0,0)
-        end
-
+        gfx.clear()
+        --gfx.sprite.update()
+        self.worldManager:draw()
+        self.logManager:draw()
+        self.screenBorder:draw()
         
+        self._redrawScreen = false
+
+        self._redrawWorld = false
+        self._redrawLog = false
+        drew = true
+
+        frameProfiler:endTimer("Draw: Screen")
     end
-    
+
+    if (self._redrawWorld == true) then
+        frameProfiler:startTimer("Draw: World")
+
+        self.worldManager:draw()
+        self._redrawWorld = false
+        drew = true
+
+        frameProfiler:endTimer("Draw: World")
+    end
+
+    if (self._redrawLog == true) then
+        frameProfiler:startTimer("Draw: Log")
+
+        self.logManager:draw()
+        self._redrawLog = false
+        drew = true
+
+        frameProfiler:endTimer("Draw: Log")
+    end
+
+    if self.fps then
+        playdate.drawFPS(0,0)
+    end
+
+    if (drew) then frameProfiler:frameEnd() end
 end
 
-function screenManager:redrawScreen()
+function ScreenManager:redrawScreen()
     self:resetDrawnGlyphs()
     self._redrawScreen = true
 end
 
-function screenManager:redrawWorld()
+function ScreenManager:redrawWorld()
     self._redrawWorld = true
 end
 
-function screenManager:redrawLog()
+function ScreenManager:redrawLog()
     self._redrawLog = true
 end
 
-function screenManager:setWorldFont(value)
+function ScreenManager:setWorldFont(value)
     if value == "8px" then
         self.currentWorldFont = self.worldFont_8px
     elseif value == "10px" then
@@ -161,7 +156,7 @@ function screenManager:setWorldFont(value)
     collectgarbage()
 end
 
-function screenManager:setLogFont(value)
+function ScreenManager:setLogFont(value)
     if value == "6px" then
         self.currentLogFont = self.logFont_6px
     elseif value == "8px" then
@@ -175,7 +170,7 @@ function screenManager:setLogFont(value)
     self:redrawScreen()
 end
 
-function screenManager:getGlyph(char, lightLevel)
+function ScreenManager:getGlyph(char, lightLevel)
     if (self.worldGlyphs[char] == nil) then
         self.worldGlyphs[char] = self.currentWorldFont.font:getGlyph(char)
         self.worldGlyphs_faded[char] = self.worldGlyphs[char]:fadedImage(0.5, playdate.graphics.image.kDitherTypeBayer2x2)
@@ -188,7 +183,7 @@ function screenManager:getGlyph(char, lightLevel)
     end
 end
 
-function screenManager:drawGlyph(char, tile, drawCoord, screenCoord)
+function ScreenManager:drawGlyph(char, tile, drawCoord, screenCoord)
     local drawnGlyph = self.drawnGlyphs[screenCoord.x][screenCoord.y]
 
     if (drawnGlyph.char == "" and char == "") then
@@ -204,7 +199,7 @@ function screenManager:drawGlyph(char, tile, drawCoord, screenCoord)
 
             -- if (drawnGlyph.lit == true and tileLit == false) then
             --     -- tile is now NOT lit, needs to be filled in, no need to erase glyph
-            --     gfx.setColor(screenManager.bgColor)
+            --     gfx.setColor(self.bgColor)
             --     gfx.fillRect(drawCoord.x, drawCoord.y, self.currentWorldFont.size, self.currentWorldFont.size)
             -- elseif (drawnGlyph.glyph ~= nil) then
             --     -- lit state the same as previous
@@ -232,12 +227,12 @@ function screenManager:drawGlyph(char, tile, drawCoord, screenCoord)
     end
 end
 
-function screenManager:resetFontGlyphs()
+function ScreenManager:resetFontGlyphs()
     self.worldGlyphs = {}
     self.worldGlyphs_faded = {}
 end
 
-function screenManager:resetDrawnGlyphs()
+function ScreenManager:resetDrawnGlyphs()
     for x = 0, self.gridScreenMax.x, 1 do
         self.drawnGlyphs[x] = {}
         for y = 0, self.gridScreenMax.y, 1 do

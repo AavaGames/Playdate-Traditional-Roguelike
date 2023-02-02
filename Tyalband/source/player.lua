@@ -1,7 +1,7 @@
-class("player").extends(actor)
+class("Player").extends(Actor)
 
-function player:init(theWorld, startPosition)
-    player.super.init(self, theWorld, startPosition)
+function Player:init(theWorld, startPosition)
+    Player.super.init(self, theWorld, startPosition)
     self.char = "@"
     self.name = "You"
     self.description = "A striking individual, who seems to be quite powerful!"
@@ -15,7 +15,7 @@ function player:init(theWorld, startPosition)
         lightSource = nil
     }
 
-    self.equipped.lightSource = lightSource()
+    self.equipped.lightSource = LightSource()
     self.equipped.lightSource.name = "Lantern"
 
     self.kb = false
@@ -29,7 +29,7 @@ function player:init(theWorld, startPosition)
     playdate.keyboard.textChangedCallback = function() self:inventoryUse() end
 end
 
-function player:update()
+function Player:update()
     if self.kb then 
         if not playdate.keyboard.isVisible() then
             self.state = ACTIVE
@@ -66,18 +66,18 @@ function player:update()
     end
 end
 
-function player:tick()
-    player.super.tick(self)
+function Player:tick()
+    Player.super.tick(self)
 end
 
-function player:inventoryUse()
+function Player:inventoryUse()
     -- parse inventory
     print("picked: " .. playdate.keyboard.text)
 
     playdate.keyboard.hide()
 end
 
-function player:spawn(theWorld, startPosition)
+function Player:spawn(theWorld, startPosition)
     self.position = Vector2.zero()
     self.updated = false
     self.state = ACTIVE
@@ -91,6 +91,6 @@ function player:spawn(theWorld, startPosition)
     end
 end
 
-function player:despawn()
+function Player:despawn()
     self.state = INACTIVE
 end

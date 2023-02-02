@@ -1,9 +1,9 @@
 local gfx <const> = playdate.graphics
 
-class("testRoom").extends(world)
+class("TestRoom").extends(World)
 
-function testRoom:init(theWorldManager, thePlayer)
-    testRoom.super.init(self, theWorldManager, thePlayer) -- calls create
+function TestRoom:init(theWorldManager, thePlayer)
+    TestRoom.super.init(self, theWorldManager, thePlayer) -- calls create
 
     -- do stuff
     self.name = "Testing Room"
@@ -11,10 +11,10 @@ function testRoom:init(theWorldManager, thePlayer)
     self.worldIsSeen = false
     self.playerSpawnPosition = { x = self.gridDimensions.x // 2, y = self.gridDimensions.y // 2 }
 
-    testRoom.super.finishInit(self)
+    TestRoom.super.finishInit(self)
 end
 
-function testRoom:create()
+function TestRoom:create()
     -- abstract function to create grid. JSON or generated
     self.gridDimensions = { x = 20, y = 20 }
 
@@ -23,7 +23,7 @@ function testRoom:create()
         self.grid[x] = table.create(self.gridDimensions.y)
 
         for y = 1, self.gridDimensions.y, 1 do
-            self.grid[x][y] = tile(x, y)
+            self.grid[x][y] = Tile(x, y)
 
             local tile = self.grid[x][y]
             if (tile ~= nil) then
