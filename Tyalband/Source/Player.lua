@@ -39,29 +39,28 @@ function Player:update()
 
     if (self.state == ACTIVE) then
         self.moveDir = Vector2.zero()
-        local actionTaken = false
+        local actionTaken, moved = false, false
 
-        if inputManager:JustReleased(playdate.kButtonRight) then
+        if inputManager:JustPressed(playdate.kButtonB) then
+            actionTaken = true
+        elseif inputManager:JustReleased(playdate.kButtonRight) then
             self.moveDir.x += 1
-        end
-        if inputManager:JustReleased(playdate.kButtonLeft) then
+        elseif inputManager:JustReleased(playdate.kButtonLeft) then
             self.moveDir.x -= 1
-        end
-        if inputManager:JustReleased(playdate.kButtonUp) then
+        elseif inputManager:JustReleased(playdate.kButtonUp) then
             self.moveDir.y -= 1
-        end
-        if inputManager:JustReleased(playdate.kButtonDown) then
+        elseif inputManager:JustReleased(playdate.kButtonDown) then
             self.moveDir.y += 1
         end
 
         if (self.moveDir ~= Vector2.zero()) then
             if self:move(self.moveDir) then
-                actionTaken = true
+                actionTaken, moved = true, true
             end
         end
 
         if actionTaken then
-            self.level:round()
+            self.level:round(moved)
         end
     end
 end

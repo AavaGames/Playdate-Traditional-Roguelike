@@ -70,7 +70,7 @@ function LogManager:draw()
         gfx.setColor(screenManager.bgColor)
         gfx.fillRect(self.dimensions.x, self.dimensions.y, self.dimensions.width, self.dimensions.height)
         -- Draw
-        gfx.setImageDrawMode(playdate.graphics.kDrawModeNXOR)
+        gfx.setImageDrawMode(gfx.kDrawModeNXOR)
         gfx.setFont(screenManager.currentLogFont.font)
 
         local text = ""

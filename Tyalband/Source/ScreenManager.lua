@@ -52,11 +52,10 @@ function ScreenManager:init()
         end }
     self.currentScreenState = self.screenState.full
 
-    self.defaultDrawMode = playdate.graphics.kDrawModeNXOR -- change to color
-
     playdate.display.setRefreshRate(self.targetFPS)
 
     self.bgColor = gfx.kColorBlack
+    self.levelColor = gfx.kColorWhite
 
     self.levelManager, self.logManager = nil, nil
     self._redrawScreen = true
@@ -71,8 +70,9 @@ function ScreenManager:init()
     self:resetDrawnGlyphs()
 end
 
-function ScreenManager:setLevelColor(color)
+function ScreenManager:setBGColor(color)
     self.bgColor = color
+    self.levelColor = color == gfx.kColorBlack and gfx.kColorWhite or gfx.kColorBlack
     gfx.setBackgroundColor(self.bgColor)
     self._redrawScreen = true
 end
@@ -186,15 +186,12 @@ end
 function ScreenManager:drawGlyph(char, tile, drawCoord, screenCoord)
     local drawnGlyph = self.drawnGlyphs[screenCoord.x][screenCoord.y]
 
-    if (drawnGlyph.char == "" and char == "") then
-        -- nothing changed
-    else
+    if (not (drawnGlyph.char == "" and char == "")) then
         local tileLit = tile ~= nil and tile.lightLevel > 0
         local tileLightLevel = tile ~= nil and tile.lightLevel or 0
 
-        if (drawnGlyph.char == char and drawnGlyph.lightLevel == tileLightLevel) then
-            -- no need to redraw if everything is the same
-        else
+        -- no need to redraw if everything is the same
+        if (not (drawnGlyph.char == char and drawnGlyph.lightLevel == tileLightLevel)) then 
             -- TODO figure out if this could work. Using glyph as eraser rather than a rect
 
             -- if (drawnGlyph.lit == true and tileLit == false) then
@@ -209,10 +206,11 @@ function ScreenManager:drawGlyph(char, tile, drawCoord, screenCoord)
             --     glyph:draw(drawCoord.x, drawCoord.y)
             -- end
 
+            -- clear tile
             gfx.setColor(self.bgColor)
             gfx.fillRect(drawCoord.x, drawCoord.y, self.currentLevelFont.size, self.currentLevelFont.size)
             
-            -- draw new and update table
+            -- draw new glyph and update table
             self.drawnGlyphs[screenCoord.x][screenCoord.y] = { char = char, lightLevel = tileLightLevel, lit = tileLit, glyph = nil}
             if (char ~= "") then
                 local glyph = self:getGlyph(char, tile.lightLevel)

@@ -7,8 +7,8 @@ function W:init(theLevelManager, thePlayer)
 
     -- do stuff
     self.name = "Level"
-    self.levelIsLit = false
-    self.levelIsSeen = false
+    self.FullyLit = false
+    self.FullySeen = false
     self.playerSpawnPosition = { x = 16, y = 53 }
     
     W.super.finishInit(self)

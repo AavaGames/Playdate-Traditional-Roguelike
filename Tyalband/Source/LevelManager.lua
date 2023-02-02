@@ -28,16 +28,16 @@ function LevelManager:update()
     self.player:update()
     self.currentLevel:update()
 
-    if (inputManager:HeldLong(playdate.kButtonB)) then
-        local view = {
-            x = 12,
-            y = 12,
-            width = screenManager.screenDimensions.y - 24,
-            height = screenManager.screenDimensions.y - 24
-        }
-        self:setViewport(view)
-    end
-
+    -- TODO add to debug menu
+    -- if (inputManager:HeldLong(playdate.kButtonB)) then
+    --     local view = {
+    --         x = 12,
+    --         y = 12,
+    --         width = screenManager.screenDimensions.y - 24,
+    --         height = screenManager.screenDimensions.y - 24
+    --     }
+    --     self:setViewport(view)
+    -- end
 end
 
 function LevelManager:lateUpdate()

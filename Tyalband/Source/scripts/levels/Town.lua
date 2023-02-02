@@ -5,8 +5,8 @@ class("Town").extends(Level)
 function Town:init(theLevelManager, thePlayer)
     Town.super.init(self, theLevelManager, thePlayer)
     self.name = "Base Camp"
-    self.levelIsLit = true
-    self.levelIsSeen = true
+    self.FullyLit = true
+    self.FullySeen = true
     self.playerSpawnPosition = { x = 16, y = 53 }
 
     Animal(self, Vector2.new(6, 43))

@@ -6,11 +6,11 @@ function Level:init(theLevelManager, thePlayer)
     self.levelManager = theLevelManager
     self.player = thePlayer
 
-    self.name = "Level" -- Floor X (Depth 50*X)
+    self.name = "Level"
     self.playerSpawnPosition = Vector2.zero()
 
-    self.levelIsLit = false
-    self.levelIsSeen = false
+    self.FullyLit = false
+    self.FullySeen = false
 
     self.grid = nil
     self.gridDimensions = Vector2.zero()
@@ -28,12 +28,12 @@ function Level:init(theLevelManager, thePlayer)
 end
 
 function Level:finishInit()
-    if (self.levelIsSeen == true) then
+    if (self.FullySeen == true) then
         self:tileLoop(function (tile)
             tile.seen = true
         end)
     end
-    screenManager:setLevelColor(self.levelIsLit == true and gfx.kColorWhite or gfx.kColorBlack)
+    screenManager:setBGColor(self.FullyLit == true and gfx.kColorWhite or gfx.kColorBlack)
     self.player:spawn(self, self.playerSpawnPosition)
     self.camera = Camera(self.player)
 
@@ -46,7 +46,7 @@ function Level:finishInit()
             tile:resetLightLevel()
         end
 
-        if (self.levelIsLit) then
+        if (self.FullyLit) then
             tile:addLightLevel(2, "Level")
             tile.seen = true
         end
@@ -76,7 +76,7 @@ function Level:finishInit()
     end)
 
     self:updatePathfindingMaps()
-    if (not self.levelIsLit) then
+    if (not self.FullyLit) then
         self:updateView()
     end
 end
@@ -99,7 +99,7 @@ function Level:lateUpdate()
     
 end
 
-function Level:round()
+function Level:round(playerMoved)
     frameProfiler:startTimer("Logic: Actor Update")
     
     local actorMax = #self.actors
@@ -110,8 +110,10 @@ function Level:round()
 
     frameProfiler:endTimer("Logic: Actor Update")
 
-    self:updatePathfindingMaps()
-    self:updateView()
+    if (playerMoved == true) then
+        self:updatePathfindingMaps()
+        self:updateView()
+    end
 
     screenManager:redrawLevel()
 end
@@ -141,7 +143,7 @@ function Level:updateView()
                         tile:resetLightLevel()
                     end
 
-                    if (self.levelIsLit) then
+                    if (self.FullyLit) then
                         tile:addLightLevel(2, "Level")
                     end
 
@@ -303,7 +305,7 @@ function Level:collisionCheck(position)
     if (self:inBounds(position.x, position.y)) then
         local tile = self.grid[position.x][position.y]
         if (tile ~= nil) then
-            if (tile.actor ~= nil and tile.actor == true) then
+            if (tile.actor ~= nil) then
                 return { true, tile.actor } -- collision with actor
             elseif (tile.feature ~= nil and tile.feature.collision == true) then
                 return { true, tile.feature } -- collision with feature

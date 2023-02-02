@@ -7,8 +7,8 @@ function TestRoom:init(theLevelManager, thePlayer)
 
     -- do stuff
     self.name = "Testing Room"
-    self.levelIsLit = false
-    self.levelIsSeen = false
+    self.FullyLit = false
+    self.FullySeen = false
     self.playerSpawnPosition = { x = self.gridDimensions.x // 2, y = self.gridDimensions.y // 2 }
 
     TestRoom.super.finishInit(self)
