@@ -1,4 +1,4 @@
-#include "floodfill.h"
+#include "Floodfill.h"
 
 static PlaydateAPI* pd;
 
@@ -30,19 +30,21 @@ static int FloodMap_new(lua_State* L)
 			fm->map[x][y] = -1;
 		}
 	}
-	pd->system->logToConsole("New Floodmap");
+	if (DEBUG_LOG)
+		pd->system->logToConsole("New Floodmap");
 	pd->lua->pushObject(fm, "FloodMap", 0);
 	return 1;
 }
 
 static int FloodMap_free(lua_State* L)
 {
-	pd->system->logToConsole("Cleaned Floodmap");
 	FloodMap* fm = pd->lua->getArgObject(1, "FloodMap", NULL);
 	free(fm->collisionMask);
 	free(fm->map);
 	free(fm->source);
 	free(fm);
+	if (DEBUG_LOG)
+		pd->system->logToConsole("Cleaned Floodmap");
 	return 0;
 }
 
@@ -62,7 +64,8 @@ static int FloodMap_addSource(lua_State* L)
 	source->y = pd->lua->getArgInt(3) - 1;
 	source->weight = pd->lua->getArgInt(4);
 	fm->source = source;
-	pd->system->logToConsole("Add source");
+	if (DEBUG_LOG)
+		pd->system->logToConsole("Add source");
 	return 0;
 }
 
@@ -97,7 +100,6 @@ bool FloodMap_inBounds(FloodMap* fm, int x, int y)
 
 static int Dijkstra_fillMap(lua_State* L)
 {
-	pd->system->logToConsole("Filling Map");
 	FloodMap* fm = pd->lua->getArgObject(1, "FloodMap", NULL);
 
 	// reset map
@@ -168,6 +170,8 @@ static int Dijkstra_fillMap(lua_State* L)
 		list_erase(steps, 0);
 	}
 
+	if (DEBUG_LOG)
+		pd->system->logToConsole("Filled Map");
 	//Dijkstra_fill(fm, fm->source->x, fm->source->y, fm->source->x, fm->source->y);
 	return 0;
 }

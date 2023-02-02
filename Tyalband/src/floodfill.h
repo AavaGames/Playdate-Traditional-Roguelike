@@ -1,9 +1,9 @@
 #ifndef FLOODFILL_H
 #define FLOODFILL_H
 
-#include "global.h"
+#include "Imports.h"
 #include "list.h"
-#include "vector2.h"
+#include "Vector2.h"
 
 //NOTE: Always subtract X & Y because lua counts from 1
 

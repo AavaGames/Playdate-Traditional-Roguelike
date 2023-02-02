@@ -1,5 +1,5 @@
-#include "global.h"
-#include "floodfill.h"
+#include "Imports.h"
+#include "Floodfill.h"
 
 static PlaydateAPI* pd = NULL;
 
