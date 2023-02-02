@@ -1,6 +1,8 @@
 class("InputManager").extends()
 
 function InputManager:init()
+    -- TODO add disable option
+
     self.startFrameTime = playdate.getCurrentTimeMilliseconds()
     self.deltaTime = 0
 

@@ -15,8 +15,10 @@ function logManager:init(theWorldManager)
     self.size = { x = 400-24, y = 64 }
     
     self.linePadding = 2
-
+    self.lineMultiple = 1
     self.currentLineOffset = 0
+
+    self.logCrankTicks = 12
 
     self.logVisibleViewport = {
         x = screenManager.currentWorldFont.size,
@@ -25,8 +27,9 @@ function logManager:init(theWorldManager)
         height = screenManager.screenDimensions.y * 0.6
     }
 
-    self.dimensions = { x = 8, y = 162, width = 400-16, height = 70 }
-    self.logBorder = border(self.dimensions.x, self.dimensions.y, self.dimensions.width, self.dimensions.height, 2, gfx.kColorBlack)
+    self.dimensions = { x = 8, y = 162, width = 384, height = 70 }
+    self.logBorder = border(self.dimensions.x, self.dimensions.y, 
+        self.dimensions.width, self.dimensions.height, 2, gfx.kColorBlack)
 
     self:hideLog()
 
@@ -36,7 +39,8 @@ function logManager:init(theWorldManager)
     self:add("You hit the skeleton for 5 damage.")
     self:add("The skeleton misses you.")
     self:add("This is a scroll of magic missle.")
-    
+    self:add("This is a scroll of magic missle.")
+    self:add("This is a scroll of magic missle.")
     --self:add("This is a dragon. It is slow and attacks often. It has a breath weapon that deals 60 damage (average) and its attacks deal 16 damage (average).")
 
     self:add("This is a dragon. It is *slow* and attacks often. It has a *breath weapon* that deals 60 damage (average) and its attacks deal 16 damage (average). It is immune to *fire* and *gas* based attacks but weak to *piercing*.")
@@ -46,8 +50,7 @@ end
 
 function logManager:showLog()
     if (not self.showingLog) then
-        -- log view
-        self.worldManager:setViewport(self.logVisibleViewport)
+        self.worldManager:setViewport(self.logVisibleViewport) -- log view
         self.showingLog = true
         self.currentLineOffset = 0
         screenManager:redrawScreen()
@@ -56,18 +59,17 @@ end
 
 function logManager:hideLog()
     if (self.showingLog) then
-        -- default fullscreen view
-        self.worldManager:setViewport()
+        self.worldManager:setViewport() -- default fullscreen view
         self.showingLog = false
     end
 end
 
 function logManager:draw()
     if (self.showingLog) then
-        -- Clear --
+        -- Clear
         gfx.setColor(screenManager.bgColor)
         gfx.fillRect(self.dimensions.x, self.dimensions.y, self.dimensions.width, self.dimensions.height)
-        --
+        -- Draw
         gfx.setImageDrawMode(playdate.graphics.kDrawModeNXOR)
         gfx.setFont(screenManager.currentLogFont.font)
 
@@ -84,6 +86,7 @@ function logManager:draw()
 end
 
 function logManager:update()
+    -- TODO add to input manager
     if not playdate.isCrankDocked() then
         if not self.showingLog then
             self:showLog()
@@ -94,9 +97,7 @@ function logManager:update()
         end
     end
 
-    
-    local ticks = 12
-    local crankTick = playdate.getCrankTicks(ticks)
+    local crankTick = playdate.getCrankTicks(self.logCrankTicks)
     if crankTick ~= 0 then
         local prevOffset = self.currentLineOffset
         self.currentLineOffset -= crankTick       
@@ -109,26 +110,17 @@ end
 
 function logManager:add(text)
     if (text == self.cleanLog[#self.cleanLog]) then
-        -- duplicate message
-        local multiplier = nil
-        for i = -2, -1, 1 do
-            multiplier = tonumber(self.log[#self.log]:sub(i))
-            print(multiplier)
-            if type(multiplier) == "number" then
-                if (multiplier == 99) then --max value
-                    break
-                end
-                multiplier += 1
-                break
-            else
-                multiplier = 2
-            end
+        self.lineMultiple = self.lineMultiple + 1
+        text = text .. " <x" .. self.lineMultiple .. ">"
+        for i = 1, self.lastLinesCreated, 1 do
+            table.remove(self.log, #self.log)
         end
-        self.log[#self.log] = text .. " x" .. multiplier
     else
+        self.lineMultipleCausedSplit = false
+        self.lineMultiple = 1
         table.insert(self.cleanLog, text)
-        self:splitLine(text)
     end
+    self.lastLinesCreated = self:splitLine(text)
 
     if (self.showingLog) then
         self.currentLineOffset = 0
@@ -146,6 +138,7 @@ function logManager:splitLine(text)
 
     gfx.setFont(screenManager.currentLogFont.font)
 
+    local linesCreated = 0
     local line = ""
     local i = 1
     while i < #words+1 do
@@ -154,6 +147,7 @@ function logManager:splitLine(text)
 
         if gfx.getTextSize(testLine) > self.size.x then
             table.insert(self.log, line)
+            linesCreated += 1
             line = ""
             i -= 1
         else
@@ -164,13 +158,15 @@ function logManager:splitLine(text)
 
     if (line ~= "") then
         table.insert(self.log, line)
+        linesCreated += 1
     end
+    return linesCreated
 end
 
 function logManager:resplitLines()
     self.log = {}
     self.currentLineOffset = 0
-    for index, line in ipairs(self.cleanLog) do
-        self:splitLine(line)
+    for i = 1, #self.cleanLog, 1 do
+        self:splitLine(self.cleanLog[i])
     end
 end

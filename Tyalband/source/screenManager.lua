@@ -175,20 +175,17 @@ function screenManager:setLogFont(value)
     self:redrawScreen()
 end
 
-function screenManager:getGlyph(char, inView, lightLevel)
+function screenManager:getGlyph(char, lightLevel)
     if (self.worldGlyphs[char] == nil) then
         self.worldGlyphs[char] = self.currentWorldFont.font:getGlyph(char)
         self.worldGlyphs_faded[char] = self.worldGlyphs[char]:fadedImage(0.5, playdate.graphics.image.kDitherTypeBayer2x2)
     end
     
-    if (inView) then
-        if lightLevel >= 2 then -- lit
-            return self.worldGlyphs[char]
-        elseif lightLevel == 1 then -- dim
-            return self.worldGlyphs_faded[char]
-        end
+    if lightLevel >= 2 then -- lit
+        return self.worldGlyphs[char]
+    else -- dim or seen
+        return self.worldGlyphs_faded[char]
     end
-    return self.worldGlyphs_faded[char] -- seen but not inview
 end
 
 function screenManager:drawGlyph(char, tile, drawCoord, screenCoord)
@@ -197,8 +194,8 @@ function screenManager:drawGlyph(char, tile, drawCoord, screenCoord)
     if (drawnGlyph.char == "" and char == "") then
         -- nothing changed
     else
-        local tileLit = tile ~= nil and tile.inView and tile.lightLevel > 0
-        local tileLightLevel = (tile ~= nil and tile.inView) and tile.lightLevel or 0
+        local tileLit = tile ~= nil and tile.lightLevel > 0
+        local tileLightLevel = tile ~= nil and tile.lightLevel or 0
 
         if (drawnGlyph.char == char and drawnGlyph.lightLevel == tileLightLevel) then
             -- no need to redraw if everything is the same
@@ -219,13 +216,13 @@ function screenManager:drawGlyph(char, tile, drawCoord, screenCoord)
 
             gfx.setColor(self.bgColor)
             gfx.fillRect(drawCoord.x, drawCoord.y, self.currentWorldFont.size, self.currentWorldFont.size)
-
+            
             -- draw new and update table
             self.drawnGlyphs[screenCoord.x][screenCoord.y] = { char = char, lightLevel = tileLightLevel, lit = tileLit, glyph = nil}
             if (char ~= "") then
-                local glyph = self:getGlyph(char, tile.inView, tile.lightLevel)
+                local glyph = self:getGlyph(char, tile.lightLevel)
                 self.drawnGlyphs[screenCoord.x][screenCoord.y].glyph = glyph
-                if (tile.inView and tile.lightLevel > 0) then -- draw light around rect
+                if (tile.lightLevel > 0) then -- draw light around rect
                     gfx.setColor(gfx.kColorWhite)
                     gfx.fillRect(drawCoord.x, drawCoord.y, self.currentWorldFont.size, self.currentWorldFont.size)
                 end

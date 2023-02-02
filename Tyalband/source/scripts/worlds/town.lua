@@ -45,9 +45,9 @@ function town:create()
             local tile = self.grid[x][y]
             if (tile ~= nil) then
                 if type == 1 then
-                    wall(self, Vector2.new(x,y))
+                    tile.feature = wall(self, Vector2.new(x,y))
                 elseif type == 4 then
-                    tile.decoration = grass()
+                    tile.feature = grass(self, Vector2.new(x,y))
                 end
             end
         end

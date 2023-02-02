@@ -9,7 +9,7 @@ function player:init(theWorld, startPosition)
     self.moveDir = { x = 0, y = 0 }
     self.state = INACTIVE
 
-    self.visionRange = 6
+    self.visionRange = 4
 
     self.equipped = {
         lightSource = nil
@@ -18,7 +18,6 @@ function player:init(theWorld, startPosition)
     self.equipped.lightSource = lightSource()
     self.equipped.lightSource.name = "Lantern"
 
-    self.diagonalMove = false
     self.kb = false
     local menu = playdate.getSystemMenu()
     local inventoryMenu, error = menu:addMenuItem("Inventory", function()
@@ -31,8 +30,6 @@ function player:init(theWorld, startPosition)
 end
 
 function player:update()
-    player.super.update(self)
-
     if self.kb then 
         if not playdate.keyboard.isVisible() then
             self.state = ACTIVE
@@ -44,26 +41,17 @@ function player:update()
         self.moveDir = Vector2.zero()
         local actionTaken = false
 
-        -- diagonals are difficult with a dpad
-        -- if inputManager:JustPressed(playdate.kButtonB) then
-        --     self.diagonalMove = not self.diagonalMove
-        -- end
-
         if inputManager:JustReleased(playdate.kButtonRight) then
             self.moveDir.x += 1
-            if self.diagonalMove then self.moveDir.y += 1 end
         end
         if inputManager:JustReleased(playdate.kButtonLeft) then
             self.moveDir.x -= 1
-            if self.diagonalMove then self.moveDir.y -= 1 end
         end
         if inputManager:JustReleased(playdate.kButtonUp) then
             self.moveDir.y -= 1
-            if self.diagonalMove then self.moveDir.x += 1 end
         end
         if inputManager:JustReleased(playdate.kButtonDown) then
             self.moveDir.y += 1
-            if self.diagonalMove then self.moveDir.x -= 1 end
         end
 
         if (self.moveDir ~= Vector2.zero()) then
@@ -76,6 +64,10 @@ function player:update()
             self.world:round()
         end
     end
+end
+
+function player:tick()
+    player.super.tick(self)
 end
 
 function player:inventoryUse()
