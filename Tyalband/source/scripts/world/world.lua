@@ -78,7 +78,9 @@ function world:finishInit()
     end)
 
     self:updatePathfindingMaps()
-    self:updateView()
+    if (not self.worldIsLit) then
+        self:updateView()
+    end
 end
 
 function world:create()
@@ -106,7 +108,7 @@ function world:round()
     for i = 1, actorMax, 1 do
         self.actors[i]:tick(); -- rename to monsters? cause player aint here
     end
-    self.camera:update() -- must update last to follow
+    self.camera:update() -- must update last to follow player
 
     frameProfiler:endTimer("Logic: Actor Update")
 
@@ -119,17 +121,19 @@ end
 --region Drawing & Lighting
 
 function world:updateView()
-    -- TODO loop / find light sources, if on screen + range then calc
     frameProfiler:startTimer("Logic: Vision")
 
+    -- TODO loop / find light sources, if on screen + range then calc
+    local litActor = self.player
+    
     frameProfiler:startTimer("Vision: Reset")
-    -- Reset previous lit tiles
+    
     -- optimize further by just resetting the tiles not seen anymore
     if (self.visionTiles ~= nil) then
         local max = #self.visionTiles
         for i = 1, max, 1 do
             local x, y = self.visionTiles[i][1], self.visionTiles[i][2]
-
+            -- Reset previous lit tiles
             if (self:inBounds(x, y)) then
                 local tile = self.grid[x][y]
                 if (tile ~= nil) then
@@ -150,13 +154,12 @@ function world:updateView()
                     end
                 end
             end
-
         end
     end
     frameProfiler:endTimer("Vision: Reset")
     
     frameProfiler:startTimer("Vision: Visible")
-    self.visionTiles = math.findAllDiamondPos(self.player.position.x, self.player.position.y, self.player.visionRange)
+    self.visionTiles = math.findAllDiamondPos(litActor.position.x, litActor.position.y, litActor.visionRange)
     frameProfiler:endTimer("Vision: Visible")
 
     frameProfiler:startTimer("Vision: Apply Vis")
@@ -168,19 +171,14 @@ function world:updateView()
         if (self:inBounds(x, y)) then
             local tile = self.grid[x][y]
             if (tile ~= nil) then
-                if (distance <= self.player.equipped.lightSource.litRange) then
+                if (distance <= litActor.equipped.lightSource.litRange) then
                     tile.currentVisibilityState = tile.visibilityState.lit
-                    tile:addLightLevel(2, self.player.equipped.lightSource)
+                    tile:addLightLevel(2, litActor.equipped.lightSource)
                     tile.seen = true
-                elseif (distance <= self.player.equipped.lightSource.dimRange) then
+                elseif (distance <= litActor.equipped.lightSource.dimRange) then
                     tile.currentVisibilityState = tile.visibilityState.dim
-                    tile:addLightLevel(1, self.player.equipped.lightSource)
+                    tile:addLightLevel(1, litActor.equipped.lightSource)
                     tile.seen = true
-                elseif (tile.lightLevel > 0) then
-                    -- in view but out of lightSource
-                    tile.currentVisibilityState = tile.visibilityState.lit
-                    tile.seen = true
-                else
                 end
             end
         end
