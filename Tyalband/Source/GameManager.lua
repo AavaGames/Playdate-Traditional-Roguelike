@@ -64,7 +64,7 @@ function GameManager:createDebugMenu()
             { text = "Load Town", closeMenuOnExecution = true, func = function() 
 				if (gameManager.levelManager.currentLevel.name ~= "Base Camp") then
 					print("Changed level to town")
-					gameManager.levelManager:loadLevel(Town)
+					gameManager.levelManager:loadLevel(Town, true)
 				else
 					gameManager.logManager:add("Already at level")
 				end
@@ -72,7 +72,7 @@ function GameManager:createDebugMenu()
 			{ text = "Load Dungeon", closeMenuOnExecution = true, func = function() 
 				if (gameManager.levelManager.currentLevel.name ~= "Floor 1 (50 feet)") then
 					print("Changed level to dungeon")
-					gameManager.levelManager:loadLevel(Dungeon)
+					gameManager.levelManager:loadLevel(Dungeon, true)
 				else
 					gameManager.logManager:add("Already at level")
 				end
@@ -80,7 +80,7 @@ function GameManager:createDebugMenu()
 			{ text = "Load Test Room", closeMenuOnExecution = true, func = function() 
 				if (gameManager.levelManager.currentLevel.name ~= "Testing Room") then
 					print("Changed level to dungeon")
-					gameManager.levelManager:loadLevel(TestRoom)
+					gameManager.levelManager:loadLevel(TestRoom, true)
 				else
 					gameManager.logManager:add("Already at level")
 				end

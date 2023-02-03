@@ -41,19 +41,6 @@ function playdate.update()
 	-- playdate.timer.updateTimers()
 	inputManager:update()
 
-	if inputManager:HeldLong(playdate.kButtonA) and inputManager:HeldLong(playdate.kButtonUp) then
-		if (gameManager.levelManager.currentLevel.name ~= "Floor 1 (50 feet)") then
-			print("Changed level to dungeon")
-			gameManager.levelManager:loadLevel(Dungeon)
-		end
-	end
-	if inputManager:HeldLong(playdate.kButtonA) and inputManager:HeldLong(playdate.kButtonDown) then
-		if (gameManager.levelManager.currentLevel.name ~= "Base Camp") then
-			print("Changed level to town")
-			gameManager.levelManager:loadLevel(Town)
-		end
-	end
-
 	updateGame()
 	drawGame()
 end

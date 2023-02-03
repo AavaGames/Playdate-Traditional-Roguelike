@@ -23,9 +23,16 @@ function LevelManager:draw()
     self.currentLevel:draw()
 end
 
-function LevelManager:loadLevel(level)
+function LevelManager:loadLevel(level, transition)
     self.player:despawn()
     --insert transition
+    if (transition) then
+        gfx.clear()
+        gfx.setImageDrawMode(gfx.kDrawModeNXOR)
+        gfx.drawTextAligned("loading...", screenManager.screenDimensions.x, screenManager.screenDimensions.y - 16, kTextAlignment.right)
+        coroutine.yield()
+    end
+    --
     self.currentLevel = level(self, self.player)
     screenManager:redrawScreen()
 end
