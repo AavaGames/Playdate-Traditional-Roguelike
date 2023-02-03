@@ -6,6 +6,8 @@ function Dungeon:init(theLevelManager, thePlayer)
     Dungeon.super.init(self, theLevelManager, thePlayer)
     self.name = "Floor 1 (50 feet)"
 
+    self.FullyLit = true
+
     self.playerSpawnPosition = { x = 18, y = 19 }
     --self.playerSpawnPosition = { x = 32, y = 16 }
     Animal(self, Vector2.new(2, 13))

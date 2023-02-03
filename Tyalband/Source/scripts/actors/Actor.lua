@@ -15,6 +15,7 @@ function Actor:init(theLevel, startPosition)
     self.level = theLevel
     self.tile = nil -- to let it know its been exited
 
+    self.visionRange = 4
     self.renderWhenSeen = false
 
     if (theLevel ~= nil and startPosition ~= nil) then
@@ -33,6 +34,7 @@ end
 
 function Actor:move(moveAmount)
     local newPosition = self.position + Vector2.new(moveAmount.x, moveAmount.y)
+    print(self.name, self.position.x, self.position.y , "new", newPosition.x, newPosition.y)
     return self:moveTo(newPosition)
 end
 
@@ -56,6 +58,7 @@ function Actor:updateTile(tile)
         self.tile:exit(self)
     end
     self.tile = tile 
+    print("tile", self.tile.position)
     self.position = self.tile.position
     self.tile:enter(self)
 end

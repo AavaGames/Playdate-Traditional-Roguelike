@@ -20,12 +20,15 @@ function LogManager:init(theLevelManager)
 
     self.logCrankTicks = 12
 
-    self.logVisibleViewport = {
-        x = screenManager.currentLevelFont.size,
-        y = screenManager.currentLevelFont.size,
-        width = screenManager.screenDimensions.x - screenManager.currentLevelFont.size * 2,
-        height = screenManager.screenDimensions.y * 0.6
-    }
+    self.logVisibleViewport = function ()
+        print("log view")
+        return {
+            x = screenManager.currentLevelFont.size,
+            y = screenManager.currentLevelFont.size,
+            width = screenManager.screenDimensions.x - screenManager.currentLevelFont.size * 2,
+            height = math.floor(screenManager.screenDimensions.y * 0.69) - screenManager.currentLevelFont.size
+        }
+    end
 
     self.dimensions = { x = 8, y = 162, width = 384, height = 70 }
     self.logBorder = Border(self.dimensions.x, self.dimensions.y, 
@@ -50,7 +53,7 @@ end
 
 function LogManager:showLog()
     if (not self.showingLog) then
-        self.levelManager:setViewport(self.logVisibleViewport) -- log view
+        screenManager:setViewport(self.logVisibleViewport) -- log view
         self.showingLog = true
         self.currentLineOffset = 0
         screenManager:redrawScreen()
@@ -59,7 +62,7 @@ end
 
 function LogManager:hideLog()
     if (self.showingLog) then
-        self.levelManager:setViewport() -- default fullscreen view
+        screenManager:setViewport() -- default fullscreen view
         self.showingLog = false
     end
 end

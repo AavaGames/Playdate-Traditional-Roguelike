@@ -208,18 +208,15 @@ end
 
 function Level:draw()
     local screenManager = screenManager
-    print("\n")
-    local viewport = self.levelManager.viewport
+
+    local viewport = screenManager.viewport
+
+    print("draw", viewport.width)
     local fontSize = screenManager.currentLevelFont.size
 
-    local screenXSize = math.floor(viewport.width / fontSize)
-    local screenYSize = math.floor(viewport.height / fontSize)
     -- TODO replace this math with pre-calcuated shit per font so that the screen is properly placed
-
-    local startTileX = math.clamp(self.camera.position.x - math.floor(screenXSize*0.5), 1, 
-        math.clamp(self.gridDimensions.x-screenXSize + 1, 1, 9999999)) -- hard code screen size to font
-    local startTileY = math.clamp(self.camera.position.y - math.floor(screenYSize*0.5), 1, 
-        math.clamp(self.gridDimensions.y-screenYSize + 1, 1, 9999999))
+    local startTileX = self.camera.position.x - math.floor(screenManager.viewportCharDrawMax.x*0.5)
+    local startTileY = self.camera.position.y - math.floor(screenManager.viewportCharDrawMax.y*0.5)
 
     local xOffset = 0
     local yOffset = 0
@@ -227,53 +224,52 @@ function Level:draw()
     gfx.setImageDrawMode(gfx.kDrawModeNXOR)
     gfx.setFont(screenManager.currentLevelFont.font)
 
-    for xPos = 0, screenManager.gridScreenMax.x, 1 do
-        for yPos = 0, screenManager.gridScreenMax.y, 1 do
+    -- TODO create some sort of dijkstra map debug drawer - can create a debug menu with the cycles of maps
+    -- If > 10+ then use letters lowercase -> upper
+    -- Also add a drawCoord view
+    -- gfx.setFont(screenManager.logFont_6px.font)
+    -- gfx.drawText((xPos), drawCoord.x, drawCoord.y)
+
+    for xPos = 0, screenManager.viewportCharDrawMax.x - 1, 1 do
+        for yPos = 0, screenManager.viewportCharDrawMax.y - 1, 1 do
 
             local x = startTileX + xOffset
             local y = startTileY + yOffset
 
-            if (x > self.gridDimensions.x or y > self.gridDimensions.y) then
-                break
-            end
             local drawCoord = { 
                 x = viewport.x + fontSize * xPos,
                 y = viewport.y + fontSize * yPos
-            }   
-            if drawCoord.x > (viewport.width) then
-                break
-            end
-            if drawCoord.y > (viewport.height) then
-                break
-            end
-
-            -- TODO create some sort of dijkstra map debug drawer - can create a debug menu with the cycles of maps
-            -- If > 10+ then use letters lowercase -> upper
+            }
+            -- if drawCoord.x > viewport.width or drawCoord.y > viewport.height then
+            --     break
+            -- end
 
             local char = ""
-            local tile = self.grid[x][y]
-            if (tile ~= nil and tile.currentVisibilityState ~= tile.visibilityState.unknown) then 
-                if tile.actor ~= nil and tile.lightLevel > 0 then
-                    char = tile.actor:getChar()
-                elseif #tile.effects > 0 then
-                    -- TODO add effects & drawing
-                elseif tile.item ~= nil and (tile.lightLevel > 0 or tile.item.seen == true) then
-                    char = tile.item.char
-                    tile.item.seen = true 
-                        -- probably move this somewhere else
-                        -- item checks if tile is seen every frame? seems inefficient
-                elseif tile.feature ~= nil then -- features: walls, ground
-                    char = tile.feature:getChar()
+            local tile = nil
+            if (self:inBounds(x, y)) then
+                tile = self.grid[x][y]
+                if (tile ~= nil and tile.currentVisibilityState ~= tile.visibilityState.unknown) then 
+                    if tile.actor ~= nil and tile.lightLevel > 0 then
+                        char = tile.actor:getChar()
+                    elseif #tile.effects > 0 then
+                        -- TODO add effects & drawing
+                    elseif tile.item ~= nil and (tile.lightLevel > 0 or tile.item.seen == true) then
+                        char = tile.item.char
+                        tile.item.seen = true 
+                            -- probably move this somewhere else
+                            -- item checks if tile is seen every frame? seems inefficient
+                    elseif tile.feature ~= nil then -- features: walls, ground
+                        char = tile.feature:getChar()
+                    end
                 end
             end
-
             screenManager:drawGlyph(char, tile, drawCoord, { 
                 x = xPos,
                 y = yPos
             })
-        
-            -- gfx.setFont(screenManager.logFont_6px.font)
-            -- gfx.drawText((xPos), drawCoord.x, drawCoord.y)
+
+            --gfx.setFont(screenManager.levelFont_8px.font)
+            --gfx.drawText("X", drawCoord.x, drawCoord.y)
 
             yOffset += 1
         end
@@ -283,6 +279,10 @@ function Level:draw()
 end
 
 --#endregion
+
+function Level:inBounds(x, y)
+    return x >= 1 and x <= self.gridDimensions.x and y >= 1 and y <= self.gridDimensions.y
+end
 
 --Pass in a function for the the tile to run through ( function(tile) )
 function Level:tileLoop(func)
@@ -294,10 +294,6 @@ function Level:tileLoop(func)
             end
         end
     end
-end
-
-function Level:inBounds(x, y)
-    return x >= 1 and x <= self.gridDimensions.x and y >= 1 and y <= self.gridDimensions.y
 end
 
 -- Check tile in the level for collision. Returns { bool: collision?, [empty tile, actor collision or nil] }

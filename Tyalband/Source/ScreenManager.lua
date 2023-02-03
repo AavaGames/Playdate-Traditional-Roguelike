@@ -6,7 +6,7 @@ function ScreenManager:init()
     self.fps = false
     self.profiler = true
     self.targetFPS = 30
-    
+
     self.screenDimensions = {
         x = 400,
         y = 240
@@ -31,8 +31,20 @@ function ScreenManager:init()
 
     self.currentLevelFont, self.currentLogFont = nil, nil
 
-    -- Maxmimum characters that can fit on the screen
-    self.gridScreenMax = { x = 0, y = 0 }
+    self.defaultViewport = function(self) 
+        print("def view")
+        return {
+            x = self.currentLevelFont.size,
+            y = self.currentLevelFont.size,
+            width = self.screenDimensions.x - self.currentLevelFont.size * 2,
+            height = self.screenDimensions.y - self.currentLevelFont.size * 2
+        }
+    end
+    self.viewportCalcFunction = self.defaultViewport
+    self.viewport = nil
+
+    -- Max characters that can be drawn in the viewport
+    self.viewportCharDrawMax = { x = 0, y = 0 }
 
     -- lit, dim but seen, unseen but known
     self.levelGlyphs = {} -- alloc an estimate?
@@ -121,6 +133,16 @@ function ScreenManager:draw()
         frameProfiler:endTimer("Draw: Log")
     end
 
+    local viewportBlockDraw = false
+    if viewportBlockDraw then
+        gfx.clear()
+        gfx.setColor(self.levelColor)
+        gfx.fillRect(self.viewport.x, self.viewport.y, self.viewport.width, self.viewport.height)
+        if (self.logManager.showingLog) then
+            gfx.fillRect(self.logManager.dimensions.x, self.logManager.dimensions.y, self.logManager.dimensions.width, self.logManager.dimensions.height)
+        end
+    end
+    
     if self.fps then
         playdate.drawFPS(0,0)
     end
@@ -149,11 +171,12 @@ function ScreenManager:setLevelFont(value)
     elseif value == "16px" then
         self.currentLevelFont = self.levelFont_16px
     end
-    self.gridScreenMax.x = math.floor(self.screenDimensions.x / self.currentLevelFont.size)
-    self.gridScreenMax.y = math.floor(self.screenDimensions.y / self.currentLevelFont.size)
+    self:recalculateViewport()
     self:resetFontGlyphs()
+    if (gameManager ~= nil and gameManager.levelManager.currentLevel.camera ~= nil) then
+        gameManager.levelManager.currentLevel.camera:calculateBounds()
+    end 
     self:redrawScreen()
-    collectgarbage()
 end
 
 function ScreenManager:setLogFont(value)
@@ -231,10 +254,28 @@ function ScreenManager:resetFontGlyphs()
 end
 
 function ScreenManager:resetDrawnGlyphs()
-    for x = 0, self.gridScreenMax.x, 1 do
+    for x = 0, self.viewportCharDrawMax.x, 1 do
         self.drawnGlyphs[x] = {}
-        for y = 0, self.gridScreenMax.y, 1 do
+        for y = 0, self.viewportCharDrawMax.y, 1 do
             self.drawnGlyphs[x][y] = { char = "", lightLevel = 0, lit = false, glyph = nil}
         end
     end
+end
+
+function ScreenManager:setViewport(viewportCalcFunction)
+    -- IDEA: Coroutine to have smooth transition
+    local func = viewportCalcFunction or self.defaultViewport
+    self.viewportCalcFunction = func
+    self:recalculateViewport()
+    self:redrawScreen()
+end
+
+function ScreenManager:recalculateViewport()
+    self.viewport = self:viewportCalcFunction()
+    
+    self.viewportCharDrawMax = {
+        x = self.viewport.width // self.currentLevelFont.size,
+        y = self.viewport.height // self.currentLevelFont.size
+    }
+    print(self.viewport.height, self.currentLevelFont.size, self.viewportCharDrawMax.y)
 end

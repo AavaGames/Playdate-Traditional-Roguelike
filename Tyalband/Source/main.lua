@@ -60,8 +60,7 @@ end
 
 function playdate.keyPressed(key) 
 	if key == "N" then
-		local color = screenManager.bgColor == gfx.kColorWhite and gfx.kColorBlack or gfx.kColorWhite
-		screenManager:setBGColor(color)
+		screenManager:setBGColor(screenManager.bgColor == gfx.kColorWhite and gfx.kColorBlack or gfx.kColorWhite)
 	end
 
 	if key == "9" then
