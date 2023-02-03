@@ -3,6 +3,10 @@
 	Made by Hasnain Raza
 	Additions by Philip Fertsman (@aavagames)
 
+	Think of variables holding this class as a pointer. 
+		local vec = Vector2.new(5, 5)
+		local vec2 = vec
+	Changing one of these variables changes the other
 ]]
 
 Vector2 = {}
@@ -135,6 +139,10 @@ function Vector2.new(x, y)
 	
 	return proxyTable
 	
+end
+
+function Vector2.copy(vector)
+	return Vector2.new(vector.x, vector.y)
 end
 
 --// METHODS //--

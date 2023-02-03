@@ -7,7 +7,7 @@ function Camera:init(target, theLevel, startPosition)
     self.position = Vector2.zero()
     if (self.target == nil) then
         self.level = theLevel
-        self.position = startPosition
+        self.position = Vector2.copy(startPosition)
     end
     self.bounds, self.move = nil, nil
     self:calculateBounds()
@@ -18,19 +18,19 @@ end
 function Camera:update()
     if (self.target) then
         -- TODO camera always follow player setting
-        local simpleFollow = true
+        local simpleFollow = false
         if (simpleFollow == true) then
-            self.position = self.target.position
+            self.position = Vector2.copy(self.target.position)
         else
             if (self.target.position.x > self.position.x + self.bounds.x) then -- right
-                self.position.x += self.move.x
+                self.position.x = self.target.position.x + self.bounds.x
             elseif (self.target.position.x < self.position.x - self.bounds.x) then -- left
-                self.position.x -= self.move.x
+                self.position.x = self.target.position.x - self.bounds.x
             end
             if (self.target.position.y > self.position.y + self.bounds.y) then -- down
-                self.position.y += self.move.y
+                self.position.y = self.target.position.y + self.bounds.y
             elseif (self.target.position.y < self.position.y - self.bounds.y) then -- up
-                self.position.y -= self.move.y
+                self.position.y = self.target.position.y - self.bounds.y
             end
         end
     else
@@ -51,7 +51,7 @@ function Camera:update()
 end
 
 function Camera:centreOnTarget()
-    self.position = self.target.position
+    self.position = Vector2.copy(self.target.position)
 end
 
 function Camera:calculateBounds()
@@ -64,6 +64,5 @@ function Camera:calculateBounds()
         x = screenManager.viewportCharDrawMax.x - self.target.visionRange * 2,
         y = screenManager.viewportCharDrawMax.y - self.target.visionRange * 2
     }
-
     self:centreOnTarget()
 end

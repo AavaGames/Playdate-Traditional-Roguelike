@@ -32,7 +32,6 @@ function ScreenManager:init()
     self.currentLevelFont, self.currentLogFont = nil, nil
 
     self.defaultViewport = function(self) 
-        print("def view")
         return {
             x = self.currentLevelFont.size,
             y = self.currentLevelFont.size,
@@ -142,7 +141,7 @@ function ScreenManager:draw()
             gfx.fillRect(self.logManager.dimensions.x, self.logManager.dimensions.y, self.logManager.dimensions.width, self.logManager.dimensions.height)
         end
     end
-    
+
     if self.fps then
         playdate.drawFPS(0,0)
     end
@@ -173,9 +172,6 @@ function ScreenManager:setLevelFont(value)
     end
     self:recalculateViewport()
     self:resetFontGlyphs()
-    if (gameManager ~= nil and gameManager.levelManager.currentLevel.camera ~= nil) then
-        gameManager.levelManager.currentLevel.camera:calculateBounds()
-    end 
     self:redrawScreen()
 end
 
@@ -272,10 +268,11 @@ end
 
 function ScreenManager:recalculateViewport()
     self.viewport = self:viewportCalcFunction()
-    
     self.viewportCharDrawMax = {
         x = self.viewport.width // self.currentLevelFont.size,
         y = self.viewport.height // self.currentLevelFont.size
     }
-    print(self.viewport.height, self.currentLevelFont.size, self.viewportCharDrawMax.y)
+    if (gameManager ~= nil and gameManager.levelManager.currentLevel.camera ~= nil) then
+        gameManager.levelManager.currentLevel.camera:calculateBounds()
+    end 
 end

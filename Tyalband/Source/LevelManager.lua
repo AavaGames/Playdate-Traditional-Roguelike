@@ -13,11 +13,6 @@ end
 function LevelManager:update()
     self.player:update()
     self.currentLevel:update()
-
-    -- TODO add to debug menu
-    -- if (inputManager:HeldLong(playdate.kButtonB)) then
-    --     self:setViewport(view)
-    -- end
 end
 
 function LevelManager:lateUpdate()

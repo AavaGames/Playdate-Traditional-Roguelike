@@ -21,7 +21,6 @@ function LogManager:init(theLevelManager)
     self.logCrankTicks = 12
 
     self.logVisibleViewport = function ()
-        print("log view")
         return {
             x = screenManager.currentLevelFont.size,
             y = screenManager.currentLevelFont.size,

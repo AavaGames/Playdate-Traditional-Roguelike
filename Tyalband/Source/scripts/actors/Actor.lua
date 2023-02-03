@@ -59,7 +59,7 @@ function Actor:updateTile(tile)
     end
     self.tile = tile 
     print("tile", self.tile.position)
-    self.position = self.tile.position
+    self.position = Vector2.copy(self.tile.position) -- pointer to a vector
     self.tile:enter(self)
 end
 
