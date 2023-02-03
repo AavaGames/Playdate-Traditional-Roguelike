@@ -37,6 +37,8 @@ function Menu:draw()
     gfx.setImageDrawMode(gfx.kDrawModeNXOR)
 
     gfx.drawTextAligned(self.name, 100, 2, kTextAlignment.center)
+    gfx.drawTextAligned("A - Open KB\nB - Close Menu", screenManager.screenDimensions.x, 
+        screenManager.screenDimensions.y - self.font.size*4, kTextAlignment.right)
 
     local text = ""
     for i = 1, #self.items, 1 do

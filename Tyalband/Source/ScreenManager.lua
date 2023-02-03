@@ -3,8 +3,8 @@ local gfx <const> = playdate.graphics
 class("ScreenManager").extends()
 
 function ScreenManager:init()
-    self.fps = false
-    self.profiler = true
+    self.fps = true
+    self.profiler = false
     self.targetFPS = 30
 
     self.screenDimensions = {

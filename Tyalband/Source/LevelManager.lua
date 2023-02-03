@@ -29,7 +29,7 @@ function LevelManager:loadLevel(level, transition)
     if (transition) then
         gfx.clear()
         gfx.setImageDrawMode(gfx.kDrawModeNXOR)
-        gfx.drawTextAligned("loading...", screenManager.screenDimensions.x, screenManager.screenDimensions.y - 16, kTextAlignment.right)
+        gfx.drawTextAligned("enter oronmaril...", screenManager.screenDimensions.x, screenManager.screenDimensions.y - 16, kTextAlignment.right)
         coroutine.yield()
     end
     --
