@@ -34,7 +34,6 @@ end
 
 function Actor:move(moveAmount)
     local newPosition = self.position + Vector2.new(moveAmount.x, moveAmount.y)
-    print(self.name, self.position.x, self.position.y , "new", newPosition.x, newPosition.y)
     return self:moveTo(newPosition)
 end
 
@@ -58,7 +57,6 @@ function Actor:updateTile(tile)
         self.tile:exit(self)
     end
     self.tile = tile 
-    print("tile", self.tile.position)
     self.position = Vector2.copy(self.tile.position) -- pointer to a vector
     self.tile:enter(self)
 end

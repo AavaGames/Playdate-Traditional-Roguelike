@@ -211,7 +211,6 @@ function Level:draw()
 
     local viewport = screenManager.viewport
 
-    print("draw", viewport.width)
     local fontSize = screenManager.currentLevelFont.size
 
     -- TODO replace this math with pre-calcuated shit per font so that the screen is properly placed

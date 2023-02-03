@@ -94,6 +94,32 @@ function ScreenManager:lateUpdate() end
 function ScreenManager:draw()
     local drew = false
 
+    if (gameManager.currentGameState == gameManager.gameStates.level) then
+        drew = self:drawLevel()
+    elseif (gameManager.currentGameState == gameManager.gameStates.menu) then
+        drew = self:drawMenu()
+    end
+
+    if self.fps then
+        playdate.drawFPS(0,0)
+    end
+
+    if (drew) then frameProfiler:frameEnd() end
+end
+
+function ScreenManager:drawMenu()
+    frameProfiler:startTimer("Draw: Menu")
+    local drew = true
+
+    gameManager.menuManager:draw()
+
+    frameProfiler:endTimer("Draw: Menu")
+    return drew
+end
+
+function ScreenManager:drawLevel()
+    local drew = false
+
     if self._redrawScreen then
         frameProfiler:startTimer("Draw: Screen")
 
@@ -142,11 +168,7 @@ function ScreenManager:draw()
         end
     end
 
-    if self.fps then
-        playdate.drawFPS(0,0)
-    end
-
-    if (drew) then frameProfiler:frameEnd() end
+    return drew
 end
 
 function ScreenManager:redrawScreen()
@@ -188,6 +210,8 @@ function ScreenManager:setLogFont(value)
     end
     self:redrawScreen()
 end
+
+--#region Glyphs 
 
 function ScreenManager:getGlyph(char, lightLevel)
     if (self.levelGlyphs[char] == nil) then
@@ -258,6 +282,10 @@ function ScreenManager:resetDrawnGlyphs()
     end
 end
 
+--#endregion
+
+--#region Viewport
+
 function ScreenManager:setViewport(viewportCalcFunction)
     -- IDEA: Coroutine to have smooth transition
     local func = viewportCalcFunction or self.defaultViewport
@@ -276,3 +304,5 @@ function ScreenManager:recalculateViewport()
         gameManager.levelManager.currentLevel.camera:calculateBounds()
     end 
 end
+
+--#endregion

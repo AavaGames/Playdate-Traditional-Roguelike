@@ -22,6 +22,9 @@ import "ScreenManager"
 import "FrameProfiler"
 import "InputManager"
 
+import "MenuManager"
+import "/scripts/ui/Menu"
+
 import "LevelManager"
 import "Level"
 import "Tile"

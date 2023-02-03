@@ -14,7 +14,6 @@ function LogManager:init(theLevelManager)
     self.position = { x = 12, y = 165}
     self.size = { x = 400-24, y = 64 }
     
-    self.linePadding = 2
     self.lineMultiple = 1
     self.currentLineOffset = 0
 

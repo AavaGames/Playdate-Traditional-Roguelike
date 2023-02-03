@@ -62,17 +62,4 @@ function playdate.keyPressed(key)
 	if key == "N" then
 		screenManager:setBGColor(screenManager.bgColor == gfx.kColorWhite and gfx.kColorBlack or gfx.kColorWhite)
 	end
-
-	if key == "9" then
-		if (gameManager.levelManager.currentLevel.name ~= "Floor 1 (50 feet)") then
-			print("Changed level to dungeon")
-			gameManager.levelManager:loadLevel(dungeon)
-		end
-	end
-	if key == "0" then
-		if (gameManager.levelManager.currentLevel.name ~= "Base Camp") then
-			print("Changed level to town")
-			gameManager.levelManager:loadLevel(town)
-		end
-	end
 end

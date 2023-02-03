@@ -17,26 +17,9 @@ function Player:init(theLevel, startPosition)
 
     self.equipped.lightSource = LightSource()
     self.equipped.lightSource.name = "Lantern"
-
-    self.kb = false
-    local menu = playdate.getSystemMenu()
-    local inventoryMenu, error = menu:addMenuItem("Inventory", function()
-        print("inventory opened")
-        self.state = INACTIVE
-        self.kb = true
-        playdate.keyboard.show()
-    end)
-    playdate.keyboard.textChangedCallback = function() self:inventoryUse() end
 end
 
 function Player:update()
-    if self.kb then 
-        if not playdate.keyboard.isVisible() then
-            self.state = ACTIVE
-            self.kb = false
-        end
-    end
-
     if (self.state == ACTIVE) then
         self.moveDir = Vector2.zero()
         local actionTaken, moved = false, false
@@ -67,13 +50,6 @@ end
 
 function Player:tick()
     Player.super.tick(self)
-end
-
-function Player:inventoryUse()
-    -- parse inventory
-    print("picked: " .. playdate.keyboard.text)
-
-    playdate.keyboard.hide()
 end
 
 function Player:spawn(theLevel, startPosition)
