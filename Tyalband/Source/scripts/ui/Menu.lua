@@ -21,6 +21,7 @@ function Menu:addItem()
 end
 
 function Menu:update()
+    print("update")
     if (not self.kbOpen) then
         if (inputManager:JustPressed(playdate.kButtonA)) then
             self:openKeyboard()
@@ -51,6 +52,8 @@ function Menu:draw()
 end
 
 function Menu:setActive()
+    print("update")
+
     self:openKeyboard()
 end
 
@@ -68,22 +71,25 @@ function Menu:readKeyboard()
 end
 
 function Menu:keyboardHidden()
-    self.kbOpen = false
+    if (self.kbOpen == true) then
+        self.kbOpen = false
 
-    local input = self.kbInput
-    if (input ~= nil and input ~= "") then
-        local char = string.byte(input)
-        local index = char - self.byteStart
-        if (index >= 1 and index <= #self.items) then
-            local item = self.items[index]
-            item.func()
-            if (item.closeMenuOnExecution == true) then
-                self.manager:removeMenu()
+        local input = self.kbInput
+        if (input ~= nil and input ~= "") then
+            local char = string.byte(input)
+            local index = char - self.byteStart
+            if (index >= 1 and index <= #self.items) then
+                local item = self.items[index]
+                item.func()
+                if (item.closeMenuOnExecution == true) then
+                    self.manager:removeMenu()
+                end
             end
+            print(self.name .. ": " .. input)
         end
-        print(self.name .. ": " .. input)
+
+        self.kbInput = nil
+
     end
-
-    self.kbInput = nil
-
+    
 end
