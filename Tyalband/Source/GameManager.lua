@@ -57,7 +57,7 @@ end
 
 function GameManager:createDebugMenu()
 	self.menuManager:addMenu(
-        Menu(self.menuManager, "DEBUG", {
+        Menu(self.menuManager, "DEBUG MENU #" .. math.random(0, 1000), {
 			{ text = "Centre Camera on Player", closeMenuOnExecution = true, func = function() 
 				gameManager.levelManager.currentLevel.camera:centreOnTarget()
 			end },
@@ -85,7 +85,7 @@ function GameManager:createDebugMenu()
 					gameManager.logManager:add("Already at level")
 				end
 			end },
-			{ text = "Toggle BG Color", closeMenuOnExecution = true, func = function() 
+			{ text = "Toggle BG Color", closeMenuOnExecution = false, func = function() 
 				screenManager:setBGColor(screenManager.bgColor == playdate.graphics.kColorWhite and playdate.graphics.kColorBlack or playdate.graphics.kColorWhite)
 			end },
 			{ text = "Nested Debug Menu", closeMenuOnExecution = false, func = function() self:createDebugMenu() end }
