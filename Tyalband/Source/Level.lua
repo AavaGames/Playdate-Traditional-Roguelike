@@ -223,6 +223,8 @@ function Level:draw()
     gfx.setImageDrawMode(gfx.kDrawModeNXOR)
     gfx.setFont(screenManager.currentLevelFont.font)
 
+    local drawPrint = table.create(screenManager.viewportCharDrawMax.x)
+
     -- TODO create some sort of dijkstra map debug drawer - can create a debug menu with the cycles of maps
     -- If > 10+ then use letters lowercase -> upper
     -- Also add a drawCoord view
@@ -230,6 +232,7 @@ function Level:draw()
     -- gfx.drawText((xPos), drawCoord.x, drawCoord.y)
 
     for xPos = 0, screenManager.viewportCharDrawMax.x - 1, 1 do
+        drawPrint[xPos+1] = {}
         for yPos = 0, screenManager.viewportCharDrawMax.y - 1, 1 do
 
             local x = startTileX + xOffset
@@ -267,6 +270,11 @@ function Level:draw()
                 y = yPos
             })
 
+            if (char == "") then
+                char = " "
+            end
+
+            drawPrint[xPos+1][yPos+1] = char
             --gfx.setFont(screenManager.levelFont_8px.font)
             --gfx.drawText("X", drawCoord.x, drawCoord.y)
 
@@ -274,6 +282,18 @@ function Level:draw()
         end
         xOffset += 1
         yOffset = 0
+    end
+
+    local drawToConsole = false
+    if (drawToConsole == true) then
+        local str = ""
+        for y = 0, screenManager.viewportCharDrawMax.y - 1, 1 do
+            for x = 0, screenManager.viewportCharDrawMax.x - 1, 1 do
+                str = str .. drawPrint[x+1][y+1]
+            end
+            str = str .. "\n"
+        end
+        print(str)
     end
 end
 
