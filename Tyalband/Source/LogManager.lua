@@ -11,8 +11,8 @@ function LogManager:init(theLevelManager)
     self.showingLog = true
     self.maxLogLines = 500 -- TODO: implement (34 avg char x 500 lines = 17 000 bytes)
 
-    self.position = { x = 12, y = 165}
-    self.size = { x = 400-24, y = 64 }
+    self.textPosition = { x = 5, y = 173}
+    self.textSize = { x = 400-8, y = 64 }
     
     self.lineMultiple = 1
     self.currentLineOffset = 0
@@ -21,32 +21,45 @@ function LogManager:init(theLevelManager)
 
     self.logVisibleViewport = function ()
         return {
-            x = screenManager.currentLevelFont.size,
-            y = screenManager.currentLevelFont.size,
-            width = screenManager.screenDimensions.x - screenManager.currentLevelFont.size * 2,
-            height = math.floor(screenManager.screenDimensions.y * 0.69) - screenManager.currentLevelFont.size
+            x = 1,
+            y = 1,
+            width = 400,
+            height = math.floor(screenManager.screenDimensions.y * 0.70)
         }
     end
 
-    self.dimensions = { x = 8, y = 162, width = 384, height = 70 }
+    self.dimensions = { x = 1, y = math.floor(screenManager.screenDimensions.y * 0.7) + 1,
+        width = 400 - 2, height = math.floor(screenManager.screenDimensions.y * 0.3) - 2}
+    -- Inspect Window Dimensions
+    -- self.textPosition = { x = math.floor(screenManager.screenDimensions.x * 0.5) + 3, y = 2}
+    -- self.textSize = { x = math.floor(screenManager.screenDimensions.x * 0.5)-6, y = screenManager.screenDimensions.y}
+    -- self.dimensions = { x = math.floor(screenManager.screenDimensions.x * 0.5), y = 1, width = math.floor(screenManager.screenDimensions.x * 0.5)-1, height = screenManager.screenDimensions.y -2}
+    -- self.inspectViewport = function ()
+    --     return {
+    --         x = 1,
+    --         y = 1,
+    --         width = math.floor(screenManager.screenDimensions.x * 0.5),
+    --         height = screenManager.screenDimensions.y
+    --     }
+    -- end
+
     self.logBorder = Border(self.dimensions.x, self.dimensions.y, 
-        self.dimensions.width, self.dimensions.height, 2, gfx.kColorBlack)
+        self.dimensions.width, self.dimensions.height, 2, gfx.kColorXOR)
 
     self:hideLog()
 
     self:add("Line 1.")
     self:add("This is text...")
     self:add("Super duper long text string that should be off the screen a a a by now.")
-    self:add("You hit the skeleton for 5 damage.")
-    self:add("The skeleton misses you.")
     self:add("This is a scroll of magic missle.")
     self:add("This is a scroll of magic missle.")
     self:add("This is a scroll of magic missle.")
-    --self:add("This is a dragon. It is slow and attacks often. It has a breath weapon that deals 60 damage (average) and its attacks deal 16 damage (average).")
-
-    self:add("This is a dragon. It is *slow* and attacks often. It has a *breath weapon* that deals 60 damage (average) and its attacks deal 16 damage (average). It is immune to *fire* and *gas* based attacks but weak to *piercing*.")
-
-    self:add("You pick up the stone axe of the dwarven kingdom of Irunel. It has 25 blah and can pierce armor of the highest grade. Only those with the mightest of shields can block such a blade.")
+    self:add("You hit the skeleton for 5 damage, catching it unaware.")
+    self:add("You hit the skeleton for 3 damage; the skeleton misses you.")
+    self:add("You destroy the skeleton.")
+    self:add("You pick up the *Great* *Axe* *of* *Irunel.*")--It has 25 blah and can pierce armor of the highest grade. Only those with the mightest of shields can block such a blade.")
+    --self:add("---")
+    --self:add("This is a dragon. It is *slow* and attacks often. It has a *breath weapon* that deals 60 damage (average) and its attacks deal 16 damage (average). It is immune to *fire* and *gas* based attacks but weak to *piercing*.")
 end
 
 function LogManager:showLog()
@@ -80,7 +93,7 @@ function LogManager:draw()
                 text = text .. self.log[#self.log-i] .. "\n"
             end
         end
-        gfx.drawTextInRect(text, self.position.x, self.position.y, self.size.x, self.size.y)
+        gfx.drawTextInRect(text, self.textPosition.x, self.textPosition.y, self.textSize.x, self.textSize.y)
 
         self.logBorder:draw()
     end
@@ -146,7 +159,7 @@ function LogManager:splitLine(text)
         local space = line ~= "" and " " or "" -- add a space unless its new line
         local testLine = line .. space .. words[i]
 
-        if gfx.getTextSize(testLine) > self.size.x then
+        if gfx.getTextSize(testLine) > self.textSize.x then
             table.insert(self.log, line)
             linesCreated += 1
             line = ""

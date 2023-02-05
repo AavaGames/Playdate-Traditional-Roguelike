@@ -3,7 +3,7 @@ local gfx <const> = playdate.graphics
 class("ScreenManager").extends()
 
 function ScreenManager:init()
-    self.fps = true
+    self.fps = false
     self.profiler = false
     self.targetFPS = 30
 
@@ -33,10 +33,10 @@ function ScreenManager:init()
 
     self.defaultViewport = function(self) 
         return {
-            x = self.currentLevelFont.size,
-            y = self.currentLevelFont.size,
-            width = self.screenDimensions.x - self.currentLevelFont.size * 2,
-            height = self.screenDimensions.y - self.currentLevelFont.size * 2
+            x = 1,
+            y = 1,
+            width = self.screenDimensions.x,
+            height = self.screenDimensions.y
         }
     end
     self.viewportCalcFunction = self.defaultViewport
@@ -74,7 +74,7 @@ function ScreenManager:init()
     self._redrawLevel = false
     self._redrawLog = false
 
-    self.screenBorder = Border(2, 2, 400-4, 240-4, 4, gfx.kColorBlack)
+    --self.screenBorder = Border(1, 1, 400-2, 240-2, 4, gfx.kColorXOR)
 
     self:setLevelFont("16px")
     self:setLogFont("8px")
@@ -127,7 +127,7 @@ function ScreenManager:drawLevel()
         --gfx.sprite.update()
         self.levelManager:draw()
         self.logManager:draw()
-        self.screenBorder:draw()
+        --self.screenBorder:draw()
         
         self._redrawScreen = false
 
