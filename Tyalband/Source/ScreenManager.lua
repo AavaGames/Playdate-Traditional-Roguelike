@@ -19,15 +19,15 @@ function ScreenManager:init()
     self.logFont_6px = { font = playdate.graphics.font.newFamily({
         [playdate.graphics.font.kVariantNormal] = "assets/fonts/DOS/dos-jpn12-6x12",
         [playdate.graphics.font.kVariantBold] = "assets/fonts/DOS/dos-jpn12-6x12", -- TODO make bold
-    }), size = 6, lineCount = 5 }
+    }), size = 6, lineCount = 5, fullLineCount = 19 } -- TODO test
     self.logFont_8px = { font = playdate.graphics.font.newFamily({
         [playdate.graphics.font.kVariantNormal] = "assets/fonts/Log/CompaqThin_8x16",
         [playdate.graphics.font.kVariantBold] = "assets/fonts/Log/Nix8810_M15",
-    }), size = 8, lineCount = 4 }
+    }), size = 8, lineCount = 4, fullLineCount = 14 }
     self.logFont_12px = { font = playdate.graphics.font.newFamily({
         [playdate.graphics.font.kVariantNormal] = "assets/fonts/Log/Portfolio_6x8_2x",
         [playdate.graphics.font.kVariantBold] = "assets/fonts/Log/Portfolio_6x8_2x", -- TODO make bold
-    }), size = 12, lineCount = 4 }
+    }), size = 12, lineCount = 4, fullLineCount = 14 }
 
     self.currentLevelFont, self.currentLogFont = nil, nil
 
@@ -49,19 +49,6 @@ function ScreenManager:init()
     self.levelGlyphs = {} -- alloc an estimate?
     self.levelGlyphs_faded = {}
     self.drawnGlyphs = {}
-
-    -- change viewports states this way? can use something similar for font sizes
-    self.screenState = {
-        full = function()
-            
-        end,
-        log = function()
-            
-        end,
-        square = function()
-        
-        end }
-    self.currentScreenState = self.screenState.full
 
     playdate.display.setRefreshRate(self.targetFPS)
 
@@ -91,12 +78,31 @@ end
 function ScreenManager:update() end
 function ScreenManager:lateUpdate() end
 
+--#region Draws
+
 function ScreenManager:draw()
     local drew = false
 
-    if (gameManager.currentGameState == gameManager.gameStates.level) then
+    if (self._redrawScreen == true) then
+        frameProfiler:startTimer("Draw: Screen Clear")
+        gfx.clear()
+        self._redrawScreen = false
+        frameProfiler:endTimer("Draw: Screen Clear")
+    end
+
+    if gameManager:isState(gameManager.gameStates.level) then
         drew = self:drawLevel()
-    elseif (gameManager.currentGameState == gameManager.gameStates.menu) then
+        local drewLog = self:drawLog()
+        drew = drew and drew or drewLog
+
+        local debugViewportBlocksDraw = false
+        if debugViewportBlocksDraw then
+            self:debugDrawViewportBlocks()
+        end
+
+    elseif gameManager:isState(gameManager.gameStates.fullLog) then
+        drew = self:drawLog()
+    elseif gameManager:isState(gameManager.gameStates.menu) then
         drew = self:drawMenu()
     end
 
@@ -108,8 +114,8 @@ function ScreenManager:draw()
 end
 
 function ScreenManager:drawMenu()
-    frameProfiler:startTimer("Draw: Menu")
     local drew = true
+    frameProfiler:startTimer("Draw: Menu")
 
     gameManager.menuManager:draw()
 
@@ -119,25 +125,6 @@ end
 
 function ScreenManager:drawLevel()
     local drew = false
-
-    if self._redrawScreen then
-        frameProfiler:startTimer("Draw: Screen")
-
-        gfx.clear()
-        --gfx.sprite.update()
-        self.levelManager:draw()
-        self.logManager:draw()
-        --self.screenBorder:draw()
-        
-        self._redrawScreen = false
-
-        self._redrawLevel = false
-        self._redrawLog = false
-        drew = true
-
-        frameProfiler:endTimer("Draw: Screen")
-    end
-
     if (self._redrawLevel == true) then
         frameProfiler:startTimer("Draw: Level")
 
@@ -147,7 +134,11 @@ function ScreenManager:drawLevel()
 
         frameProfiler:endTimer("Draw: Level")
     end
+    return drew
+end
 
+function ScreenManager:drawLog()
+    local drew = false
     if (self._redrawLog == true) then
         frameProfiler:startTimer("Draw: Log")
 
@@ -157,23 +148,30 @@ function ScreenManager:drawLevel()
 
         frameProfiler:endTimer("Draw: Log")
     end
-
-    local viewportBlockDraw = false
-    if viewportBlockDraw then
-        gfx.clear()
-        gfx.setColor(self.levelColor)
-        gfx.fillRect(self.viewport.x, self.viewport.y, self.viewport.width, self.viewport.height)
-        if (self.logManager.showingLog) then
-            gfx.fillRect(self.logManager.dimensions.x, self.logManager.dimensions.y, self.logManager.dimensions.width, self.logManager.dimensions.height)
-        end
-    end
-
     return drew
 end
+
+function ScreenManager:debugDrawViewportBlocks()
+    gfx.clear()
+    gfx.setImageDrawMode(gfx.kDrawModeNXOR)
+    gfx.setColor(self.levelColor)
+    gfx.fillRect(self.viewport.x, self.viewport.y, self.viewport.width, self.viewport.height)
+    gfx.drawText("WORLD", self.viewport.x, self.viewport.y)
+    if (self.logManager.showingLog) then
+        gfx.fillRect(self.logManager.currentLogViewport.dimensions.x, self.logManager.currentLogViewport.dimensions.y, 
+            self.logManager.currentLogViewport.dimensions.width, self.logManager.currentLogViewport.dimensions.height)
+        gfx.drawText("LOG", self.logManager.currentLogViewport.dimensions.x, self.logManager.currentLogViewport.dimensions.y)
+    end
+end
+
+--#endregion
 
 function ScreenManager:redrawScreen()
     self:resetDrawnGlyphs()
     self._redrawScreen = true
+
+    self:redrawLevel()
+    self:redrawLog()
 end
 
 function ScreenManager:redrawLevel()

@@ -31,7 +31,9 @@ function MenuManager:removeMenu()
     if (#self.menus < 1) then
         self.currentMenu = nil
         self.showMenu = false
-        self.gameManager:setState(self.gameManager.gameStates.level)
+        if (self.gameManager:isState(self.gameManager.gameStates.menu)) then
+            self.gameManager:setState(self.gameManager.gameStates.level)
+        end
     else
         self.currentMenu = self.menus[#self.menus]
         self.currentMenu :setActive()

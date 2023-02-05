@@ -22,38 +22,62 @@ function GameManager:init()
     self.levelManager = LevelManager(self.player)
 	self.logManager = LogManager(self.levelManager)
 
-	self.gameStates = enum({"level", "menu"})
+	self.gameStates = enum({"level", "fullLog", "menu"})
 	self.currentGameState = self.gameStates.level
 end
 
 function GameManager:update()
-	if (self.currentGameState == self.gameStates.level) then
+	if self:isState(self.gameStates.level) then
 		self.levelManager:update()
 		self.logManager:update()
-	elseif (self.currentGameState == self.gameStates.menu) then
+	elseif self:isState(self.gameStates.fullLog) then
+		self.logManager:update()
+	elseif self:isState(self.gameStates.menu) then
 		self.menuManager:update()
 	end
 end
 
 function GameManager:lateUpdate()
-	if (self.currentGameState == self.gameStates.level) then
+	if self:isState(self.gameStates.level) then
 		self.levelManager:lateUpdate()
-	elseif (self.currentGameState == self.gameStates.menu) then
+	elseif self:isState(self.gameStates.fullLog) then
+
+	elseif self:isState(self.gameStates.menu) then
 
 	end
 end
 
 function GameManager:setState(state)
 	self.currentGameState = state
-
-	if (self.currentGameState == self.gameStates.level) then
+	print("GameManager State is now = " .. state)
+	if self:isState(self.gameStates.level) then
 		screenManager:redrawScreen()
-	elseif (self.currentGameState == self.gameStates.menu) then
+	elseif self:isState(self.gameStates.fullLog) then
+		screenManager:redrawScreen()
+	elseif self:isState(self.gameStates.menu) then
 
 	else
 		print("ERROR: " .. state .. " is an invalid GameManager state.")
 	end
 end
+
+function GameManager:isState(state)
+	if (state ~= nil) then
+		return (self.currentGameState == state)
+	else
+		print("GameManager.isState recieved nil state")
+		return false -- error?
+	end
+end
+
+--#region Sub State Funcs
+
+function GameManager:setFullscreenLog(full)
+	self.logManager:setFullscreen(full)
+	self:setState(full and self.gameStates.fullLog or self.gameStates.level)
+end
+
+--#endregion
 
 function GameManager:createDebugMenu()
 	self.menuManager:addMenu(
@@ -61,6 +85,10 @@ function GameManager:createDebugMenu()
 			{ text = "Centre Camera on Player", closeMenuOnExecution = true, func = function() 
 				gameManager.levelManager.currentLevel.camera:centreOnTarget()
 			end },
+			{ text = "Fullscreen Log", closeMenuOnExecution = true, func = function()
+				gameManager:setFullscreenLog(not gameManager.logManager.fullscreen)
+			end },
+
             { text = "Load Town", closeMenuOnExecution = true, func = function() 
 				if (gameManager.levelManager.currentLevel.name ~= "Base Camp") then
 					print("Changed level to town")
