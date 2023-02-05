@@ -126,6 +126,8 @@ function LogManager:draw()
 end
 
 function LogManager:update()
+    self.previousLineOffset = self.currentLineOffset
+
     local crankTick = playdate.getCrankTicks(logCrankTicks)
     if crankTick ~= 0 then
         self:addLineOffset(-crankTick)
@@ -151,13 +153,16 @@ function LogManager:update()
         end
     end
 
+    -- if (inputManager:crankJustDocked()) then
+    --     self.currentLineOffset = 0
+    -- end
+
     if (self.currentLineOffset ~= self.previousLineOffset) then
         screenManager:redrawLog()
     end
 end
 
 function LogManager:addLineOffset(lines)
-    self.previousLineOffset = self.currentLineOffset
     self.currentLineOffset += lines
     self.currentLineOffset = math.clamp(self.currentLineOffset, 0, #self.log - self.fontLineCount)
 end
