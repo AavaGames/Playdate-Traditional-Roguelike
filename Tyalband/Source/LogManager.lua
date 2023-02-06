@@ -35,7 +35,7 @@ function LogManager:init(theLevelManager)
         textPosition = { x = 5, y = 173},
         textSize = { x = 400-8, y = 64 },
         dimensions = { x = 1, y = math.floor(screenManager.screenDimensions.y * 0.71) + 1,
-            width = 400 - 2, height = math.floor(screenManager.screenDimensions.y * 0.3) - 2}
+            width = 400 - 2, height = math.floor(screenManager.screenDimensions.y * 0.29) - 1}
     }
 
     self.fullLogViewport = {

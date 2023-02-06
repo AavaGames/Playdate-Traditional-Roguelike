@@ -15,7 +15,7 @@ function ScreenManager:init()
     --self.levelFont_8px = { font = gfx.font.new('assets/fonts/IBM/IBM_EGA_8x8'), size = 8 }
     self.levelFont_8px = { font = gfx.font.new('assets/fonts/Rainbow100_re_40'), size = { width = 9, height = 10 } }
 
-    self.levelFont_10px = { font = gfx.font.new('assets/fonts/Log/Nix8810_M15'), size = { width = 10, height = 13 } }
+    self.levelFont_10px = { font = gfx.font.new('assets/fonts/Log/Nix8810_M15'), size = { width = 11, height = 13 } }
 
     self.levelFont_16px = { font = gfx.font.new('assets/fonts/IBM/IBM_EGA_8x8_2x'), size = { width = 15, height = 15 } }
 
