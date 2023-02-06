@@ -1,5 +1,7 @@
 -- All Imports -- LOAD ORDER MATTERS FOR CLASSES
 
+debug = true
+
 import "CoreLibs/object"
 import "CoreLibs/graphics"
 import "CoreLibs/sprites"
@@ -23,6 +25,7 @@ import "FrameProfiler"
 import "InputManager"
 
 import "MenuManager"
+import "/scripts/ui/MenuItem"
 import "/scripts/ui/Menu"
 
 import "LevelManager"

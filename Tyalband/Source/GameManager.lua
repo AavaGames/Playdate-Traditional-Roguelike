@@ -24,6 +24,8 @@ function GameManager:init()
 
 	self.gameStates = enum({"level", "fullLog", "menu"})
 	self.currentGameState = self.gameStates.level
+
+	MenuItem("Centre Camera on Player", false, false, function () end)
 end
 
 function GameManager:update()
@@ -82,41 +84,74 @@ end
 function GameManager:createDebugMenu()
 	self.menuManager:addMenu(
         Menu(self.menuManager, "DEBUG MENU #" .. math.random(0, 1000), {
-			{ text = "Centre Camera on Player", closeMenuOnExecution = true, func = function() 
-				gameManager.levelManager.currentLevel.camera:centreOnTarget()
-			end },
-			{ text = "Fullscreen Log", closeMenuOnExecution = true, func = function()
-				gameManager:setFullscreenLog(not gameManager.logManager.fullscreen)
-			end },
 
-            { text = "Load Town", closeMenuOnExecution = true, func = function() 
+			MenuItem("Centre Camera on Player", nil, true, false, function ()
+				gameManager.levelManager.currentLevel.camera:centreOnTarget()
+			end),
+
+
+			
+			MenuItem("Fullscreen Log", nil, true, false, function () 
+				gameManager:setFullscreenLog(not gameManager.logManager.fullscreen)
+			end),
+
+			MenuItem("Load *Town*", nil, true, true, function () 
 				if (gameManager.levelManager.currentLevel.name ~= "Base Camp") then
 					print("Changed level to town")
 					gameManager.levelManager:loadLevel(Town, true)
 				else
 					gameManager.logManager:add("Already at level")
 				end
-			end },
-			{ text = "Load Dungeon", closeMenuOnExecution = true, func = function() 
+			end),
+
+			MenuItem("Load Dungeon", nil, true, true, function () 
 				if (gameManager.levelManager.currentLevel.name ~= "Floor 1 (50 feet)") then
 					print("Changed level to dungeon")
 					gameManager.levelManager:loadLevel(Dungeon, true)
 				else
 					gameManager.logManager:add("Already at level")
 				end
-			end },
-			{ text = "Load Test Room", closeMenuOnExecution = true, func = function() 
+			end),
+			
+			MenuItem("Load Test Room", nil, true, true, function () 
 				if (gameManager.levelManager.currentLevel.name ~= "Testing Room") then
 					print("Changed level to dungeon")
 					gameManager.levelManager:loadLevel(TestRoom, true)
 				else
 					gameManager.logManager:add("Already at level")
 				end
-			end },
-			{ text = "Toggle BG Color", closeMenuOnExecution = false, func = function() 
+			end),
+
+			MenuItem("Toggle BG Color", nil, false, false, function () 
 				screenManager:setBGColor(screenManager.bgColor == playdate.graphics.kColorWhite and playdate.graphics.kColorBlack or playdate.graphics.kColorWhite)
-			end },
-			{ text = "Nested Debug Menu", closeMenuOnExecution = false, func = function() self:createDebugMenu() end }
+			end),
+
+			MenuItem("Nest Another Debug Menu", nil, false, false, function () 
+				gameManager:createDebugMenu()
+			end),
+
+			MenuItem("Close All Menus", "Z", true, true, function () end),
+
+			MenuItem("Padding 1", nil, true, true, function () end),
+			MenuItem("Padding 2", "Z", true, true, function () end),
+			MenuItem("Padding 3", nil, true, true, function () end),
+			MenuItem("Padding 4", nil, true, true, function () end),
+			MenuItem("Padding 5", "Z", true, true, function () end),
+			MenuItem("Padding 6", "Z", true, true, function () end),
+			MenuItem("Padding 7", "Z", true, true, function () end),
+			MenuItem("Padding 8", nil, true, true, function () end),
+			MenuItem("Padding 9", "Z", true, true, function () end),
+			MenuItem("Padding 10", "Z", true, true, function () end),
+			MenuItem("Padding 11", "Z", true, true, function () end),
+			MenuItem("Padding 12", "Z", true, true, function () end),
+			MenuItem("Padding 13", "Z", true, true, function () end),
+			MenuItem("Padding 14", nil, true, true, function () end),
+			MenuItem("Padding 15", nil, true, true, function () end),
+			MenuItem("Padding 16", nil, true, true, function () end),
+			MenuItem("Padding 17", "Z", true, true, function () end),
+			MenuItem("Padding 18", "Z", true, true, function () end),
+
+			-- 26 items total
 		})
     )
 end

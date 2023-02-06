@@ -36,7 +36,12 @@ function MenuManager:removeMenu()
         end
     else
         self.currentMenu = self.menus[#self.menus]
-        self.currentMenu :setActive()
+        self.currentMenu:setActive()
     end
 end
 
+function MenuManager:removeAllMenu()
+    for i = 1, #self.menus, 1 do
+        self:removeMenu()
+    end
+end
