@@ -86,10 +86,10 @@ function Level:create()
 end
 
 function Level:update()
-    -- if (inputManager:JustPressed(playdate.kButtonA)) then
+    -- if (inputManager:justPressed(playdate.kButtonA)) then
     --     print("up")
     --     self.player.equipped.lightSource.dimRange += 2
-    -- elseif (inputManager:JustPressed(playdate.kButtonB)) then
+    -- elseif (inputManager:justPressed(playdate.kButtonB)) then
     --     print("dowmn")
     --     self.player.equipped.lightSource.dimRange -= 2
     -- end

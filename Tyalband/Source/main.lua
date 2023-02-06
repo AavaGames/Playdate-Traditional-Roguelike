@@ -23,10 +23,14 @@ local function updateGame()
 	frameProfiler:frameStart()
 	frameProfiler:startTimer("Logic")
 
+	inputManager:update()
+
 	gameManager:update()
 	gameManager:lateUpdate()
 	screenManager:update()
 	screenManager:lateUpdate()
+
+	inputManager:lateUpdate()
 
 	frameProfiler:endTimer("Logic")
 end
@@ -39,14 +43,12 @@ initializeGame()
 
 function playdate.update()
 	-- playdate.timer.updateTimers()
-	inputManager:update()
-
 	updateGame()
 	drawGame()
 end
 
-function playdate.keyPressed(key) 
+function playdate.keyPressed(key)
 	if key == "N" then
-		screenManager:setBGColor(screenManager.bgColor == gfx.kColorWhite and gfx.kColorBlack or gfx.kColorWhite)
+
 	end
 end

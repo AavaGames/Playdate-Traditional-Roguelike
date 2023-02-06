@@ -1,7 +1,7 @@
 class("InputManager").extends()
 
 function InputManager:init()
-    -- TODO add disable option
+    self.active = true
 
     self.startFrameTime = playdate.getCurrentTimeMilliseconds()
     self.deltaTime = 0
@@ -26,9 +26,24 @@ function InputManager:init()
         }
     end
 
+    self.cJustDocked, self.cJustUndocked = false, false
+    self.cJustDockedToDisable, self.cJustUndockedToDisable = false, false
+
+    playdate.crankDocked = function ()
+        self.cJustDocked = true
+    end
+
+    playdate.crankUndocked = function ()
+        self.cJustUndocked = true
+    end
+
     -- In Milliseconds
     self.holdBufferTime = 300
     self.longHoldBufferTime = 1000
+end
+
+function InputManager:setActive(active)
+    self.active = active -- TODO finish active implementation
 end
 
 function InputManager:update()
@@ -56,24 +71,58 @@ function InputManager:update()
             held.just = false
         end
     end
+
+    if (self.cJustDocked) then
+        self.cJustDockedToDisable = true
+    end
+    if (self.cJustUndocked) then
+        self.cJustUndockedToDisable = true
+    end
 end
 
-function InputManager:IsPressed(button)
+function InputManager:lateUpdate()
+    if (self.cJustDockedToDisable) then
+        self.cJustDocked = false
+    end
+    if (self.cJustUndockedToDisable) then
+        self.cJustUndocked = false
+    end
+end
+
+function InputManager:isPressed(button)
     return playdate.buttonIsPressed(button)
 end
 
-function InputManager:JustPressed(button)
+function InputManager:justPressed(button)
     return playdate.buttonJustPressed(button)
 end
 
-function InputManager:JustReleased(button)
+function InputManager:justReleased(button)
     return self.held[button].was == false and playdate.buttonJustReleased(button)
 end
 
-function InputManager:Held(button) 
+function InputManager:held(button) 
     return self.held[button].currently
 end
 
-function InputManager:HeldLong(button)
+function InputManager:heldLong(button)
     return self.held[button].just == false and self.held[button].duration >= self.longHoldBufferTime
+end
+
+--#region Crank
+
+function InputManager:isCrankDocked()
+    return playdate.isCrankDocked()
+end
+
+function InputManager:justCrankDocked()
+    return self.cJustDocked
+end
+
+function InputManager:justCrankUndocked()
+    return self.cJustUndocked
+end
+
+function InputManager:getCrankTicks(ticksPerRevolution)
+    return playdate.getCrankTicks(ticksPerRevolution)
 end

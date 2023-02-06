@@ -34,16 +34,16 @@ function Camera:update()
             end
         end
     else
-        if inputManager.JustReleased(playdate.kButtonRight) then
+        if inputManager:justReleased(playdate.kButtonRight) then
             self.position.x += 1
         end
-        if inputManager.JustReleased(playdate.kButtonLeft) then
+        if inputManager:justReleased(playdate.kButtonLeft) then
             self.position.x -= 1
         end
-        if inputManager.JustReleased(playdate.kButtonUp) then
+        if inputManager:justReleased(playdate.kButtonUp) then
             self.position.y -= 1
         end
-        if inputManager.JustReleased(playdate.kButtonDown) then
+        if inputManager:justReleased(playdate.kButtonDown) then
             self.position.y += 1
         end
         self.position = Vector2.clamp(Vector2.one(), self.level.gridDimensions)

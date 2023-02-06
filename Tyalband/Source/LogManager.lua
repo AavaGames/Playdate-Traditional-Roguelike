@@ -128,34 +128,33 @@ end
 function LogManager:update()
     self.previousLineOffset = self.currentLineOffset
 
-    local crankTick = playdate.getCrankTicks(logCrankTicks)
+    local crankTick = inputManager:getCrankTicks(logCrankTicks)
     if crankTick ~= 0 then
         self:addLineOffset(-crankTick)
     end
 
     if (self.fullscreen == true) then
-        if (inputManager:JustPressed(playdate.kButtonB)) then
+        if (inputManager:justPressed(playdate.kButtonB)) then
             gameManager:setFullscreenLog(false)
         end
 
         local prevOffset = self.currentLineOffset
-        if (inputManager:JustPressed(playdate.kButtonUp)) then -- TODO add held timer
+        if (inputManager:justPressed(playdate.kButtonUp)) then -- TODO add held timer
             self:addLineOffset(1)
-        elseif (inputManager:JustPressed(playdate.kButtonDown)) then
+        elseif (inputManager:justPressed(playdate.kButtonDown)) then
             self:addLineOffset(-1)
         end
     else
-        -- TODO add crank to input manager
-        if not playdate.isCrankDocked() then
+        if not inputManager:isCrankDocked() then
             self:showLog()
         else
             self:hideLog()
         end
     end
 
-    -- if (inputManager:crankJustDocked()) then
-    --     self.currentLineOffset = 0
-    -- end
+    if (inputManager:justCrankDocked()) then
+        self.currentLineOffset = 0
+    end
 
     if (self.currentLineOffset ~= self.previousLineOffset) then
         screenManager:redrawLog()
@@ -255,7 +254,7 @@ function LogManager:setFullscreen(full)
     self:getFontLineCount()
     if self.fullscreen then
         self:showLog()
-    elseif playdate.isCrankDocked() then
+    elseif inputManager:isCrankDocked() then
         self:hideLog()
     end
     screenManager:redrawScreen()

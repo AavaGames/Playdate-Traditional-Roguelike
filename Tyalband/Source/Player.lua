@@ -24,15 +24,15 @@ function Player:update()
         self.moveDir = Vector2.zero()
         local actionTaken, moved = false, false
 
-        if inputManager:JustPressed(playdate.kButtonB) then
+        if inputManager:justPressed(playdate.kButtonB) then
             actionTaken = true
-        elseif inputManager:JustReleased(playdate.kButtonRight) then
+        elseif inputManager:justReleased(playdate.kButtonRight) then
             self.moveDir.x += 1
-        elseif inputManager:JustReleased(playdate.kButtonLeft) then
+        elseif inputManager:justReleased(playdate.kButtonLeft) then
             self.moveDir.x -= 1
-        elseif inputManager:JustReleased(playdate.kButtonUp) then
+        elseif inputManager:justReleased(playdate.kButtonUp) then
             self.moveDir.y -= 1
-        elseif inputManager:JustReleased(playdate.kButtonDown) then
+        elseif inputManager:justReleased(playdate.kButtonDown) then
             self.moveDir.y += 1
         end
 
