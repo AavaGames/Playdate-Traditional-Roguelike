@@ -3,8 +3,8 @@ local gfx <const> = playdate.graphics
 class("ScreenManager").extends()
 
 function ScreenManager:init()
-    self.fps = false
-    self.profiler = false
+    self.fps = true
+    self.profiler = true
     self.targetFPS = 30
 
     self.screenDimensions = {
@@ -55,13 +55,12 @@ function ScreenManager:init()
     self.bgColor = gfx.kColorBlack
     self.levelColor = gfx.kColorWhite
 
-    self.levelManager, self.logManager = nil, nil
+    self.levelManager, self.logManager, self.menuManager = nil, nil, nil
     self._redrawScreen = true
 
     self._redrawLevel = false
     self._redrawLog = false
-
-    --self.screenBorder = Border(1, 1, 400-2, 240-2, 4, gfx.kColorXOR)
+    self._redrawMenu = false
 
     self:setLevelFont("16px")
     self:setLogFont("8px")
@@ -114,12 +113,15 @@ function ScreenManager:draw()
 end
 
 function ScreenManager:drawMenu()
-    local drew = true
-    frameProfiler:startTimer("Draw: Menu")
+    local drew = false
+    if (self._redrawMenu == true) then
+        frameProfiler:startTimer("Draw: Menu")
 
-    gameManager.menuManager:draw()
+        self.menuManager:draw()
+        self._redrawMenu = false
 
-    frameProfiler:endTimer("Draw: Menu")
+        frameProfiler:endTimer("Draw: Menu")
+    end
     return drew
 end
 
@@ -172,6 +174,7 @@ function ScreenManager:redrawScreen()
 
     self:redrawLevel()
     self:redrawLog()
+    self:redrawMenu()
 end
 
 function ScreenManager:redrawLevel()
@@ -180,6 +183,10 @@ end
 
 function ScreenManager:redrawLog()
     self._redrawLog = true
+end
+
+function ScreenManager:redrawMenu()
+    self._redrawMenu = true
 end
 
 function ScreenManager:setLevelFont(value)

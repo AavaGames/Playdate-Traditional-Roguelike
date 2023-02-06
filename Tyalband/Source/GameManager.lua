@@ -7,14 +7,16 @@ function GameManager:init()
     local levelSizeMenu, error = menu:addOptionsMenuItem("level font", { "8px", "10px", "16px" }, "16px", function(value)
 		screenManager:setLevelFont(value)
     end)
-
     local logSizeMenu, error = menu:addOptionsMenuItem("log font", { "6px", "8px", "12px" }, "8px", function(value)
 		screenManager:setLogFont(value)
     end)
-
+	
 	local debugMenu, error = menu:addMenuItem("Debug", function()
         self:createDebugMenu()
     end)
+	-- local settingsMenu, error = menu:addMenuItem("Settings", function()
+    --     self:createSettingsMenu()
+    -- end)
 
 	self.menuManager = MenuManager(self)
 

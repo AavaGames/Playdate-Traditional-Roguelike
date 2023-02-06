@@ -2,6 +2,7 @@ class("MenuManager").extends()
 
 function MenuManager:init(gameManager)
     self.gameManager = gameManager
+    screenManager.menuManager = self
     self.menus = {}
     self.currentMenu = nil
     self.showMenu = false

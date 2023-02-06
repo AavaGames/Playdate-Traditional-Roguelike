@@ -5,9 +5,9 @@ class("Menu").extends()
 local charByteStart <const> = 65 -- "A"
 -- can add an alternate char set for the left side of the keyboard
 
-function Menu:init(manager, name, items)
+function Menu:init(manager, name, items, subMenuCount)
 
-    local t = ChunkTimer("Create " .. name)
+    local t = ChunkTimer("Creating " .. name)
     self.manager = manager
     self.name = name
     self.font = screenManager.logFont_8px
@@ -23,6 +23,7 @@ function Menu:init(manager, name, items)
 
     self.items = {}
     self.subMenu = nil
+    self.subMenuCount = subMenuCount or 1
 
     self.kbOpen = false
     self.kbInput = nil
@@ -85,7 +86,7 @@ function Menu:checkForSubMenu(index, item, items)
         for i = index, #items, 1 do
             table.insert(subItems, items[i])
         end
-        self.subMenu = Menu(self.manager, self.name, subItems)
+        self.subMenu = Menu(self.manager, self.name, subItems, self.subMenuCount + 1)
 
         local char = "a"
         self.items[char] = MenuItem("...", char, false, false, function ()
@@ -112,11 +113,13 @@ end
 
 function Menu:update()
     if (not self.kbOpen) then
-        if (inputManager:JustPressed(playdate.kButtonA)) then
+        if (inputManager:justPressed(playdate.kButtonA)) then
             self:openKeyboard()
-        elseif (inputManager:JustPressed(playdate.kButtonB)) then
+        elseif (inputManager:justPressed(playdate.kButtonB)) then
             self.manager:removeMenu()
         end
+    else
+        screenManager:redrawMenu()
     end
 end
 
@@ -127,7 +130,11 @@ function Menu:draw()
     gfx.setImageDrawMode(gfx.kDrawModeNXOR)
 
     -- Name Text
-    gfx.drawTextAligned(self.name, 200, 1, kTextAlignment.center)
+    local name = self.name
+    if (self.subMenuCount > 1) then
+        name = name .. " pg." .. self.subMenuCount
+    end
+    gfx.drawTextAligned(name, 200, 1, kTextAlignment.center)
     -- Input Text
     gfx.drawTextAligned("A - Open KB\nB - Close Menu", screenManager.screenDimensions.x, 
         screenManager.screenDimensions.y - self.font.size * 4, kTextAlignment.right)
@@ -151,6 +158,7 @@ end
 
 function Menu:setActive()
     print(self.name .. " set active")
+    screenManager:redrawScreen()
     -- Opening kb here results in a loop bug
     -- guessing kb doesn't turn off visible before callback
 end
