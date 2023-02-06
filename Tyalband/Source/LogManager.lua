@@ -8,6 +8,8 @@ function LogManager:init(theLevelManager)
     self.screenManager.logManager = self
     self.levelManager = theLevelManager
 
+    -- the line of the current round, all events are added together to one large line
+    self.roundLine = "" 
     self.cleanLog = {} -- holds full lines of the log
 	self.log = {} -- holds lines trimmed to fit the log view
     self.showingLog = true
@@ -70,15 +72,18 @@ function LogManager:init(theLevelManager)
     self:add("This is a scroll of magic missle.")
     self:add("This is a scroll of magic missle.")
     self:add("This is a scroll of magic missle.")
-    self:add("You hit the skeleton for 5 damage, catching it unaware.")
-    self:add("You hit the skeleton for 3 damage; the skeleton misses you.")
+    self:addToRound("You hit the skeleton for 5 damage, catching it unaware")
+    self:addRoundLineToLog()
+    self:addToRound("You hit the skeleton for 3 damage.")
+    self:addToRound("The skeleton misses you.")
+    self:addRoundLineToLog()
     self:add("You destroy the skeleton.")
     self:add("You pick up the *Great* *Axe* *of* *Irunel.*")--It has 25 blah and can pierce armor of the highest grade. Only those with the mightest of shields can block such a blade.")
-    self:add("---")
-    self:add("This is a dragon. It i2 *slow* and attacks often. It has a *breath weapon* that deals 60 damage (average) and its attacks deal 16 damage (average). It is immune to *fire* and *gas* based attacks but weak to *piercing*.")
-    self:add("This is a dragon. It is 4*slow* and attacks often. It has a *breath weapon* that deals 60 damage (average) and its attacks deal 16 damage (average). It is immune to *fire* and *gas* based attacks but weak to *piercing*.")
-    self:add("This is a dragon. It is3 *slow* and attacks often. It has a *breath weapon* that deals 60 damage (average) and its attacks deal 16 damage (average). It is immune to *fire* and *gas* based attacks but weak to *piercing*.")
-    self:add("This is a dragon. It is *s5ow* and attacks often. It has a *breath weapon* that deals 60 damage (average) and its attacks deal 16 damage (average). It is immune to *fire* and *gas* based attacks but weak to *piercing*.")
+    -- self:add("---")
+    -- self:add("This is a dragon. It i2 *slow* and attacks often. It has a *breath weapon* that deals 60 damage (average) and its attacks deal 16 damage (average). It is immune to *fire* and *gas* based attacks but weak to *piercing*.")
+    -- self:add("This is a dragon. It is 4*slow* and attacks often. It has a *breath weapon* that deals 60 damage (average) and its attacks deal 16 damage (average). It is immune to *fire* and *gas* based attacks but weak to *piercing*.")
+    -- self:add("This is a dragon. It is3 *slow* and attacks often. It has a *breath weapon* that deals 60 damage (average) and its attacks deal 16 damage (average). It is immune to *fire* and *gas* based attacks but weak to *piercing*.")
+    -- self:add("This is a dragon. It is *s5ow* and attacks often. It has a *breath weapon* that deals 60 damage (average) and its attacks deal 16 damage (average). It is immune to *fire* and *gas* based attacks but weak to *piercing*.")
 
 end
 
@@ -95,6 +100,13 @@ function LogManager:hideLog()
     if (self.showingLog) then
         screenManager:setViewport() -- default fullscreen view
         self.showingLog = false
+    end
+end
+
+function LogManager:addRoundLineToLog()
+    if (self.roundLine ~= "") then
+        self:add(self.roundLine)
+        self.roundLine = ""
     end
 end
 
@@ -161,15 +173,8 @@ function LogManager:update()
     end
 end
 
-function LogManager:addLineOffset(lines)
-    self.currentLineOffset += lines
-    self.currentLineOffset = math.clamp(self.currentLineOffset, 0, #self.log - self.fontLineCount)
-end
-
-function LogManager:clearLog()
-    self.cleanLog = {}
-    self.log = {}
-    self.currentLineOffset = 0
+function LogManager:lateUpdate()
+    self:addRoundLineToLog()
 end
 
 function LogManager:add(text)
@@ -192,11 +197,20 @@ function LogManager:add(text)
     end
 end
 
-function LogManager:addRound(text)
+-- Text must capitalize the sentence and end in punctuation.
+function LogManager:addToRound(text)
     -- adds to a line that is split before drawing
-
-
+    local separator <const> = " "
+    local sep = self.roundLine == "" and "" or separator
+    self.roundLine = self.roundLine .. sep .. text
     screenManager:redrawLog()
+end
+
+--#region Utility
+
+function LogManager:addLineOffset(lines)
+    self.currentLineOffset += lines
+    self.currentLineOffset = math.clamp(self.currentLineOffset, 0, #self.log - self.fontLineCount)
 end
 
 function LogManager:splitLine(text)
@@ -245,6 +259,12 @@ function LogManager:resplitLines()
     for i = 1, #self.cleanLog, 1 do
         self:splitLine(self.cleanLog[i])
     end
+end
+
+function LogManager:clearLog()
+    self.cleanLog = {}
+    self.log = {}
+    self.currentLineOffset = 0
 end
 
 function LogManager:setFullscreen(full)

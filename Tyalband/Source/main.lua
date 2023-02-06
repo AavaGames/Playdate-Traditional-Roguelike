@@ -3,8 +3,6 @@ import "~imports"
 local gfx <const> = playdate.graphics
 
 local function initializeGame()
-	math.randomseed(playdate.getSecondsSinceEpoch())
-
 	inputManager = InputManager()
 	frameProfiler = FrameProfiler()
 	screenManager = ScreenManager()

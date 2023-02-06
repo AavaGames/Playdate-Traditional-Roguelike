@@ -4,7 +4,7 @@ function Player:init(theLevel, startPosition)
     Player.super.init(self, theLevel, startPosition)
     self.char = "@"
     self.name = "You"
-    self.description = "A striking individual, who seems to be quite powerful!"
+    self.description = "A striking individual, who seems to be quite powerful"
 
     self.moveDir = { x = 0, y = 0 }
     self.state = INACTIVE
@@ -50,6 +50,13 @@ end
 
 function Player:tick()
     Player.super.tick(self)
+end
+
+function Player:interact(actor)
+    if (actor ~= nil) then
+        gameManager.logManager:addToRound("The " .. actor.name .. " bumps into you.")
+        actor:interact(self)
+    end
 end
 
 function Player:spawn(theLevel, startPosition)

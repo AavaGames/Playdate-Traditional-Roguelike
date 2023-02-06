@@ -1,7 +1,7 @@
 class("GameManager").extends()
 
 function GameManager:init()
-	--self.mainMenu = false
+	math.randomseed(playdate.getSecondsSinceEpoch()) -- TODO call on new game start
 
 	local menu = playdate.getSystemMenu()
     local levelSizeMenu, error = menu:addOptionsMenuItem("level font", { "8px", "10px", "16px" }, "16px", function(value)
@@ -44,8 +44,9 @@ end
 function GameManager:lateUpdate()
 	if self:isState(self.gameStates.level) then
 		self.levelManager:lateUpdate()
+		self.logManager:lateUpdate()
 	elseif self:isState(self.gameStates.fullLog) then
-
+		self.logManager:lateUpdate()
 	elseif self:isState(self.gameStates.menu) then
 
 	end

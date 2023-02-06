@@ -13,6 +13,6 @@ end
 
 function Animal:interact(Actor)
     if (Actor.name == "You") then --TODO think through interaction system
-        gameManager.logManager:add(self.description)
+        gameManager.logManager:addToRound(self.description)
     end
 end

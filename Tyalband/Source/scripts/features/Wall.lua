@@ -14,6 +14,6 @@ end
 
 function Wall:interact(actor)
     if (actor.name == "You") then --TODO think through interaction system
-        gameManager.logManager:add(self.description)
+        gameManager.logManager:addToRound(self.description)
     end
 end
