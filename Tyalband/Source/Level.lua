@@ -239,8 +239,8 @@ function Level:draw()
             local y = startTileY + yOffset
 
             local drawCoord = { 
-                x = viewport.x + fontSize * xPos,
-                y = viewport.y + fontSize * yPos
+                x = viewport.x + fontSize.width * xPos,
+                y = viewport.y + fontSize.height * yPos
             }
             -- if drawCoord.x > viewport.width or drawCoord.y > viewport.height then
             --     break

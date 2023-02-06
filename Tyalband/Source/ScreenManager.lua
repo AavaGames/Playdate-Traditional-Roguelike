@@ -12,9 +12,12 @@ function ScreenManager:init()
         y = 240
     }
 
-    self.levelFont_8px = { font = gfx.font.new('assets/fonts/IBM/IBM_EGA_8x8'), size = 8 }
-    self.levelFont_10px = { font = gfx.font.new('assets/fonts/Rainbow100_re_40'), size = 10 }
-    self.levelFont_16px = { font = gfx.font.new('assets/fonts/IBM/IBM_EGA_8x8_2x'), size = 16 }
+    --self.levelFont_8px = { font = gfx.font.new('assets/fonts/IBM/IBM_EGA_8x8'), size = 8 }
+    self.levelFont_8px = { font = gfx.font.new('assets/fonts/Rainbow100_re_40'), size = { width = 9, height = 10 } }
+
+    self.levelFont_10px = { font = gfx.font.new('assets/fonts/Log/Nix8810_M15'), size = { width = 10, height = 13 } }
+
+    self.levelFont_16px = { font = gfx.font.new('assets/fonts/IBM/IBM_EGA_8x8_2x'), size = { width = 15, height = 15 } }
 
     self.logFont_6px = { font = playdate.graphics.font.newFamily({
         [playdate.graphics.font.kVariantNormal] = "assets/fonts/DOS/dos-jpn12-6x12",
@@ -224,7 +227,7 @@ function ScreenManager:getGlyph(char, lightLevel)
         self.levelGlyphs_faded[char] = self.levelGlyphs[char]:fadedImage(0.5, playdate.graphics.image.kDitherTypeBayer2x2)
     end
     
-    if lightLevel >= 2 then -- lit
+    if lightLevel >= 1 then -- lit
         return self.levelGlyphs[char]
     else -- dim or seen
         return self.levelGlyphs_faded[char]
@@ -256,16 +259,16 @@ function ScreenManager:drawGlyph(char, tile, drawCoord, screenCoord)
 
             -- clear tile
             gfx.setColor(self.bgColor)
-            gfx.fillRect(drawCoord.x, drawCoord.y, self.currentLevelFont.size, self.currentLevelFont.size)
+            gfx.fillRect(drawCoord.x, drawCoord.y, self.currentLevelFont.size.width, self.currentLevelFont.size.height)
             
             -- draw new glyph and update table
             self.drawnGlyphs[screenCoord.x][screenCoord.y] = { char = char, lightLevel = tileLightLevel, lit = tileLit, glyph = nil}
             if (char ~= "") then
                 local glyph = self:getGlyph(char, tile.lightLevel)
                 self.drawnGlyphs[screenCoord.x][screenCoord.y].glyph = glyph
-                if (tile.lightLevel > 0) then -- draw light around rect
+                if (tile.lightLevel >= 2) then -- draw light around rect
                     gfx.setColor(gfx.kColorWhite)
-                    gfx.fillRect(drawCoord.x, drawCoord.y, self.currentLevelFont.size, self.currentLevelFont.size)
+                    gfx.fillRect(drawCoord.x, drawCoord.y, self.currentLevelFont.size.width, self.currentLevelFont.size.height)
                 end
                 glyph:draw(drawCoord.x, drawCoord.y)
             end
@@ -302,8 +305,8 @@ end
 function ScreenManager:recalculateViewport()
     self.viewport = self:viewportCalcFunction()
     self.viewportCharDrawMax = {
-        x = self.viewport.width // self.currentLevelFont.size,
-        y = self.viewport.height // self.currentLevelFont.size
+        x = self.viewport.width // self.currentLevelFont.size.width,
+        y = self.viewport.height // self.currentLevelFont.size.height
     }
     if (gameManager ~= nil and gameManager.levelManager.currentLevel.camera ~= nil) then
         gameManager.levelManager.currentLevel.camera:calculateBounds()

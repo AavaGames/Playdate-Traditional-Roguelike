@@ -27,14 +27,14 @@ function LogManager:init(theLevelManager)
             x = 1,
             y = 1,
             width = 400,
-            height = math.floor(screenManager.screenDimensions.y * 0.70)
+            height = math.floor(screenManager.screenDimensions.y * 0.73)
         }
     end
 
     self.levelLogViewport = {
         textPosition = { x = 5, y = 173},
         textSize = { x = 400-8, y = 64 },
-        dimensions = { x = 1, y = math.floor(screenManager.screenDimensions.y * 0.7) + 1,
+        dimensions = { x = 1, y = math.floor(screenManager.screenDimensions.y * 0.71) + 1,
             width = 400 - 2, height = math.floor(screenManager.screenDimensions.y * 0.3) - 2}
     }
 
