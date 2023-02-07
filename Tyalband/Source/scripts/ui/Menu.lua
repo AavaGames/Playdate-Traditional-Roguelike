@@ -75,7 +75,7 @@ function Menu:populateItems(items)
     for key, value in pairs(self.items) do
         count += 1
     end
-    print ("Menu: " .. self.name .. " created with " .. count .. " items.")
+    pDebug:log("Menu: " .. self.name .. " created with " .. count .. " items.")
 end
 
 function Menu:checkForSubMenu(index, item, items)
@@ -89,7 +89,7 @@ function Menu:checkForSubMenu(index, item, items)
         self.subMenu = Menu(self.manager, self.name, subItems, self.subMenuCount + 1)
 
         local char = "a"
-        self.items[char] = MenuItem("...", char, false, false, function ()
+        self.items[char] = MenuItem("...", char, true, false, false, function ()
             self.manager:addMenu(self.subMenu)
         end)
 
@@ -202,12 +202,9 @@ function Menu:selectItem()
     if (self.kbInput ~= nil) then
         local item = self.items[self.kbInput]
         item:selected()
-        print("item selected")
         if (item:isState(item.executionBehaviors.closeAllMenus)) then
-            print("close ALL menu")
             self.manager:removeAllMenu()
         elseif (item:isState(item.executionBehaviors.closeMenuOnSelect)) then
-            print("close menu")
             self.manager:removeMenu()
         end
     end

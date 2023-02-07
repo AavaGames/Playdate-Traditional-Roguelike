@@ -8,7 +8,10 @@ end
 
 function Animal:tick()
     Animal.super.tick(self)
-    self:move(Vector2.new(math.random(-1,1), math.random(-1,1)))
+    local move = Vector2.new(math.random(-1,1), math.random(-1,1))
+    local dir = math.random(0, 1) == 0 and Vector2.right() or Vector2.up()
+    move *= dir
+    self:move(move)
 end
 
 function Animal:interact(Actor)

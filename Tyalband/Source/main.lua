@@ -29,14 +29,6 @@ local function updateGame()
 	screenManager:update()
 	screenManager:lateUpdate()
 
-	if (inputManager:justCrankDocked()) then
-		pDebug:log("docked")
-
-	end
-	if (inputManager:justCrankUndocked()) then
-		pDebug:log("undocked")
-
-	end
 	inputManager:lateUpdate()
 
 	frameProfiler:endTimer("Logic")
