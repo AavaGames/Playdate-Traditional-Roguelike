@@ -106,6 +106,19 @@ function math.inBoundsOfArray(value, arraySize)
     return value >= 1 and value <= arraySize
 end
 
+function math.loopIndexOfArray(index, arraySize)
+    while (not math.inBoundsOfArray(index, arraySize)) do
+        if (index < 1) then
+            index += arraySize
+        elseif (index > arraySize) then
+            index -= arraySize
+        else
+            break
+        end
+    end
+    return index
+end
+
 function pairsByKeys (t, f)
     local a = {}
     for n in pairs(t) do table.insert(a, n) end

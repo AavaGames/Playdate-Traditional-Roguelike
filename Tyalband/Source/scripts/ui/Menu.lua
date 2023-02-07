@@ -106,7 +106,7 @@ end
 function Menu:removeItem(index)
     if (index ~= nil and not math.inBoundsOfArray(index, #self.items)) then
         index = nil
-        print(self.name .. " ERROR: remove Item index out of bounds") -- TODO error catch?
+        pDebug:log(self.name .. " ERROR: remove Item index out of bounds") -- TODO error catch?
     end
     table.remove(self.items, index or #self.items) -- remove index or the last item
 end
@@ -139,47 +139,51 @@ function Menu:draw()
     gfx.drawTextAligned("A - Open KB\nB - Close Menu", screenManager.screenDimensions.x, 
         screenManager.screenDimensions.y - self.font.size * 4, kTextAlignment.right)
 
+    -- Menu Items Text
     gfx.drawTextInRect(self:getFullItemText(), self.itemTextDimensions.x, self.itemTextDimensions.y, 
                     self.itemTextDimensions.width, self.itemTextDimensions.height)
 end
 
 function Menu:getFullItemText(extraItem)
     local text = ""
-
     if (extraItem) then 
-        text = "A" .. ": " .. extraItem.text .. "\n"
+        text = "M" .. ": " .. extraItem:getText() .. "\n"
     end
-
     for key, item in pairsByKeys(self.items) do
-        text = text .. key .. ": " .. item.text .. "\n"
+        text = text .. key .. ": " .. item:getText() .. "\n"
     end
     return text
 end
 
 function Menu:setActive()
-    print(self.name .. " set active")
+    pDebug:log(self.name .. " set active")
     screenManager:redrawScreen()
     -- Opening kb here results in a loop bug
     -- guessing kb doesn't turn off visible before callback
 end
 
 function Menu:openKeyboard()
-    print("show menu")
     playdate.keyboard.show()
     playdate.keyboard.textChangedCallback = function() self:readKeyboard() end
     playdate.keyboard.keyboardDidHideCallback = function () self:keyboardHidden() end
     self.kbOpen = true
 end
+
 function Menu:readKeyboard()
     local input = playdate.keyboard.text
     self.kbInput = nil
     if (input ~= nil and input ~= "") then
         if (self.items[input] ~= nil) then
-            print(self.name .. ": " .. input)
+            pDebug:log(self.name .. ": " .. input)
             self.kbInput = input
-            playdate.keyboard.hide()
+            local closeKB = self.items[self.kbInput].closeKeyboardOnSelect
+            if (closeKB) then
+                playdate.keyboard.hide()
+            else
+                self:selectItem()
+            end
         else
-            print(input .. " out of bounds")
+            pDebug:log(input .. " out of bounds")
         end
     end
     playdate.keyboard.text = ""
@@ -188,19 +192,24 @@ end
 function Menu:keyboardHidden()
     if (self.kbOpen == true) then
         self.kbOpen = false
-
-        if (self.kbInput ~= nil) then
-            local item = self.items[self.kbInput]
-            item.selectionFunction()
-
-            if (item:isState(item.executionBehaviors.closeAllMenus)) then
-                self.manager:removeAllMenu()
-            elseif (item:isState(item.executionBehaviors.closeMenu)) then
-                self.manager:removeMenu()
-            end
-        end
+        self:selectItem()
     end
     playdate.keyboard.textChangedCallback = function() end
     playdate.keyboard.keyboardDidHideCallback = function () end
+end
+
+function Menu:selectItem()
+    if (self.kbInput ~= nil) then
+        local item = self.items[self.kbInput]
+        item:selected()
+        print("item selected")
+        if (item:isState(item.executionBehaviors.closeAllMenus)) then
+            print("close ALL menu")
+            self.manager:removeAllMenu()
+        elseif (item:isState(item.executionBehaviors.closeMenuOnSelect)) then
+            print("close menu")
+            self.manager:removeMenu()
+        end
+    end
     self.kbInput = nil
 end

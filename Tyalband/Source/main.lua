@@ -3,6 +3,7 @@ import "~imports"
 local gfx <const> = playdate.graphics
 
 local function initializeGame()
+	pDebug = P_Debug()
 	inputManager = InputManager()
 	frameProfiler = FrameProfiler()
 	screenManager = ScreenManager()
@@ -12,7 +13,7 @@ local function initializeGame()
 	-- local v2 = Vector2.new(32, 15)
 	-- local v3 = Vector2.new(8, 12)
 
-	--print(Test-C(true))
+	--pDebug:log(Test-C(true))
 
 	--Test_Lua()
 end
@@ -28,6 +29,14 @@ local function updateGame()
 	screenManager:update()
 	screenManager:lateUpdate()
 
+	if (inputManager:justCrankDocked()) then
+		pDebug:log("docked")
+
+	end
+	if (inputManager:justCrankUndocked()) then
+		pDebug:log("undocked")
+
+	end
 	inputManager:lateUpdate()
 
 	frameProfiler:endTimer("Logic")

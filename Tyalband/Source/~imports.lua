@@ -19,6 +19,7 @@ import "/scripts/structs/Vector2"
 
 import "/extensions/ChunkTimer"
 
+import "P_Debug"
 import "GameManager"
 import "ScreenManager"
 import "FrameProfiler"
@@ -26,6 +27,8 @@ import "InputManager"
 
 import "MenuManager"
 import "/scripts/ui/MenuItem"
+import "/scripts/ui/MenuItemBool"
+import "/scripts/ui/MenuItemOptions"
 import "/scripts/ui/Menu"
 
 import "LevelManager"
@@ -40,6 +43,10 @@ import "/scripts/actors/Actor"
 import "/scripts/features/Feature"
 
 -- Subclasses
+
+import "/scripts/ui/menus/DebugMenu"
+import "/scripts/ui/menus/CommandMenu"
+import "/scripts/ui/menus/SettingsMenu"
 
 import "/scripts/levels/Town"
 import "/scripts/levels/Dungeon"

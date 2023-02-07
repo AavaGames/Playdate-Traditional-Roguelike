@@ -69,7 +69,7 @@ function Player:spawn(theLevel, startPosition)
     if (theLevel ~= nil and startPosition ~= nil) then
         self:moveTo(Vector2.new(startPosition.x, startPosition.y)) -- TODO: can spawn on top of another actor overwriting their pos (SpawnAt)
     else
-        print("SPAWNING ERROR: ", theLevel.name, startPosition, " parameters failed to find appropriate location.")
+        pDebug:log("SPAWNING ERROR: ", theLevel.name, startPosition, " parameters failed to find appropriate location.")
     end
 end
 

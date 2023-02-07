@@ -10,7 +10,7 @@ function logGrid:drawCell(section, row, column, selected, x, y, width, height)
 
     local text = "text"
 
-    -- print(text)
+    -- pDebug:log(text)
 
     --gfx.drawTextInRect(text, x, y, width, height)
 

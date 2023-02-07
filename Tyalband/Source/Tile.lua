@@ -57,6 +57,6 @@ function Tile:addLightLevel(level, source)
         -- TODO could optimize vis calls, if tile already had been called ignore (but what if the first check was dim and then lit)
         -- this shouldnt matter since light should always applies strongest first
     else
-        --print("source attempting to apply again")
+        --pDebug:log("source attempting to apply again")
     end
 end

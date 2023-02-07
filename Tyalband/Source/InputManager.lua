@@ -26,16 +26,8 @@ function InputManager:init()
         }
     end
 
-    self.cJustDocked, self.cJustUndocked = false, false
-    self.cJustDockedToDisable, self.cJustUndockedToDisable = false, false
-
-    playdate.crankDocked = function ()
-        self.cJustDocked = true
-    end
-
-    playdate.crankUndocked = function ()
-        self.cJustUndocked = true
-    end
+    self.crankWasDocked = false
+    self.crankJustDocked, self.crankJustUndocked = false, false
 
     -- In Milliseconds
     self.holdBufferTime = 300
@@ -50,8 +42,8 @@ function InputManager:update()
     self.deltaTime = playdate.getCurrentTimeMilliseconds() - self.startFrameTime
     self.startFrameTime = playdate.getCurrentTimeMilliseconds()
 
-    for index, button in ipairs(self.buttons) do
-
+    for i = 1, #self.buttons, 1 do
+        local button = self.buttons[i]
         local held = self.held[button]
         held.was = held.currently
 
@@ -72,21 +64,18 @@ function InputManager:update()
         end
     end
 
-    if (self.cJustDocked) then
-        self.cJustDockedToDisable = true
-    end
-    if (self.cJustUndocked) then
-        self.cJustUndockedToDisable = true
+    self.crankJustDocked, self.crankJustUndocked = false, false
+
+    if (self.crankWasDocked ~= playdate.isCrankDocked()) then
+        self.crankJustDocked = playdate.isCrankDocked()
+        self.crankJustUndocked = not playdate.isCrankDocked()
+
+        self.crankWasDocked = playdate.isCrankDocked()
     end
 end
 
 function InputManager:lateUpdate()
-    if (self.cJustDockedToDisable) then
-        self.cJustDocked = false
-    end
-    if (self.cJustUndockedToDisable) then
-        self.cJustUndocked = false
-    end
+
 end
 
 function InputManager:isPressed(button)
@@ -116,13 +105,15 @@ function InputManager:isCrankDocked()
 end
 
 function InputManager:justCrankDocked()
-    return self.cJustDocked
+    return self.crankJustDocked
 end
 
 function InputManager:justCrankUndocked()
-    return self.cJustUndocked
+    return self.crankJustUndocked
 end
 
 function InputManager:getCrankTicks(ticksPerRevolution)
     return playdate.getCrankTicks(ticksPerRevolution)
 end
+
+--#endregion

@@ -27,7 +27,7 @@ function MenuManager:addMenu(menu)
 end
 
 function MenuManager:removeMenu()
-    print(self.menus[#self.menus].name .. " menu is removed")
+    pDebug:log(self.menus[#self.menus].name .. " menu is removed")
     table.remove(self.menus, #self.menus)
     if (#self.menus < 1) then
         self.currentMenu = nil

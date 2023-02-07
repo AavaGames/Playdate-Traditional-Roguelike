@@ -1,21 +1,33 @@
 class("MenuItem").extends()
 
-function MenuItem:init(text, assignedChar, closeMenu, allMenus, selectionFunction)
+function MenuItem:init(text, assignedChar, closeKeyboardOnSelect, closeMenuOnSelect, allMenus, selectionFunction)
     self.text = text
     self.assignedChar = assignedChar
-    self.executionBehaviors = enum({"nothing", "closeMenu", "closeAllMenus"})
-    if (closeMenu) then
+    self.closeKeyboardOnSelect = closeKeyboardOnSelect
+    self.executionBehaviors = enum({"nothing", "closeMenuOnSelect", "closeAllMenus"})
+    if (closeKeyboardOnSelect and closeMenuOnSelect) then
         if (allMenus) then
-            self.executionBehavior = closeMenu and self.executionBehaviors.closeAllMenus
+            self.executionBehavior = self.executionBehaviors.closeAllMenus
+            print("close all")
         else
-            self.executionBehavior = closeMenu and self.executionBehaviors.closeMenu
+            self.executionBehavior = self.executionBehaviors.closeMenuOnSelect
+            print("close one")
         end
     else
-        self.executionBehavior = closeMenu and self.executionBehaviors.nothing
+        self.executionBehavior = self.executionBehaviors.nothing
+        print("close nothing")
     end
     self.selectionFunction = selectionFunction
 end
 
 function MenuItem:isState(state)
     return self.executionBehavior == state
+end
+
+function MenuItem:getText()
+    return self.text
+end
+
+function MenuItem:selected()
+    self.selectionFunction()
 end

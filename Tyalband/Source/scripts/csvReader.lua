@@ -15,7 +15,7 @@ function readCSV(path)
 			for str in string.gmatch(line, "([^,]+)") do
                 table.insert(fileTable[i], str)
         	end
-			print(fileTable[i])
+			pDebug:log(fileTable[i])
 		else
 			break
 		end

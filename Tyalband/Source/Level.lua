@@ -87,10 +87,10 @@ end
 
 function Level:update()
     -- if (inputManager:justPressed(playdate.kButtonA)) then
-    --     print("up")
+    --     pDebug:log("up")
     --     self.player.equipped.lightSource.dimRange += 2
     -- elseif (inputManager:justPressed(playdate.kButtonB)) then
-    --     print("dowmn")
+    --     pDebug:log("dowmn")
     --     self.player.equipped.lightSource.dimRange -= 2
     -- end
 end
@@ -293,7 +293,7 @@ function Level:draw()
             end
             str = str .. "\n"
         end
-        print(str)
+        pDebug:log(str)
     end
 end
 

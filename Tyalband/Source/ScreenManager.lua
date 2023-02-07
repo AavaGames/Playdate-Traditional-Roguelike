@@ -4,7 +4,6 @@ class("ScreenManager").extends()
 
 function ScreenManager:init()
     self.fps = true
-    self.profiler = true
     self.targetFPS = 30
 
     self.screenDimensions = {
@@ -74,7 +73,7 @@ function ScreenManager:setBGColor(color)
     self.bgColor = color
     self.levelColor = color == gfx.kColorBlack and gfx.kColorWhite or gfx.kColorBlack
     gfx.setBackgroundColor(self.bgColor)
-    self._redrawScreen = true
+    self:redrawScreen()
 end
 
 function ScreenManager:update() end
@@ -251,7 +250,7 @@ function ScreenManager:drawGlyph(char, tile, drawCoord, screenCoord)
             --     gfx.fillRect(drawCoord.x, drawCoord.y, self.currentLevelFont.size, self.currentLevelFont.size)
             -- elseif (drawnGlyph.glyph ~= nil) then
             --     -- lit state the same as previous
-            --     print("erasing " .. drawnGlyph.char)
+            --     pDebug:log("erasing " .. drawnGlyph.char)
             --     gfx.setImageDrawMode(gfx.kDrawModeXOR) -- same color as bg
             --     local glyph = self:getGlyph(drawnGlyph.char, true, 2)
             --     glyph:draw(drawCoord.x, drawCoord.y)
