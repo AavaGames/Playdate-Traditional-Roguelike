@@ -22,13 +22,18 @@ function LogManager:init(theLevelManager)
     self.fontLineCount = nil
     self:getFontLineCount()
 
+    local worldHeight = math.floor(screenManager.screenDimensions.y * 0.71)
     self.logLevelViewport = function ()
-        return {
-            x = 1,
-            y = 1,
-            width = 400,
-            height = math.floor(screenManager.screenDimensions.y * 0.73)
+        local height = worldHeight
+        local x = (screenManager.screenDimensions.x - ((screenManager.screenDimensions.x // screenManager.currentLevelFont.size.width) * screenManager.currentLevelFont.size.width)) // 2
+        local y = (height - ((height // screenManager.currentLevelFont.size.height) * screenManager.currentLevelFont.size.height)) // 2
+        local v = {
+            x = x + 1,
+            y = y + 1,
+            width = screenManager.screenDimensions.x - x * 2,
+            height = height - y * 2
         }
+        return v
     end
 
     self.levelLogViewport = {

@@ -10,6 +10,10 @@ function DebugMenu:init(menuManager)
             pDebug:checkForSysMenu()
 		end),
 
+		MenuItemBool("Block Draw", nil, true, true, false, false, function (bool)
+			screenManager.debugViewportBlocksDraw = bool
+		end),
+
 		MenuItem("Load *Town*", nil, true, true, true, function () 
 			if (gameManager.levelManager.currentLevel.name ~= "Base Camp") then
 				pDebug:log("Changed level to town")

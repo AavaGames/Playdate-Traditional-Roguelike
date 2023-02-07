@@ -7,7 +7,7 @@ function LevelManager:init(player)
     self.player = player
     self.currentLevel = nil
 
-    self:loadLevel(Town)
+    self:loadLevel(TestRoom)
 end
 
 function LevelManager:update()

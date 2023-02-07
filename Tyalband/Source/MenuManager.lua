@@ -28,6 +28,7 @@ end
 
 function MenuManager:removeMenu()
     pDebug:log(self.menus[#self.menus].name .. " menu is removed")
+    self.menus[#self.menus]:setInactive()
     table.remove(self.menus, #self.menus)
     if (#self.menus < 1) then
         self.currentMenu = nil

@@ -7,7 +7,7 @@ function TestRoom:init(theLevelManager, thePlayer)
 
     -- do stuff
     self.name = "Testing Room"
-    self.FullyLit = false
+    self.FullyLit = true
     self.FullySeen = false
     self.playerSpawnPosition = { x = self.gridDimensions.x // 2, y = self.gridDimensions.y // 2 }
 
@@ -16,7 +16,7 @@ end
 
 function TestRoom:create()
     -- abstract function to create grid. JSON or generated
-    self.gridDimensions = { x = 20, y = 20 }
+    self.gridDimensions = { x = 60, y = 30 }
 
     self.grid = table.create(self.gridDimensions.x)
     for x = 1, self.gridDimensions.x, 1 do
@@ -27,6 +27,7 @@ function TestRoom:create()
 
             local tile = self.grid[x][y]
             if (tile ~= nil) then
+                tile.feature.char = "#"
                 -- change feature?
             end
         end

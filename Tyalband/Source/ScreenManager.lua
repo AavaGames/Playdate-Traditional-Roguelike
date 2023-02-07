@@ -6,17 +6,16 @@ function ScreenManager:init()
     self.fps = true
     self.targetFPS = 30
 
+    self.debugViewportBlocksDraw = false
+
     self.screenDimensions = {
         x = 400,
         y = 240
     }
 
-    --self.levelFont_8px = { font = gfx.font.new('assets/fonts/IBM/IBM_EGA_8x8'), size = 8 }
     self.levelFont_8px = { font = gfx.font.new('assets/fonts/Rainbow100_re_40'), size = { width = 9, height = 10 } }
-
     self.levelFont_10px = { font = gfx.font.new('assets/fonts/Log/Nix8810_M15'), size = { width = 11, height = 13 } }
-
-    self.levelFont_16px = { font = gfx.font.new('assets/fonts/IBM/IBM_EGA_8x8_2x'), size = { width = 15, height = 15 } }
+    self.levelFont_16px = { font = gfx.font.new('assets/fonts/IBM/IBM_EGA_8x8_2x'), size = { width = 16, height = 15 } }
 
     self.logFont_6px = { font = playdate.graphics.font.newFamily({
         [playdate.graphics.font.kVariantNormal] = "assets/fonts/DOS/dos-jpn12-6x12",
@@ -33,13 +32,16 @@ function ScreenManager:init()
 
     self.currentLevelFont, self.currentLogFont = nil, nil
 
-    self.defaultViewport = function(self) 
-        return {
-            x = 1,
-            y = 1,
-            width = self.screenDimensions.x,
-            height = self.screenDimensions.y
+    self.defaultViewport = function(self)
+        local x = (self.screenDimensions.x - ((self.screenDimensions.x // self.currentLevelFont.size.width) * self.currentLevelFont.size.width)) // 2
+        local y = (self.screenDimensions.y - ((self.screenDimensions.y // self.currentLevelFont.size.height) * self.currentLevelFont.size.height)) // 2
+        local v = {
+            x = x + 1,
+            y = y + 1,
+            width = self.screenDimensions.x - x * 2,
+            height = self.screenDimensions.y - y * 2
         }
+        return v
     end
     self.viewportCalcFunction = self.defaultViewport
     self.viewport = nil
@@ -96,8 +98,8 @@ function ScreenManager:draw()
         local drewLog = self:drawLog()
         drew = drew and drew or drewLog
 
-        local debugViewportBlocksDraw = false
-        if debugViewportBlocksDraw then
+        
+        if self.debugViewportBlocksDraw then
             self:debugDrawViewportBlocks()
         end
 
@@ -159,13 +161,13 @@ function ScreenManager:debugDrawViewportBlocks()
     gfx.clear()
     gfx.setImageDrawMode(gfx.kDrawModeNXOR)
     gfx.setColor(self.levelColor)
-    gfx.fillRect(self.viewport.x, self.viewport.y, self.viewport.width, self.viewport.height)
-    gfx.drawText("WORLD", self.viewport.x, self.viewport.y)
     if (self.logManager.showingLog) then
         gfx.fillRect(self.logManager.currentLogViewport.dimensions.x, self.logManager.currentLogViewport.dimensions.y, 
             self.logManager.currentLogViewport.dimensions.width, self.logManager.currentLogViewport.dimensions.height)
         gfx.drawText("LOG", self.logManager.currentLogViewport.dimensions.x, self.logManager.currentLogViewport.dimensions.y)
     end
+    gfx.fillRect(self.viewport.x, self.viewport.y, self.viewport.width, self.viewport.height)
+    gfx.drawText("WORLD", self.viewport.x, self.viewport.y)
 end
 
 --#endregion

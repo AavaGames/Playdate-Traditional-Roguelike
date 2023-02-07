@@ -6,7 +6,6 @@ local charByteStart <const> = 65 -- "A"
 -- can add an alternate char set for the left side of the keyboard
 
 function Menu:init(manager, name, items, subMenuCount)
-
     local t = ChunkTimer("Creating " .. name)
     self.manager = manager
     self.name = name
@@ -19,8 +18,6 @@ function Menu:init(manager, name, items, subMenuCount)
         height = screenManager.screenDimensions.y - self.font.size * 6,
     }
 
-    gfx.setFont(self.font.font)
-
     self.items = {}
     self.subMenu = nil
     self.subMenuCount = subMenuCount or 1
@@ -30,6 +27,39 @@ function Menu:init(manager, name, items, subMenuCount)
 
     self:populateItems(items)
     t:print()
+end
+
+function Menu:update()
+    if (not self.kbOpen) then
+        if (inputManager:justPressed(playdate.kButtonA)) then
+            self:openKeyboard()
+        elseif (inputManager:justPressed(playdate.kButtonB)) then
+            self.manager:removeMenu()
+        end
+    else
+        screenManager:redrawMenu()
+    end
+end
+
+function Menu:draw()
+    gfx.clear(gfx.kColorBlack)
+
+    gfx.setFont(self.font.font)
+    gfx.setImageDrawMode(gfx.kDrawModeNXOR)
+
+    -- Name Text
+    local name = self.name
+    if (self.subMenuCount > 1) then
+        name = name .. " pg." .. self.subMenuCount
+    end
+    gfx.drawTextAligned(name, 200, 1, kTextAlignment.center)
+    -- Input Text
+    gfx.drawTextAligned("A - Open KB\nB - Close Menu", screenManager.screenDimensions.x, 
+        screenManager.screenDimensions.y - self.font.size * 4, kTextAlignment.right)
+
+    -- Menu Items Text
+    gfx.drawTextInRect(self:getFullItemText(), self.itemTextDimensions.x, self.itemTextDimensions.y, 
+                    self.itemTextDimensions.width, self.itemTextDimensions.height)
 end
 
 function Menu:populateItems(items)
@@ -79,6 +109,7 @@ function Menu:populateItems(items)
 end
 
 function Menu:checkForSubMenu(index, item, items)
+    gfx.setFont(self.font.font)
     local text = self:getFullItemText(item)
     local textwidth, textHeight = gfx.getTextSizeForMaxWidth(text, self.itemTextDimensions.width)
     if (textHeight > self.itemTextDimensions.height) then
@@ -111,39 +142,6 @@ function Menu:removeItem(index)
     table.remove(self.items, index or #self.items) -- remove index or the last item
 end
 
-function Menu:update()
-    if (not self.kbOpen) then
-        if (inputManager:justPressed(playdate.kButtonA)) then
-            self:openKeyboard()
-        elseif (inputManager:justPressed(playdate.kButtonB)) then
-            self.manager:removeMenu()
-        end
-    else
-        screenManager:redrawMenu()
-    end
-end
-
-function Menu:draw()
-    gfx.clear(gfx.kColorBlack)
-
-    gfx.setFont(self.font.font)
-    gfx.setImageDrawMode(gfx.kDrawModeNXOR)
-
-    -- Name Text
-    local name = self.name
-    if (self.subMenuCount > 1) then
-        name = name .. " pg." .. self.subMenuCount
-    end
-    gfx.drawTextAligned(name, 200, 1, kTextAlignment.center)
-    -- Input Text
-    gfx.drawTextAligned("A - Open KB\nB - Close Menu", screenManager.screenDimensions.x, 
-        screenManager.screenDimensions.y - self.font.size * 4, kTextAlignment.right)
-
-    -- Menu Items Text
-    gfx.drawTextInRect(self:getFullItemText(), self.itemTextDimensions.x, self.itemTextDimensions.y, 
-                    self.itemTextDimensions.width, self.itemTextDimensions.height)
-end
-
 function Menu:getFullItemText(extraItem)
     local text = ""
     if (extraItem) then 
@@ -160,6 +158,11 @@ function Menu:setActive()
     screenManager:redrawScreen()
     -- Opening kb here results in a loop bug
     -- guessing kb doesn't turn off visible before callback
+end
+
+function Menu:setInactive()
+    self.kbOpen = false
+    self.kbInput = nil
 end
 
 function Menu:openKeyboard()
