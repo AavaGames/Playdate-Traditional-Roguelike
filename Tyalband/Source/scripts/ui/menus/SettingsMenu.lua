@@ -3,7 +3,7 @@ class("SettingsMenu").extends()
 function SettingsMenu:init(menuManager)
 
     self.menuManager = menuManager
-    self.menu = Menu(menuManager, "Settings", {
+    self.menu = Menu(menuManager, "SETTINGS", {
 
         MenuItemOptions("Level Font", nil, false, false, false, { "8px", "10px", "16px" }, 3, function (option)
 			screenManager:setLevelFont(option)

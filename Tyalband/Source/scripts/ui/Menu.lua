@@ -22,7 +22,6 @@ function Menu:init(manager, name, items, subMenuCount)
     self.subMenu = nil
     self.subMenuCount = subMenuCount or 1
 
-    self.kbOpen = false
     self.kbInput = nil
 
     self:populateItems(items)
@@ -30,13 +29,16 @@ function Menu:init(manager, name, items, subMenuCount)
 end
 
 function Menu:update()
-    if (not self.kbOpen) then
+    if (not playdate.keyboard.isVisible()) then
         if (inputManager:justPressed(playdate.kButtonA)) then
             self:openKeyboard()
         elseif (inputManager:justPressed(playdate.kButtonB)) then
             self.manager:removeMenu()
         end
     else
+        if (inputManager:justPressed(playdate.kButtonB)) then
+            self:closeKeyboard()
+        end
         screenManager:redrawMenu()
     end
 end
@@ -161,15 +163,19 @@ function Menu:setActive()
 end
 
 function Menu:setInactive()
-    self.kbOpen = false
+    pDebug:log(self.name .. " set inactive")
     self.kbInput = nil
+    self:closeKeyboard()
 end
 
 function Menu:openKeyboard()
     playdate.keyboard.show()
     playdate.keyboard.textChangedCallback = function() self:readKeyboard() end
-    playdate.keyboard.keyboardDidHideCallback = function () self:keyboardHidden() end
-    self.kbOpen = true
+end
+
+function Menu:closeKeyboard()
+    playdate.keyboard.hide()
+    playdate.keyboard.textChangedCallback = function() end
 end
 
 function Menu:readKeyboard()
@@ -181,24 +187,15 @@ function Menu:readKeyboard()
             self.kbInput = input
             local closeKB = self.items[self.kbInput].closeKeyboardOnSelect
             if (closeKB) then
-                playdate.keyboard.hide()
-            else
-                self:selectItem()
+                self:closeKeyboard()
             end
+            self:selectItem()
         else
             pDebug:log(input .. " out of bounds")
         end
     end
     playdate.keyboard.text = ""
-end
 
-function Menu:keyboardHidden()
-    if (self.kbOpen == true) then
-        self.kbOpen = false
-        self:selectItem()
-    end
-    playdate.keyboard.textChangedCallback = function() end
-    playdate.keyboard.keyboardDidHideCallback = function () end
 end
 
 function Menu:selectItem()

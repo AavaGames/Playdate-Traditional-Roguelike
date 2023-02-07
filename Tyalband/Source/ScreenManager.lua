@@ -78,7 +78,11 @@ function ScreenManager:setBGColor(color)
     self:redrawScreen()
 end
 
-function ScreenManager:update() end
+function ScreenManager:update() 
+    if (not self._redrawScreen and playdate.keyboard.isVisible()) then
+        self:redrawScreen()
+    end
+end
 function ScreenManager:lateUpdate() end
 
 --#region Draws

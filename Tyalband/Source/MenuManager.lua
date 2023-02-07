@@ -20,6 +20,8 @@ function MenuManager:addMenu(menu)
     if (self.showMenu == false) then
         self.showMenu = true
         self.gameManager:setState(self.gameManager.gameStates.menu)
+    else
+        self.menus[#self.menus]:setInactive()
     end
     table.insert(self.menus, menu)
     self.currentMenu = menu
@@ -27,8 +29,8 @@ function MenuManager:addMenu(menu)
 end
 
 function MenuManager:removeMenu()
-    pDebug:log(self.menus[#self.menus].name .. " menu is removed")
     self.menus[#self.menus]:setInactive()
+    pDebug:log(self.menus[#self.menus].name .. " menu is removed")
     table.remove(self.menus, #self.menus)
     if (#self.menus < 1) then
         self.currentMenu = nil

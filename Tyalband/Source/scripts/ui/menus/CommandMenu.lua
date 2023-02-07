@@ -4,7 +4,7 @@ function CommandMenu:init(menuManager)
 
     self.showing = false -- TODO keep track of showing, so multiple arent opened
     self.menuManager = menuManager
-    self.menu = Menu(menuManager, "Commands", {
+    self.menu = Menu(menuManager, "COMMANDS", {
 
         MenuItem("Centre Camera on Player", nil, true, true, false, function ()
 			gameManager.levelManager.currentLevel.camera:centreOnTarget()
