@@ -58,13 +58,13 @@ function Level:finishInit()
         end
     end)
 
-    self.toPlayerPathMap = FloodMap.new(self.gridDimensions.x, self.gridDimensions.y)
+    self.toPlayerPathMap = DistanceMap.new(self.gridDimensions.x, self.gridDimensions.y)
 	self.toPlayerPathMap:addSource(self.playerSpawnPosition.x, self.playerSpawnPosition.y, 1)
 
-    self.smellMap = FloodMap.new(self.gridDimensions.x, self.gridDimensions.y)
+    self.smellMap = DistanceMap.new(self.gridDimensions.x, self.gridDimensions.y)
 	self.smellMap:addSource(self.playerSpawnPosition.x, self.playerSpawnPosition.y, 1)
 
-    self.soundMap = FloodMap.new(self.gridDimensions.x, self.gridDimensions.y)
+    self.soundMap = DistanceMap.new(self.gridDimensions.x, self.gridDimensions.y)
 	self.soundMap:addSource(self.playerSpawnPosition.x, self.playerSpawnPosition.y, 1)
 
     self:tileLoop(function (tile)
@@ -85,26 +85,15 @@ function Level:create()
     -- abstract function to create grid
 end
 
-function Level:update()
-    -- if (inputManager:justPressed(playdate.kButtonA)) then
-    --     pDebug:log("up")
-    --     self.player.equipped.lightSource.dimRange += 2
-    -- elseif (inputManager:justPressed(playdate.kButtonB)) then
-    --     pDebug:log("dowmn")
-    --     self.player.equipped.lightSource.dimRange -= 2
-    -- end
-end
-
-function Level:lateUpdate()
-    
-end
+function Level:update() end
+function Level:lateUpdate() end
 
 function Level:round(playerMoved)
     frameProfiler:startTimer("Logic: Actor Update")
-    
+ 
     local actorMax = #self.actors
     for i = 1, actorMax, 1 do
-        self.actors[i]:tick(); -- rename to monsters? cause player aint here
+        self.actors[i]:round(); -- rename to monsters? cause player aint here
     end
     self.camera:update() -- must update last to follow player
 
@@ -125,9 +114,9 @@ function Level:updateView()
 
     -- TODO loop / find light sources, if on screen + range then calc
     local litActor = self.player
-    
+
     frameProfiler:startTimer("Vision: Reset")
-    
+
     -- optimize further by just resetting the tiles not seen anymore
     if (self.visionTiles ~= nil) then
         local max = #self.visionTiles
@@ -157,7 +146,7 @@ function Level:updateView()
         end
     end
     frameProfiler:endTimer("Vision: Reset")
-    
+
     frameProfiler:startTimer("Vision: Visible")
     self.visionTiles = math.findAllDiamondPos(litActor.position.x, litActor.position.y, litActor.visionRange)
     frameProfiler:endTimer("Vision: Visible")

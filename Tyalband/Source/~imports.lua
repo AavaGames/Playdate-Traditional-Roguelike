@@ -19,6 +19,8 @@ import "/scripts/structs/Vector2"
 
 import "/extensions/ChunkTimer"
 
+import "/scripts/vision/ComputeVision"
+
 import "P_Debug"
 import "GameManager"
 import "ScreenManager"

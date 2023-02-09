@@ -7,6 +7,6 @@ function A:init(theLevel, startPosition)
     self.description = "A cold wall."
 end
 
-function A:tick()
-    A.super.tick(self)
+function A:round()
+    A.super.round(self)
 end

@@ -48,9 +48,7 @@ function Player:update()
     end
 end
 
-function Player:tick()
-    Player.super.tick(self)
-end
+function Player:round() end
 
 function Player:interact(actor)
     if (actor ~= nil) then

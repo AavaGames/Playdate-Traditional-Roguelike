@@ -24,7 +24,7 @@ function Actor:init(theLevel, startPosition)
     end
 end
 
-function Actor:tick()
+function Actor:round()
 
 end
 

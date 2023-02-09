@@ -1,5 +1,5 @@
 #include "Imports.h"
-#include "Floodfill.h"
+#include "DistanceMap.h"
 
 static PlaydateAPI* pd = NULL;
 
@@ -33,7 +33,7 @@ int eventHandler(PlaydateAPI* playdate, PDSystemEvent event, uint32_t arg)
 		const char* err;
 		if (!pd->lua->addFunction(Test_C, "test_c", &err))
 			pd->system->logToConsole("%s:%i: addFunction failed, %s", __FILE__, __LINE__, err);
-		Register_floodfill(pd);
+		Register_distanceMap(pd);
 
 		pd->system->logToConsole("Initialized C to Lua");
 	}
