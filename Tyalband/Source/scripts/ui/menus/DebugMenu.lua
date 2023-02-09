@@ -14,6 +14,14 @@ function DebugMenu:init(menuManager)
 			screenManager.debugViewportBlocksDraw = bool
 		end),
 
+		MenuItemBool("Distance Map Draw", nil, true, true, false, false, function (bool)
+			gameManager.levelManager.currentLevel.debugDrawDistMap = bool
+		end),
+
+		MenuItemOptions("Level Font", nil, false, false, false, { "toPlayerPathMap", "smellMap", "soundMap" }, 1, function (option)
+			gameManager.levelManager.currentLevel.debugDistMap = option
+		end),
+
 		MenuItem("Load *Town*", nil, true, true, true, function () 
 			if (gameManager.levelManager.currentLevel.name ~= "Base Camp") then
 				pDebug:log("Changed level to town")

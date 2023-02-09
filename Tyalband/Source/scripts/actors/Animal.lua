@@ -2,8 +2,8 @@ class("Animal").extends(Actor)
 
 function Animal:init(theLevel, startPosition)
     Animal.super.init(self, theLevel, startPosition)
-    self.name = "Animal"
-    self.description = "A cute cuddly animal."
+    self.name = "Sabi"
+    self.description = "A cute white cat tipped in black. It purrs loudly."
 end
 
 function Animal:round()

@@ -14,15 +14,16 @@ typedef struct DistanceMap_Source {
 } DistanceMap_Source;
 
 DistanceMap_Source* DistanceMap_Source_new(int x, int y, int weight);
+void* DistanceMap_Source_free(DistanceMap_Source* source);
 
 typedef struct DistanceMap {
 	int width;
 	int height;
 	bool** collisionMask;
 	int** map;
-	DistanceMap_Source* source;
-	//DistanceMap_Source** sources;
-	//uint16_t rangeLimit;
+	DistanceMap_Source* centerSource;
+	list_type(DistanceMap_Source*) sources;
+	uint16_t rangeLimit;
 } DistanceMap;
 
 // PARAM: width, height
@@ -33,11 +34,18 @@ static int DistanceMap_new(lua_State* L);
 static int DistanceMap_free(lua_State* L);
 //PARAM: x, y, weight
 static int DistanceMap_addSource(lua_State* L);
+static int DistanceMap_addCenterSource(lua_State* L);
+static int DistanceMap_clearSources(lua_State* L);
 
 static int DistanceMap_getTile(lua_State* L);
+static int DistanceMap_getStep(lua_State* L);
+static int DistanceMap_getPath(lua_State* L);
 static int DistanceMap_setTileColliding(lua_State* L);
 
+static int DistanceMap_setRangeLimit(lua_State* L);
+
 bool DistanceMap_inBounds(DistanceMap* dm, int x, int y);
+int DistanceMap_lowestNeighbor(DistanceMap* dm, int x, int y);
 
 void Dijkstra_fill(DistanceMap* dm, int x, int y, int fromX, int FromY);
 

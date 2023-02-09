@@ -11,7 +11,11 @@ function TestRoom:init(theLevelManager, thePlayer)
     self.FullySeen = false
     self.playerSpawnPosition = { x = self.gridDimensions.x // 2, y = self.gridDimensions.y // 2 }
 
+    local a = Animal(self, Vector2.new(self.playerSpawnPosition.x + 5 , self.playerSpawnPosition.y - 5))
+
     TestRoom.super.finishInit(self)
+
+    self.distanceMapManager:addSource("toPlayerPathMap", a, 0)
 end
 
 function TestRoom:create()

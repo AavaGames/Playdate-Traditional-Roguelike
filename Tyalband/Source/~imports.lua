@@ -33,6 +33,7 @@ import "/scripts/ui/MenuItemBool"
 import "/scripts/ui/MenuItemOptions"
 import "/scripts/ui/Menu"
 
+import "DistanceMapManager"
 import "LevelManager"
 import "Level"
 import "Tile"

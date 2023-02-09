@@ -24,8 +24,9 @@ function Level:init(theLevelManager, thePlayer)
     self.smellMap = nil
     self.soundMap = nil
 
-    self.distanceMaps = {}
-    
+    self.distanceMapManager = nil
+    self.debugDrawDistMap = false
+    self.debugDistMap = "toPlayerPathMap"
 
     self:create()
 end
@@ -61,20 +62,17 @@ function Level:finishInit()
         end
     end)
 
-    self.toPlayerPathMap = DistanceMap.new(self.gridDimensions.x, self.gridDimensions.y)
-	self.toPlayerPathMap:addSource(self.playerSpawnPosition.x, self.playerSpawnPosition.y, 1)
-
-    self.smellMap = DistanceMap.new(self.gridDimensions.x, self.gridDimensions.y)
-	self.smellMap:addSource(self.playerSpawnPosition.x, self.playerSpawnPosition.y, 1)
-
-    self.soundMap = DistanceMap.new(self.gridDimensions.x, self.gridDimensions.y)
-	self.soundMap:addSource(self.playerSpawnPosition.x, self.playerSpawnPosition.y, 1)
+    self.distanceMapManager = DistanceMapManager(self, self.gridDimensions)
+    -- create maps and add player as center source
+    self.distanceMapManager:addMap("toPlayerPathMap", self.player, 0)
+    self.distanceMapManager:addMap("smellMap", self.player, 0)
+    self.distanceMapManager:addMap("soundMap", self.player, 0)
 
     self:tileLoop(function (tile)
         if (tile.blocksLight) then
-            self.toPlayerPathMap:setTileColliding(tile.position.x, tile.position.y)
-            self.smellMap:setTileColliding(tile.position.x, tile.position.y)
-            self.soundMap:setTileColliding(tile.position.x, tile.position.y)
+            self.distanceMapManager.distanceMaps.toPlayerPathMap.cMap:setTileColliding(tile.position.x, tile.position.y)
+            self.distanceMapManager.distanceMaps.smellMap.cMap:setTileColliding(tile.position.x, tile.position.y)
+            self.distanceMapManager.distanceMaps.soundMap.cMap:setTileColliding(tile.position.x, tile.position.y)
         end
     end)
 
@@ -93,7 +91,9 @@ function Level:lateUpdate() end
 
 function Level:round(playerMoved)
     frameProfiler:startTimer("Logic: Actor Update")
- 
+
+    self.distanceMapManager:reset()
+
     local actorMax = #self.actors
     for i = 1, actorMax, 1 do
         self.actors[i]:round(); -- rename to monsters? cause player aint here
@@ -102,8 +102,9 @@ function Level:round(playerMoved)
 
     frameProfiler:endTimer("Logic: Actor Update")
 
+    self:updatePathfindingMaps()
+
     if (playerMoved == true) then
-        self:updatePathfindingMaps()
         self:updateView()
     end
 
@@ -183,26 +184,21 @@ end
 
 function Level:updatePathfindingMaps()
     frameProfiler:startTimer("Pathfinding")
-    -- update source position and fill out map
-    -- TODO update djikstra only when someone asks for it
-    frameProfiler:startTimer("Pathfinding: toPlayerPath")
-    self.toPlayerPathMap:addSource(self.player.position.x, self.player.position.y, 1)
-    self.toPlayerPathMap:fillMap()
-    frameProfiler:endTimer("Pathfinding: toPlayerPath")
 
-    self.smellMap:addSource(self.player.position.x, self.player.position.y, 1)
-    self.smellMap:fillMap()
+    print("\n")
+    self.distanceMapManager:getTile("toPlayerPathMap", self.player.position.x, self.player.position.y)
 
-    self.soundMap:addSource(self.player.position.x, self.player.position.y, 1)
-    self.soundMap:fillMap()
     frameProfiler:endTimer("Pathfinding")
 end
 
 function Level:draw()
+    if (self.debugDrawDistMap) then
+        self.distanceMapManager:debugDrawMap(self.debugDistMap, self.camera)
+        return
+    end
+
     local screenManager = screenManager
-
     local viewport = screenManager.viewport
-
     local fontSize = screenManager.currentLevelFont.size
 
     -- TODO replace this math with pre-calcuated shit per font so that the screen is properly placed

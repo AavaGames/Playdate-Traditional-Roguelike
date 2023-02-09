@@ -102,7 +102,6 @@ function ScreenManager:draw()
         local drewLog = self:drawLog()
         drew = drew and drew or drewLog
 
-        
         if self.debugViewportBlocksDraw then
             self:debugDrawViewportBlocks()
         end
