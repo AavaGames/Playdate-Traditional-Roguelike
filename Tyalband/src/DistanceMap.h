@@ -21,6 +21,8 @@ typedef struct DistanceMap {
 	bool** collisionMask;
 	int** map;
 	DistanceMap_Source* source;
+	//DistanceMap_Source** sources;
+	//uint16_t rangeLimit;
 } DistanceMap;
 
 // PARAM: width, height

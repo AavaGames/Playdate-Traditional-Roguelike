@@ -24,6 +24,9 @@ function Level:init(theLevelManager, thePlayer)
     self.smellMap = nil
     self.soundMap = nil
 
+    self.distanceMaps = {}
+    
+
     self:create()
 end
 
