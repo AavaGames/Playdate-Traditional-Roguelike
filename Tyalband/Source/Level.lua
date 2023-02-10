@@ -12,8 +12,6 @@ function Level:init(theLevelManager, thePlayer)
     self.FullyLit = false
     self.FullySeen = false
 
-    self.lineOfSight = false
-
     self.grid = nil
     self.gridDimensions = Vector2.zero()
 
@@ -101,6 +99,7 @@ function Level:updateView()
     frameProfiler:startTimer("Logic: Vision")
 
     -- TODO loop / find light sources, if on screen + range then calc
+    -- change this to litTiles and remove visionRange form player
     local litActor = self.player
 
     frameProfiler:startTimer("Vision: Reset")
@@ -134,10 +133,6 @@ function Level:updateView()
         end
     end
     frameProfiler:endTimer("Vision: Reset")
-
-    if (self.lineOfSight) then
-        
-    end
 
     frameProfiler:startTimer("Vision: Visible")
     self.visionTiles = math.findAllDiamondPos(litActor.position.x, litActor.position.y, litActor.visionRange)

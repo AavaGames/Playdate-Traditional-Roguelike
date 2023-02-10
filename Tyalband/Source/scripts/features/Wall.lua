@@ -5,11 +5,9 @@ function Wall:init(theLevel, startPosition)
     self.char = "#"
     self.name = "Wall"
     self.description = "A cold stone wall."
-    
+
     self.collision = true
     self.renderWhenSeen = true
-
-    self.blocksVision = true
 
     self.moveCost = 1
 end

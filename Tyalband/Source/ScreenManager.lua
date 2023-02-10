@@ -15,7 +15,7 @@ function ScreenManager:init()
 
     self.levelFont_8px = { font = gfx.font.new('assets/fonts/Rainbow100_re_40'), size = { width = 9, height = 10 } }
     self.levelFont_10px = { font = gfx.font.new('assets/fonts/Log/Nix8810_M15'), size = { width = 11, height = 13 } }
-    self.levelFont_16px = { font = gfx.font.new('assets/fonts/IBM/IBM_EGA_8x8_2x'), size = { width = 16, height = 15 } }
+    self.levelFont_16px = { font = gfx.font.new('assets/fonts/IBM/IBM_EGA_8x8_2x'), size = { width = 16, height = 16 } }
 
     self.logFont_6px = { font = playdate.graphics.font.newFamily({
         [playdate.graphics.font.kVariantNormal] = "assets/fonts/DOS/dos-jpn12-6x12",

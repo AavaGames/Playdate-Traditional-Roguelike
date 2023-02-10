@@ -7,7 +7,6 @@ function Town:init(theLevelManager, thePlayer)
     self.name = "Base Camp"
     self.FullyLit = true
     self.FullySeen = true
-    self.lineOfSight = true
 
     self.playerSpawnPosition = { x = 16, y = 53 }
 
@@ -19,12 +18,12 @@ end
 
 function Town:create()
     -- var tile = array[y * width + x]
-    -- 0 = empty, 1 = wall, 2 = ?, 3 = ?, 4 = grass
+    -- 0 = empty, 1 = wall, 2 = crystal, 3 = ground, 4 = grass
     local townFile = playdate.file.open("assets/maps/town.json")
     local townJson = json.decodeFile(townFile)
     local townArray = townJson.layers[1].data
     self.gridDimensions = { x = townJson.width, y = townJson.height }
-    
+
     -- init table
     self.grid = table.create(self.gridDimensions.x)
     for x = 1, self.gridDimensions.x, 1 do
@@ -48,6 +47,8 @@ function Town:create()
             if (tile ~= nil) then
                 if type == 1 then
                     tile.feature = Wall(self, Vector2.new(x,y))
+                elseif type == 2 then
+                    tile.feature = Crystal(self, Vector2.new(x,y))
                 elseif type == 4 then
                     tile.feature = Grass(self, Vector2.new(x,y))
                 end
