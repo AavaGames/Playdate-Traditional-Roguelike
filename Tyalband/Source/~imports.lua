@@ -56,10 +56,12 @@ import "/scripts/levels/Dungeon"
 import "/scripts/levels/TestRoom"
 
 import "/scripts/actors/Animal"
+import "/scripts/actors/Cat"
 
 import "/scripts/features/Grass"
 import "/scripts/features/Ground"
 import "/scripts/features/Wall"
+import "/scripts/features/Crystal"
 
 import "/scripts/items/Item"
 import "/scripts/items/LightSource"

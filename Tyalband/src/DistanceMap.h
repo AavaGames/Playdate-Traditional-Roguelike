@@ -4,6 +4,17 @@
 #include "Imports.h"
 #include "list.h"
 #include "Vector2.h"
+#include "CollisionMask.h"
+
+static enum Direction
+{
+	North,
+	East,
+	South,
+	West
+};
+
+Vector2* Direction_getVector(enum Direction dir);
 
 //NOTE: Always subtract X & Y because lua counts from 1
 
@@ -19,11 +30,11 @@ void* DistanceMap_Source_free(DistanceMap_Source* source);
 typedef struct DistanceMap {
 	int width;
 	int height;
-	bool** collisionMask;
+	CollisionMask* collisionMask;
 	int** map;
 	DistanceMap_Source* centerSource;
 	list_type(DistanceMap_Source*) sources;
-	uint16_t rangeLimit;
+	uint16_t stepLimit;
 } DistanceMap;
 
 // PARAM: width, height
@@ -40,15 +51,14 @@ static int DistanceMap_clearSources(lua_State* L);
 static int DistanceMap_getTile(lua_State* L);
 static int DistanceMap_getStep(lua_State* L);
 static int DistanceMap_getPath(lua_State* L);
-static int DistanceMap_setTileColliding(lua_State* L);
 
 static int DistanceMap_setRangeLimit(lua_State* L);
 
 bool DistanceMap_inBounds(DistanceMap* dm, int x, int y);
-int DistanceMap_lowestNeighbor(DistanceMap* dm, int x, int y);
+enum Direction DistanceMap_lowestNeighbor(DistanceMap* dm, int x, int y);
 
-void Dijkstra_fill(DistanceMap* dm, int x, int y, int fromX, int FromY);
+static int Dijkstra_fillMap(lua_State* L);
 
-void Register_distanceMap(PlaydateAPI* p);
+void Register_DistanceMap(PlaydateAPI* p);
 
 #endif

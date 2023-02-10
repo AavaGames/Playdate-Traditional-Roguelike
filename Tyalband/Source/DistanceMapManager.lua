@@ -1,31 +1,39 @@
 local gfx <const> = playdate.graphics
 
-local distanceMapMaxLimit <const> = 100
+local distanceMapMaxStepLimit <const> = 100
 
 class("DistanceMapManager").extends()
 
 function DistanceMapManager:init(level, gridDimensions)
     self.level = level
     self.gridDimensions = gridDimensions
-    -- map: toPlayerPathMap, smellMap, soundMap
 
-    -- Contains { cMap = C.DistanceMap, source = {}, updated = false }
+    self.collisionMask = CollisionMask.new(self.gridDimensions.x, self.gridDimensions.y)
+    self.level:tileLoop(function (tile)
+        if (tile.feature ~= nil and not tile.feature.collision) then
+            self.collisionMask:setTileFloor(tile.position.x, tile.position.y)
+        end
+    end)
     self.distanceMaps = {}
 
+    self:addMap("toPlayerPathMap", self.level.player, 0) -- defaults to max step range
+    self:addMap("smellMap", self.level.player, 0) -- add smell range
+    self:addMap("soundMap", self.level.player, 0) -- add sound radius
 end
 
 function DistanceMapManager:reset()
     for key, map in pairs(self.distanceMaps) do
         map.updated = false
     end
-    print("maps reset")
 end
 
-function DistanceMapManager:addMap(name, centerSourceActor, centreSourceWeight, rangeLimit)
+function DistanceMapManager:addMap(name, centerSourceActor, centreSourceWeight, stepLimit)
     self.distanceMaps[name] = {
-        cMap = DistanceMap.new(self.gridDimensions.x, self.gridDimensions.y, rangeLimit or distanceMapMaxLimit),
+        cMap = DistanceMap.new(self.gridDimensions.x, self.gridDimensions.y, self.collisionMask, stepLimit or distanceMapMaxStepLimit),
         centerSource = centerSourceActor and DistanceMapSource(centerSourceActor, centreSourceWeight) or nil,
         sources = {},
+        -- TODO convert to a function that gets the value this is set to (i.e player.soundRadius)
+        stepLimit = stepLimit or distanceMapMaxStepLimit,
         updated = centerSourceActor == nil
     }
 end
@@ -34,21 +42,26 @@ function DistanceMapManager:getMap(map)
     if (type(map) == "string") then
         if (self.distanceMaps[map] ~= nil) then
             return self.distanceMaps[map]
-        else
-            print("DistanceMapManager ERROR: map recieved is nil", map)
         end
     elseif (map ~= nil) then
         return map
-    else
-        print("DistanceMapManager ERROR: map recieved is nil", map)
     end
+    pDebug:error("DistanceMapManager ERROR: map recieved is nil", map)
 end
 
 -- Returns direction to move towards nearest goal
 function DistanceMapManager:getStep(map, position)
     local map = self:getMap(map)
-    self.checkForUpdate(map)
-    -- get CameFrom vector
+    self:checkForUpdate(map)
+
+    -- TODO get came from vector
+
+    local x, y = map.cMap:getStep(position.x, position.y)
+    if (x ~= nil) then
+        return Vector2.new(x, y)
+    else
+        return Vector2.zero();
+    end
 end
 
 function DistanceMapManager:getTile(map, x, y)
@@ -82,7 +95,6 @@ function DistanceMapManager:checkForUpdate(map)
 end
 
 function DistanceMapManager:updateMap(map)
-    print("updated map")
     local map = self:getMap(map)
     map.cMap:clearSources()
     if (map.centerSource) then
@@ -109,11 +121,19 @@ end
 
 function DistanceMapManager:setRangeLimit(map, limit)
     local map = self:getMap(map)
-    map.cMap:setRangeLimit(limit)
+    if (map.stepLimit ~= limit) then
+        map.stepLimit = limit
+        map.cMap:setRangeLimit(limit)
+    end
 end
 
 function DistanceMapManager:debugDrawMap(map, camera)
     local map = self:getMap(map)
+
+    if (map == nil) then return end
+
+    map.updated = true -- do not allow updating map through this func
+
     local screenManager = screenManager
     local viewport = screenManager.viewport
     local fontSize = screenManager.currentLevelFont.size
@@ -126,7 +146,6 @@ function DistanceMapManager:debugDrawMap(map, camera)
     local yOffset = 0
 
     local tile = Tile()
-    tile.lightLevel = 2
 
     gfx.setImageDrawMode(gfx.kDrawModeNXOR)
     gfx.setFont(screenManager.currentLevelFont.font)
@@ -146,7 +165,6 @@ function DistanceMapManager:debugDrawMap(map, camera)
             -- once > 9 then draw in ascii ranges of 64-89 & 96-121 -- string.char(i + 64)
             local step = self:getTile(map, x, y)
             if (step ~= nil) then
-                
                 if (step < 0) then
                     tile.lightLevel = 0
                 else
@@ -187,11 +205,8 @@ end
 
 function DistanceMapSource:hasChanged()
     if (self.actor.position ~= self.lastActorPosition) then
-        print("source changed")
         self.lastActorPosition = Vector2.copy(self.actor.position)
         return true
-    else
-        print("no change")
     end
     return false
 end

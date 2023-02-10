@@ -9,7 +9,7 @@ function Town:init(theLevelManager, thePlayer)
     self.FullySeen = true
     self.playerSpawnPosition = { x = 16, y = 53 }
 
-    Animal(self, Vector2.new(6, 43))
+    Cat(self, Vector2.new(6, 43))
     Animal(self, Vector2.new(7, 43))
 
     Town.super.finishInit(self)

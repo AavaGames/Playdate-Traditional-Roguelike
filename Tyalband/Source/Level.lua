@@ -20,11 +20,8 @@ function Level:init(theLevelManager, thePlayer)
 
     self.visionTiles = nil
 
-    self.toPlayerPathMap = nil
-    self.smellMap = nil
-    self.soundMap = nil
-
     self.distanceMapManager = nil
+
     self.debugDrawDistMap = false
     self.debugDistMap = "toPlayerPathMap"
 
@@ -40,6 +37,8 @@ function Level:finishInit()
     screenManager:setBGColor(self.FullyLit == true and gfx.kColorWhite or gfx.kColorBlack)
     self.player:spawn(self, self.playerSpawnPosition)
     self.camera = Camera(self.player)
+
+    self.distanceMapManager = DistanceMapManager(self, self.gridDimensions)
 
     -- setup vision / light
     self:tileLoop(function (tile)
@@ -62,21 +61,6 @@ function Level:finishInit()
         end
     end)
 
-    self.distanceMapManager = DistanceMapManager(self, self.gridDimensions)
-    -- create maps and add player as center source
-    self.distanceMapManager:addMap("toPlayerPathMap", self.player, 0)
-    self.distanceMapManager:addMap("smellMap", self.player, 0)
-    self.distanceMapManager:addMap("soundMap", self.player, 0)
-
-    self:tileLoop(function (tile)
-        if (tile.blocksLight) then
-            self.distanceMapManager.distanceMaps.toPlayerPathMap.cMap:setTileColliding(tile.position.x, tile.position.y)
-            self.distanceMapManager.distanceMaps.smellMap.cMap:setTileColliding(tile.position.x, tile.position.y)
-            self.distanceMapManager.distanceMaps.soundMap.cMap:setTileColliding(tile.position.x, tile.position.y)
-        end
-    end)
-
-    self:updatePathfindingMaps()
     if (not self.FullyLit) then
         self:updateView()
     end
@@ -101,8 +85,6 @@ function Level:round(playerMoved)
     self.camera:update() -- must update last to follow player
 
     frameProfiler:endTimer("Logic: Actor Update")
-
-    self:updatePathfindingMaps()
 
     if (playerMoved == true) then
         self:updateView()
@@ -182,19 +164,11 @@ function Level:updateView()
     frameProfiler:endTimer("Logic: Vision")
 end
 
-function Level:updatePathfindingMaps()
-    frameProfiler:startTimer("Pathfinding")
-
-    print("\n")
-    self.distanceMapManager:getTile("toPlayerPathMap", self.player.position.x, self.player.position.y)
-
-    frameProfiler:endTimer("Pathfinding")
-end
-
 function Level:draw()
     if (self.debugDrawDistMap) then
-        self.distanceMapManager:debugDrawMap(self.debugDistMap, self.camera)
-        return
+        if self.distanceMapManager:debugDrawMap(self.debugDistMap, self.camera) then
+            return
+        end
     end
 
     local screenManager = screenManager

@@ -6,6 +6,6 @@
 #include <stdbool.h>
 #include "pd_api.h"
 
-#define DEBUG_LOG true
+#define DEBUG_LOG false
 
 #endif

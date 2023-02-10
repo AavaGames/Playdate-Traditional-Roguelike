@@ -2,8 +2,31 @@
 
 static PlaydateAPI* pd;
 
-const static int MAX_LIMIT = 100;
-const static int BASE_VALUE = 9999;
+const static int BASE_VALUE = 99999;
+
+Vector2* Direction_getVector(enum Direction dir)
+{
+	switch (dir)
+	{
+	case North:
+		return Vector2_new(0, -1);
+		break;
+	case East:
+		return Vector2_new(1, 0);
+		break;
+	case South:
+		return Vector2_new(0, 1);
+		break;
+	case West:
+		return Vector2_new(-1, 0);
+		break;
+	default:
+		if (DEBUG_LOG)
+			pd->system->logToConsole("C: Invalid Direction for Vector");
+		return NULL;
+		break;
+	}
+}
 
 DistanceMap_Source* DistanceMap_Source_new(int x, int y, int weight)
 {
@@ -19,25 +42,23 @@ void* DistanceMap_Source_free(DistanceMap_Source* source)
 	free(source);
 }
 
-// PARAM: width, height, rangeLimit
+// PARAM: width, height, stepLimit
 static int DistanceMap_new(lua_State* L)
 {
 	DistanceMap* dm = malloc(sizeof(*dm));
 	dm->width = pd->lua->getArgInt(1);
 	dm->height = pd->lua->getArgInt(2);
-	dm->rangeLimit = pd->lua->getArgInt(3);
+	dm->collisionMask = pd->lua->getArgObject(3, "CollisionMask", NULL);
+	dm->stepLimit = pd->lua->getArgInt(4);
 	dm->centerSource = NULL;
 	dm->sources = NULL;
 	list_set_elem_destructor(dm->sources, DistanceMap_Source_free);
 
-	dm->collisionMask = malloc(dm->width * sizeof(*(dm->collisionMask)));
 	dm->map = malloc(dm->width * sizeof(*(dm->map)));
 	for (int x = 0; x < dm->width; x++)
 	{
-		dm->collisionMask[x] = malloc(dm->height * sizeof(*(dm->collisionMask[0])));
 		dm->map[x] = malloc(dm->height * sizeof(*(dm->map[0])));
 		for (int y = 0; y < dm->height; y++) {
-			dm->collisionMask[x][y] = false;
 			dm->map[x][y] = BASE_VALUE;
 		}
 	}
@@ -50,7 +71,6 @@ static int DistanceMap_new(lua_State* L)
 static int DistanceMap_free(lua_State* L)
 {
 	DistanceMap* dm = pd->lua->getArgObject(1, "DistanceMap", NULL);
-	free(dm->collisionMask);
 	free(dm->map);
 	free(dm->centerSource);
 	list_free(dm->sources);
@@ -105,7 +125,7 @@ static int DistanceMap_getTile(lua_State* L)
 	DistanceMap* dm = pd->lua->getArgObject(1, "DistanceMap", NULL);
 	int x = pd->lua->getArgInt(2) - 1;
 	int y = pd->lua->getArgInt(3) - 1;
-	if (DistanceMap_inBounds(dm, x, y))
+	if (DistanceMap_inBounds(dm, x, y) && dm->map[x][y] != BASE_VALUE)
 		pd->lua->pushInt(dm->map[x][y]);
 	else
 		pd->lua->pushNil();
@@ -113,9 +133,25 @@ static int DistanceMap_getTile(lua_State* L)
 }
 
 //PARAM: x, y
+// returns direction of lowest neightbor
 static int DistanceMap_getStep(lua_State* L)
 {
-	// returns direction of lowest neightbor
+	DistanceMap* dm = pd->lua->getArgObject(1, "DistanceMap", NULL);
+	int x = pd->lua->getArgInt(2) - 1;
+	int y = pd->lua->getArgInt(3) - 1;
+	enum Direction dir = DistanceMap_lowestNeighbor(dm, x, y);
+	if (dir > -1)
+	{
+		Vector2* direction = Direction_getVector(dir);
+		if (direction != NULL)
+		{
+			pd->lua->pushInt(direction->x);
+			pd->lua->pushInt(direction->y);
+			return 2;
+		}
+	}
+	pd->lua->pushNil();
+	return 1;
 }
 
 //PARAM: x, y
@@ -124,21 +160,10 @@ static int DistanceMap_getPath(lua_State* L)
 
 }
 
-//PARAM: x, y
-static int DistanceMap_setTileColliding(lua_State* L)
-{
-	DistanceMap* dm = pd->lua->getArgObject(1, "DistanceMap", NULL);
-	int x = pd->lua->getArgInt(2) - 1;
-	int y = pd->lua->getArgInt(3) - 1;
-	if (DistanceMap_inBounds(dm, x, y))
-		dm->collisionMask[x][y] = true;
-	return 0;
-}
-
 static int DistanceMap_setRangeLimit(lua_State* L)
 {
 	DistanceMap* dm = pd->lua->getArgObject(1, "DistanceMap", NULL);
-	dm->rangeLimit = pd->lua->getArgInt(2);
+	dm->stepLimit = pd->lua->getArgInt(2);
 	return 0;
 }
 
@@ -147,18 +172,45 @@ bool DistanceMap_inBounds(DistanceMap* dm, int x, int y)
 	return x >= 0 && x < dm->width && y >= 0 && y < dm->height;
 }
 
-int DistanceMap_lowestNeighbor(DistanceMap* dm, int x, int y)
+// Returns the lowest neighbor that is lower than the tile
+enum Direction DistanceMap_lowestNeighbor(DistanceMap* dm, int x, int y)
 {
-	int n = BASE_VALUE;
-	if (n < dm->map[x + 1][y]) 
-		n = dm->map[x + 1][y];
-	if (n < dm->map[x - 1][y])
-		n = dm->map[x - 1][y];
-	if (n < dm->map[x][y] + 1)
-		n = dm->map[x][y + 1];
-	if (n < dm->map[x][y - 1])
-		n = dm->map[x][y - 1];
-	return n;
+	int n = dm->map[x][y];
+	enum Direction dir = -1;
+
+	int xx = x;
+	int yy = y - 1;
+	if (DistanceMap_inBounds(dm, xx, yy) && dm->map[xx][yy] < n)
+	{
+		n = dm->map[xx][yy];
+		dir = North;
+	}
+
+	xx = x + 1;
+	yy = y;
+	if (DistanceMap_inBounds(dm, xx, yy) && dm->map[xx][yy] < n)
+	{
+		n = dm->map[xx][yy];
+		dir = East;
+	}
+
+	xx = x;
+	yy = y + 1;
+	if (DistanceMap_inBounds(dm, xx, yy) && dm->map[xx][yy] < n)
+	{
+		n = dm->map[xx][yy];
+		dir = South;
+	}
+
+	xx = x - 1;
+	yy = y;
+	if (DistanceMap_inBounds(dm, xx, yy) && dm->map[xx][yy] < n)
+	{
+		n = dm->map[xx][yy];
+		dir = West;
+	}
+	
+	return dir;
 }
 
 static int Dijkstra_fillMap(lua_State* L)
@@ -186,6 +238,8 @@ static int Dijkstra_fillMap(lua_State* L)
 		list_push_back(steps, source->weight);
 	}
 
+	// TODO change rangelimit from step limit to square around primary target
+
 	// TODO could implement a tile move cost along with blocking for water, grease, etc.
 	// int tileMoveCost = 1;
 	
@@ -196,14 +250,13 @@ static int Dijkstra_fillMap(lua_State* L)
 		int step = steps[0];
 
 		// see if blocked and check map again incase it was changed already
-		if (dm->collisionMask[x][y] == false && dm->map[x][y] > step)
+		if (step < dm->stepLimit && !CollisionMask_collision(dm->collisionMask, x, y) && dm->map[x][y] > step)
 		{
 			dm->map[x][y] = step;
 			// set value to CameFrom + 1
 
 			int xx = x - 1;
 			int yy = y;
-
 			if (DistanceMap_inBounds(dm, xx, yy) && (dm->map[xx][yy] >= step + 1))
 			{
 				list_push_back(toCheck, Vector2_new(xx, yy));
@@ -241,15 +294,8 @@ static int Dijkstra_fillMap(lua_State* L)
 
 	if (DEBUG_LOG)
 		pd->system->logToConsole("Filled Map");
-	//Dijkstra_fill(dm, dm->source->x, dm->source->y, dm->source->x, dm->source->y);
 	return 0;
 }
-
-void Dijkstra_fill(DistanceMap* dm, int x, int y, int fromX, int FromY)
-{
-	
-}
-
 
 //
 
@@ -260,14 +306,14 @@ static const lua_reg DistanceMapLib[] =
 	{ "addSource", DistanceMap_addSource },
 	{ "addCenterSource", DistanceMap_addCenterSource },
 	{ "clearSources", DistanceMap_clearSources },
+	{ "getStep", DistanceMap_getStep },
 	{ "getTile", DistanceMap_getTile },
-	{ "setTileColliding", DistanceMap_setTileColliding },
 	{ "setRangeLimit", DistanceMap_setRangeLimit },
 	{ "fillMap", Dijkstra_fillMap },
 	{ NULL, NULL }
 };
 
-void Register_distanceMap(PlaydateAPI* api)
+void Register_DistanceMap(PlaydateAPI* api)
 {
 	pd = api;
 	const char* err;

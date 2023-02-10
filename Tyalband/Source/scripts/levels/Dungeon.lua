@@ -10,7 +10,9 @@ function Dungeon:init(theLevelManager, thePlayer)
 
     self.playerSpawnPosition = { x = 18, y = 19 }
     --self.playerSpawnPosition = { x = 32, y = 16 }
-    Animal(self, Vector2.new(2, 13))
+
+    Cat(self, Vector2.new(2, 2)) -- Cat locked away in top left corner
+    Cat(self, Vector2.new(2, 13))
 
     self.grid[9][18].glow = true
     self.grid[9][19].glow = true
@@ -50,8 +52,7 @@ function Dungeon:create()
             local tile = self.grid[x][y]
             if (tile ~= nil) then
                 if type == 1 then
-                    tile.feature = Wall(self, Vector2.new(x,y))
-                    tile.blocksLight = true
+                    tile.feature = Crystal(self, Vector2.new(x,y))
                 end
             end
         end

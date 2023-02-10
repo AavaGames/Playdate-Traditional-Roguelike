@@ -12,6 +12,7 @@ function TestRoom:init(theLevelManager, thePlayer)
     self.playerSpawnPosition = { x = self.gridDimensions.x // 2, y = self.gridDimensions.y // 2 }
 
     local a = Animal(self, Vector2.new(self.playerSpawnPosition.x + 5 , self.playerSpawnPosition.y - 5))
+    Cat(self, Vector2.new(self.playerSpawnPosition.x - 5 , self.playerSpawnPosition.y - 5))
 
     TestRoom.super.finishInit(self)
 

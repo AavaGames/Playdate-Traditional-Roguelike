@@ -3,11 +3,13 @@ class("Wall").extends(Feature)
 function Wall:init(theLevel, startPosition)
     Wall.super.init(self, theLevel, startPosition)
     self.char = "#"
-    self.name = "Crystal"
-    self.description = "A cold perfectly transparent crystal."
+    self.name = "Wall"
+    self.description = "A cold stone wall."
     
     self.collision = true
     self.renderWhenSeen = true
+
+    self.blocksVision = true
 
     self.moveCost = 1
 end

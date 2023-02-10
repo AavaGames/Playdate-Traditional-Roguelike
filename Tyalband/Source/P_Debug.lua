@@ -13,6 +13,11 @@ function P_Debug:log(text)
     end
 end
 
+function P_Debug:error(text)
+    --TODO error catching
+    print(text)
+end
+
 function P_Debug:createDebugMenu(menuManager)
     if (self.debugMenu == nil) then
         self.debugMenu = DebugMenu(menuManager)

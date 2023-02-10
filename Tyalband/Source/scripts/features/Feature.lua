@@ -8,6 +8,8 @@ function Feature:init(theLevel, startPosition)
     self.collision = true
     self.renderWhenSeen = true
 
+    self.blocksVision = true -- only used for wall in town
+
     self.moveCost = 1
 end
 
