@@ -21,16 +21,18 @@ end
 
 function FrameProfiler:frameEnd()
     if (pDebug.profile == true) then
-        pDebug:log("-- Frame Profile --")
+        print("-- Frame Profile --")
         for index, purpose in ipairs(self.purposes) do 
             if (self.timers[purpose] ~= nil) then
                 self.timers[purpose]:print(false)
             else
-                pDebug:log(purpose .. " is nil")
+                print(purpose .. " is nil")
             end
         end
         self.frameTime:print()
-        pDebug:log(1000 / (self.frameTime.endTime - self.frameTime.startTime) .. " fps")
-        pDebug:log("----")
+        local stats = playdate.getStats()
+        if stats ~= nil then printTable(stats) end
+        print(1000 / (self.frameTime.endTime - self.frameTime.startTime) .. " fps")
+        print("----")
     end
 end

@@ -3,16 +3,17 @@ class("MenuItemBool").extends(MenuItem)
 function MenuItemBool:init(text, assignedChar, closeKeyboardOnSelect, closeMenuOnSelect, allMenus, startingValue, selectionFunction)
     MenuItemBool.super.init(self, text, assignedChar, closeKeyboardOnSelect, closeMenuOnSelect, allMenus, selectionFunction)
     self.bool = startingValue
+    self:updateText()
 end
 
-function MenuItemBool:getText()
+function MenuItemBool:updateText()
     local bool = self.bool == true and "<ON>" or "<OFF>"
-    return self.text .. " " .. bool
+    self.text = self.baseText .. " " .. bool
 end
 
 function MenuItemBool:selected()
     self.bool = not self.bool
     self.selectionFunction(self.bool)
-
+    self:updateText()
     screenManager:redrawMenu()
 end

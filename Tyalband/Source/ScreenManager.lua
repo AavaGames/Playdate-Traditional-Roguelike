@@ -66,6 +66,17 @@ function ScreenManager:init()
     self._redrawLog = false
     self._redrawMenu = false
 
+    playdate.keyboard.keyboardAnimatingCallback = function ()
+        if gameManager:isState(gameManager.gameStates.level) then
+        elseif gameManager:isState(gameManager.gameStates.fullLog) then
+            self:redrawLog()
+        elseif gameManager:isState(gameManager.gameStates.menu) then
+        end
+    end
+    playdate.keyboard.keyboardDidHideCallback = function ()
+        self:redrawScreen()
+    end
+
     self:setLevelFont("16px")
     self:setLogFont("8px")
     self:resetDrawnGlyphs()
@@ -79,9 +90,7 @@ function ScreenManager:setBGColor(color)
 end
 
 function ScreenManager:update() 
-    if (not self._redrawScreen and playdate.keyboard.isVisible()) then
-        self:redrawScreen()
-    end
+
 end
 function ScreenManager:lateUpdate() end
 

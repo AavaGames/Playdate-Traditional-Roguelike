@@ -5,7 +5,7 @@ function DebugMenu:init(menuManager)
     self.menuManager = menuManager
     self.menu = Menu(self.menuManager, "DEBUG MENU #" .. math.random(0, 1000), {
 
-		MenuItemBool("Debug profile", nil, true, false, false, true, function (bool)
+		MenuItemBool("Debug profile", nil, true, false, false, false, function (bool)
 			pDebug.profile = bool
             pDebug:checkForSysMenu()
 		end),

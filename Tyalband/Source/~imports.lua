@@ -1,7 +1,5 @@
 -- All Imports -- LOAD ORDER MATTERS FOR CLASSES
 
-debug = true
-
 import "CoreLibs/object"
 import "CoreLibs/graphics"
 import "CoreLibs/sprites"

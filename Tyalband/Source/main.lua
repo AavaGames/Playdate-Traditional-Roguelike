@@ -47,7 +47,7 @@ function playdate.update()
 end
 
 function playdate.keyPressed(key)
-	if key == "N" then
+	if key == "n" then
 
 	end
 end

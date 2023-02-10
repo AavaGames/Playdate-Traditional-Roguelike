@@ -1,7 +1,8 @@
 class("MenuItem").extends()
 
 function MenuItem:init(text, assignedChar, closeKeyboardOnSelect, closeMenuOnSelect, allMenus, selectionFunction)
-    self.text = text
+    self.baseText = text
+    self.text = self.baseText
     self.assignedChar = assignedChar
     self.closeKeyboardOnSelect = closeKeyboardOnSelect
     self.executionBehaviors = enum({"nothing", "closeMenuOnSelect", "closeAllMenus"})
@@ -19,10 +20,6 @@ end
 
 function MenuItem:isState(state)
     return self.executionBehavior == state
-end
-
-function MenuItem:getText()
-    return self.text
 end
 
 function MenuItem:selected()

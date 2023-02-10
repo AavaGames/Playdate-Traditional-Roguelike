@@ -4,14 +4,17 @@ function MenuItemOptions:init(text, assignedChar, closeKeyboardOnSelect, closeMe
     MenuItemOptions.super.init(self, text, assignedChar, closeKeyboardOnSelect, closeMenuOnSelect, allMenus, selectionFunction)
     self.options = options
     self.currentIndex = startingIndex
+    self:updateText()
 end
 
-function MenuItemOptions:getText()
+function MenuItemOptions:updateText()
     local option = "<" .. self.options[self.currentIndex] .. ">"
-    return self.text .. " " .. option
+    self.text = self.baseText .. " " .. option
 end
 
 function MenuItemOptions:selected()
     self.currentIndex = math.loopIndexOfArray(self.currentIndex + 1, #self.options)
     self.selectionFunction(self.options[self.currentIndex])
+    self:updateText()
+    screenManager:redrawMenu()
 end

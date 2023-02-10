@@ -166,9 +166,8 @@ end
 
 function Level:draw()
     if (self.debugDrawDistMap) then
-        if self.distanceMapManager:debugDrawMap(self.debugDistMap, self.camera) then
-            return
-        end
+        self.distanceMapManager:debugDrawMap(self.debugDistMap, self.camera)
+        return
     end
 
     local screenManager = screenManager

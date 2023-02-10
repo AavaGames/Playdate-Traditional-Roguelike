@@ -1,3 +1,5 @@
+import "CoreLibs/utilities/where"
+
 class("P_Debug").extends()
 
 function P_Debug:init()
@@ -14,8 +16,7 @@ function P_Debug:log(text)
 end
 
 function P_Debug:error(text)
-    --TODO error catching
-    print(text)
+    print("ERROR: " .. text .. "\n\t" .. where())
 end
 
 function P_Debug:createDebugMenu(menuManager)

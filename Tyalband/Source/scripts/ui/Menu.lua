@@ -6,7 +6,6 @@ local charByteStart <const> = 65 -- "A"
 -- can add an alternate char set for the left side of the keyboard
 
 function Menu:init(manager, name, items, subMenuCount)
-    local t = ChunkTimer("Creating " .. name)
     self.manager = manager
     self.name = name
     self.font = screenManager.logFont_8px
@@ -25,7 +24,6 @@ function Menu:init(manager, name, items, subMenuCount)
     self.kbInput = nil
 
     self:populateItems(items)
-    t:print()
 end
 
 function Menu:update()
@@ -107,7 +105,7 @@ function Menu:populateItems(items)
     for key, value in pairs(self.items) do
         count += 1
     end
-    pDebug:log("Menu: " .. self.name .. " created with " .. count .. " items.")
+    --pDebug:log("Menu: " .. self.name .. " created with " .. count .. " items.")
 end
 
 function Menu:checkForSubMenu(index, item, items)
@@ -139,7 +137,7 @@ end
 function Menu:removeItem(index)
     if (index ~= nil and not math.inBoundsOfArray(index, #self.items)) then
         index = nil
-        pDebug:log(self.name .. " ERROR: remove Item index out of bounds") -- TODO error catch?
+        pDebug:error(self.name .. " remove Item index out of bounds") -- TODO error catch?
     end
     table.remove(self.items, index or #self.items) -- remove index or the last item
 end
@@ -147,23 +145,23 @@ end
 function Menu:getFullItemText(extraItem)
     local text = ""
     if (extraItem) then 
-        text = "M" .. ": " .. extraItem:getText() .. "\n"
+        text = "M" .. ": " .. extraItem.text .. "\n"
     end
     for key, item in pairsByKeys(self.items) do
-        text = text .. key .. ": " .. item:getText() .. "\n"
+        text = text .. key .. ": " .. item.text .. "\n"
     end
     return text
 end
 
 function Menu:setActive()
-    pDebug:log(self.name .. " set active")
+    --pDebug:log(self.name .. " set active")
     screenManager:redrawScreen()
     -- Opening kb here results in a loop bug
     -- guessing kb doesn't turn off visible before callback
 end
 
 function Menu:setInactive()
-    pDebug:log(self.name .. " set inactive")
+    --pDebug:log(self.name .. " set inactive")
     self.kbInput = nil
     self:closeKeyboard()
 end
@@ -183,7 +181,7 @@ function Menu:readKeyboard()
     self.kbInput = nil
     if (input ~= nil and input ~= "") then
         if (self.items[input] ~= nil) then
-            pDebug:log(self.name .. ": " .. input)
+            --pDebug:log(self.name .. ": " .. input)
             self.kbInput = input
             local closeKB = self.items[self.kbInput].closeKeyboardOnSelect
             if (closeKB) then
