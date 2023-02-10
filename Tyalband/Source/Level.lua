@@ -12,6 +12,8 @@ function Level:init(theLevelManager, thePlayer)
     self.FullyLit = false
     self.FullySeen = false
 
+    self.lineOfSight = false
+
     self.grid = nil
     self.gridDimensions = Vector2.zero()
 
@@ -132,6 +134,10 @@ function Level:updateView()
         end
     end
     frameProfiler:endTimer("Vision: Reset")
+
+    if (self.lineOfSight) then
+        
+    end
 
     frameProfiler:startTimer("Vision: Visible")
     self.visionTiles = math.findAllDiamondPos(litActor.position.x, litActor.position.y, litActor.visionRange)

@@ -7,6 +7,8 @@ function Town:init(theLevelManager, thePlayer)
     self.name = "Base Camp"
     self.FullyLit = true
     self.FullySeen = true
+    self.lineOfSight = true
+
     self.playerSpawnPosition = { x = 16, y = 53 }
 
     Cat(self, Vector2.new(6, 43))
