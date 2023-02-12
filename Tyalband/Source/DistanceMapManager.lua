@@ -139,8 +139,8 @@ function DistanceMapManager:debugDrawMap(map, camera)
     local fontSize = screenManager.currentLevelFont.size
 
     -- TODO replace this math with pre-calcuated shit per font so that the screen is properly placed
-    local startTileX = camera.position.x - math.floor(screenManager.viewportCharDrawMax.x*0.5)
-    local startTileY = camera.position.y - math.floor(screenManager.viewportCharDrawMax.y*0.5)
+    local startTileX = camera.position.x - math.floor(screenManager.viewportGlyphDrawMax.x*0.5)
+    local startTileY = camera.position.y - math.floor(screenManager.viewportGlyphDrawMax.y*0.5)
 
     local xOffset = 0
     local yOffset = 0
@@ -150,8 +150,8 @@ function DistanceMapManager:debugDrawMap(map, camera)
     gfx.setImageDrawMode(gfx.kDrawModeNXOR)
     gfx.setFont(screenManager.currentLevelFont.font)
 
-    for xPos = 0, screenManager.viewportCharDrawMax.x - 1, 1 do
-        for yPos = 0, screenManager.viewportCharDrawMax.y - 1, 1 do
+    for xPos = 0, screenManager.viewportGlyphDrawMax.x - 1, 1 do
+        for yPos = 0, screenManager.viewportGlyphDrawMax.y - 1, 1 do
 
             local x = startTileX + xOffset
             local y = startTileY + yOffset
@@ -161,7 +161,7 @@ function DistanceMapManager:debugDrawMap(map, camera)
                 y = viewport.y + fontSize.height * yPos
             }
 
-            local char = ""
+            local glyph = ""
             -- once > 9 then draw in ascii ranges of 64-89 & 96-121 -- string.char(i + 64)
             local step = self:getTile(map, x, y)
             if (step ~= nil) then
@@ -172,17 +172,17 @@ function DistanceMapManager:debugDrawMap(map, camera)
                 end
                 step = math.abs(step)
                 if (step < 10) then
-                    char = step
+                    glyph = step
                 else
                     -- map to range?
                     if (step < 126) then
-                        char = string.char(step - 9 + 64)
+                        glyph = string.char(step - 9 + 64)
 
                     end
                 end 
             end
 
-            screenManager:drawGlyph(char, tile, drawCoord, {
+            screenManager:drawGlyph(glyph, tile, drawCoord, {
                 x = xPos,
                 y = yPos
             })

@@ -3,6 +3,7 @@ local gfx <const> = playdate.graphics
 class("Camera").extends()
 
 function Camera:init(target, theLevel, startPosition)
+    self.settings = settings
     self.target = target -- any actor, usually player
     self.position = Vector2.zero()
     if (self.target == nil) then
@@ -18,8 +19,7 @@ end
 function Camera:update()
     if (self.target) then
         -- TODO camera always follow player setting
-        local simpleFollow = false
-        if (simpleFollow == true) then
+        if (self.settings.cameraFollowPlayer == true) then
             self.position = Vector2.copy(self.target.position)
         else
             if (self.target.position.x > self.position.x + self.bounds.x) then -- right
@@ -57,12 +57,12 @@ end
 function Camera:calculateBounds()
     -- the bounds are based on the screen right now but they need to be based on the DRAW
     self.bounds = {
-        x = screenManager.viewportCharDrawMax.x // 2 - self.target.visionRange,
-        y = screenManager.viewportCharDrawMax.y // 2 - self.target.visionRange
+        x = screenManager.viewportGlyphDrawMax.x // 2 - self.target.visionRange,
+        y = screenManager.viewportGlyphDrawMax.y // 2 - self.target.visionRange
     }
     self.move = { -- (((self.target.visionRange + 1)  * 2) + 1) add padding to stop flip flop on move
-        x = screenManager.viewportCharDrawMax.x - self.target.visionRange * 2,
-        y = screenManager.viewportCharDrawMax.y - self.target.visionRange * 2
+        x = screenManager.viewportGlyphDrawMax.x - self.target.visionRange * 2,
+        y = screenManager.viewportGlyphDrawMax.y - self.target.visionRange * 2
     }
     self:centreOnTarget()
 end

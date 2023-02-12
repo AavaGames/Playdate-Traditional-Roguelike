@@ -2,7 +2,7 @@ class("Player").extends(Actor)
 
 function Player:init(theLevel, startPosition)
     Player.super.init(self, theLevel, startPosition)
-    self.char = "@"
+    self.glyph = "@"
     self.name = "You"
     self.description = "A striking individual, who seems to be quite powerful"
 

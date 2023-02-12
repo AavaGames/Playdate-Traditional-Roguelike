@@ -1,7 +1,6 @@
 class("SettingsMenu").extends()
 
 function SettingsMenu:init(menuManager)
-
     self.menuManager = menuManager
     self.menu = Menu(menuManager, "SETTINGS", {
 
@@ -13,6 +12,9 @@ function SettingsMenu:init(menuManager)
 			screenManager:setLogFont(option)
 		end),
 
+        MenuItemBool("Camera Always Follows Character", nil, true, false, false, false, function (bool)
+			settings.cameraFollowPlayer = bool
+		end),
     })
 
 end

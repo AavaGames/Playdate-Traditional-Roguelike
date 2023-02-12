@@ -2,7 +2,7 @@ class("Ground").extends(Feature)
 
 function Ground:init()
     Ground.super:init(self)
-    self.char = "."
+    self.glyph = "."
     self.name = "Ground"
     self.description = ""
 

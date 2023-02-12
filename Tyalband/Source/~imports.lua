@@ -13,10 +13,12 @@ import "/extensions/dm/enum"
 import "/extensions/dm/filepath"
 import "/extensions/dm/table"
 import "/extensions/dm/sampler"
-import "/scripts/structs/Vector2"
+import "/extensions/Set"
 
+import "/scripts/structs/Vector2"
 import "/extensions/ChunkTimer"
 
+import "Settings"
 import "P_Debug"
 import "GameManager"
 import "ScreenManager"

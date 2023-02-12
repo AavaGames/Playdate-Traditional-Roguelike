@@ -32,7 +32,7 @@ function TestRoom:create()
 
             local tile = self.grid[x][y]
             if (tile ~= nil) then
-                tile.feature.char = "#"
+                tile.feature.glyph = "#"
                 -- change feature?
             end
         end

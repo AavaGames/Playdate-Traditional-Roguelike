@@ -4,7 +4,7 @@ class("Entity").extends()
 
 --abstract class
 function Entity:init()
-    self.char = "E"
+    self.glyph = "E"
     self.name = "Entity"
     self.description = "Default Entity"
 end

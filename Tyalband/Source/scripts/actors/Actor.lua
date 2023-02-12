@@ -5,7 +5,7 @@ ACTIVE = 0
 INACTIVE = 1
 
 function Actor:init(theLevel, startPosition)
-    self.char = "a"
+    self.glyph = "a"
     self.name = "Actor"
     self.description = "An actor."
     
@@ -61,6 +61,6 @@ function Actor:updateTile(tile)
     self.tile:enter(self)
 end
 
-function Actor:getChar()
-    return self.char
+function Actor:getGlyph()
+    return self.glyph
 end

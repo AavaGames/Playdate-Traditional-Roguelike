@@ -15,7 +15,7 @@ function Animal:round()
 end
 
 function Animal:interact(Actor)
-    if (Actor.name == "You") then --TODO think through interaction system
+    if (Actor.name == "You") then 
         gameManager.logManager:addToRound(self.description)
     end
 end

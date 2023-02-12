@@ -4,6 +4,7 @@ local gfx <const> = playdate.graphics
 
 local function initializeGame()
 	pDebug = P_Debug()
+	settings = Settings()
 	inputManager = InputManager()
 	frameProfiler = FrameProfiler()
 	screenManager = ScreenManager()

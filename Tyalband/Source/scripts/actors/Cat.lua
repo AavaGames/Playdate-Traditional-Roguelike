@@ -3,7 +3,7 @@ class("Cat").extends(Actor)
 function Cat:init(theLevel, startPosition)
     Cat.super.init(self, theLevel, startPosition)
     self.name = "Cat"
-    self.char = "c"
+    self.glyph = "c"
     self.description = "A cute white cat tipped in black. It purrs loudly."
 end
 

@@ -3,7 +3,7 @@ local gfx <const> = playdate.graphics
 class("ScreenManager").extends()
 
 function ScreenManager:init()
-    self.fps = true
+    self.fps = false
     self.targetFPS = 30
 
     self.debugViewportBlocksDraw = false
@@ -20,7 +20,7 @@ function ScreenManager:init()
     self.logFont_6px = { font = playdate.graphics.font.newFamily({
         [playdate.graphics.font.kVariantNormal] = "assets/fonts/DOS/dos-jpn12-6x12",
         [playdate.graphics.font.kVariantBold] = "assets/fonts/DOS/dos-jpn12-6x12", -- TODO make bold
-    }), size = 6, lineCount = 5, fullLineCount = 19 } -- TODO test
+    }), size = 6, lineCount = 5, fullLineCount = 19 }
     self.logFont_8px = { font = playdate.graphics.font.newFamily({
         [playdate.graphics.font.kVariantNormal] = "assets/fonts/Log/CompaqThin_8x16",
         [playdate.graphics.font.kVariantBold] = "assets/fonts/Log/Nix8810_M15",
@@ -47,7 +47,7 @@ function ScreenManager:init()
     self.viewport = nil
 
     -- Max characters that can be drawn in the viewport
-    self.viewportCharDrawMax = { x = 0, y = 0 }
+    self.viewportGlyphDrawMax = { x = 0, y = 0 }
 
     -- lit, dim but seen, unseen but known
     self.levelGlyphs = {} -- alloc an estimate?
@@ -69,7 +69,7 @@ function ScreenManager:init()
     playdate.keyboard.keyboardAnimatingCallback = function ()
         if gameManager:isState(gameManager.gameStates.level) then
         elseif gameManager:isState(gameManager.gameStates.fullLog) then
-            self:redrawLog()
+            self:redrawScreen()
         elseif gameManager:isState(gameManager.gameStates.menu) then
         end
     end
@@ -234,56 +234,56 @@ end
 
 --#region Glyphs 
 
-function ScreenManager:getGlyph(char, lightLevel)
-    if (self.levelGlyphs[char] == nil) then
-        self.levelGlyphs[char] = self.currentLevelFont.font:getGlyph(char)
-        self.levelGlyphs_faded[char] = self.levelGlyphs[char]:fadedImage(0.5, playdate.graphics.image.kDitherTypeBayer2x2)
+function ScreenManager:getGlyphImage(glyph, lightLevel)
+    if (self.levelGlyphs[glyph] == nil) then
+        self.levelGlyphs[glyph] = self.currentLevelFont.font:getGlyph(glyph)
+        self.levelGlyphs_faded[glyph] = self.levelGlyphs[glyph]:fadedImage(0.5, gfx.image.kDitherTypeBayer2x2)
     end
     
     if lightLevel >= 1 then -- lit
-        return self.levelGlyphs[char]
+        return self.levelGlyphs[glyph]
     else -- dim or seen
-        return self.levelGlyphs_faded[char]
+        return self.levelGlyphs_faded[glyph]
     end
 end
 
-function ScreenManager:drawGlyph(char, tile, drawCoord, screenCoord)
+function ScreenManager:drawGlyph(glyph, tile, drawCoord, screenCoord)
     local drawnGlyph = self.drawnGlyphs[screenCoord.x][screenCoord.y]
 
-    if (not (drawnGlyph.char == "" and char == "")) then
+    if (not (drawnGlyph.glyph == "" and glyph == "")) then
         local tileLit = tile ~= nil and tile.lightLevel > 0
         local tileLightLevel = tile ~= nil and tile.lightLevel or 0
 
         -- no need to redraw if everything is the same
-        if (not (drawnGlyph.char == char and drawnGlyph.lightLevel == tileLightLevel)) then 
+        if (not (drawnGlyph.glyph == glyph and drawnGlyph.lightLevel == tileLightLevel)) then 
             -- TODO figure out if this could work. Using glyph as eraser rather than a rect
 
             -- if (drawnGlyph.lit == true and tileLit == false) then
             --     -- tile is now NOT lit, needs to be filled in, no need to erase glyph
             --     gfx.setColor(self.bgColor)
             --     gfx.fillRect(drawCoord.x, drawCoord.y, self.currentLevelFont.size, self.currentLevelFont.size)
-            -- elseif (drawnGlyph.glyph ~= nil) then
+            -- elseif (drawnGlyph.image ~= nil) then
             --     -- lit state the same as previous
-            --     pDebug:log("erasing " .. drawnGlyph.char)
+            --     pDebug:log("erasing " .. drawnGlyph.glyph)
             --     gfx.setImageDrawMode(gfx.kDrawModeXOR) -- same color as bg
-            --     local glyph = self:getGlyph(drawnGlyph.char, true, 2)
-            --     glyph:draw(drawCoord.x, drawCoord.y)
+            --     local image = self:getGlyphImage(drawnGlyph.glyph, true, 2)
+            --     image:draw(drawCoord.x, drawCoord.y)
             -- end
 
             -- clear tile
             gfx.setColor(self.bgColor)
             gfx.fillRect(drawCoord.x, drawCoord.y, self.currentLevelFont.size.width, self.currentLevelFont.size.height)
             
-            -- draw new glyph and update table
-            self.drawnGlyphs[screenCoord.x][screenCoord.y] = { char = char, lightLevel = tileLightLevel, lit = tileLit, glyph = nil}
-            if (char ~= "") then
-                local glyph = self:getGlyph(char, tile.lightLevel)
-                self.drawnGlyphs[screenCoord.x][screenCoord.y].glyph = glyph
+            -- draw new glyph image and update table
+            self.drawnGlyphs[screenCoord.x][screenCoord.y] = { glyph = glyph, lightLevel = tileLightLevel, lit = tileLit, image = nil}
+            if (glyph ~= "") then
+                local image = self:getGlyphImage(glyph, tile.lightLevel)
+                self.drawnGlyphs[screenCoord.x][screenCoord.y].image = image
                 if (tile.lightLevel >= 2) then -- draw light around rect
                     gfx.setColor(gfx.kColorWhite)
                     gfx.fillRect(drawCoord.x, drawCoord.y, self.currentLevelFont.size.width, self.currentLevelFont.size.height)
                 end
-                glyph:draw(drawCoord.x, drawCoord.y)
+                image:draw(drawCoord.x, drawCoord.y)
             end
         end
     end
@@ -295,10 +295,10 @@ function ScreenManager:resetFontGlyphs()
 end
 
 function ScreenManager:resetDrawnGlyphs()
-    for x = 0, self.viewportCharDrawMax.x, 1 do
+    for x = 0, self.viewportGlyphDrawMax.x, 1 do
         self.drawnGlyphs[x] = {}
-        for y = 0, self.viewportCharDrawMax.y, 1 do
-            self.drawnGlyphs[x][y] = { char = "", lightLevel = 0, lit = false, glyph = nil}
+        for y = 0, self.viewportGlyphDrawMax.y, 1 do
+            self.drawnGlyphs[x][y] = { glyph = "", lightLevel = 0, lit = false, image = nil}
         end
     end
 end
@@ -317,7 +317,7 @@ end
 
 function ScreenManager:recalculateViewport()
     self.viewport = self:viewportCalcFunction()
-    self.viewportCharDrawMax = {
+    self.viewportGlyphDrawMax = {
         x = self.viewport.width // self.currentLevelFont.size.width,
         y = self.viewport.height // self.currentLevelFont.size.height
     }

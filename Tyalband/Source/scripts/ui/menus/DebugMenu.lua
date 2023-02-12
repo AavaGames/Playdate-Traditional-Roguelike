@@ -10,6 +10,10 @@ function DebugMenu:init(menuManager)
             pDebug:checkForSysMenu()
 		end),
 
+		MenuItemBool("FPS", nil, true, false, false, false, function (bool)
+			screenManager.fps = bool
+		end),
+
 		MenuItemBool("Block Draw", nil, true, true, false, false, function (bool)
 			screenManager.debugViewportBlocksDraw = bool
 		end),

@@ -63,38 +63,38 @@ function Menu:draw()
 end
 
 function Menu:populateItems(items)
-    local itemNeedsChar = {}
-    -- check if item already has pre-assigned character
+    local itemNeedsGlyph = {}
+    -- check if item already has pre-assigned Glyph
     for index, item in ipairs(items) do
         -- check if assignment is already taken
-        if (item.assignedChar ~= nil and self.items[item.assignedChar] == nil) then
+        if (item.assignedGlyph ~= nil and self.items[item.assignedGlyph] == nil) then
             if (self:checkForSubMenu(index, item, items)) then
                 items = nil
                 break
             else
-                self.items[item.assignedChar] = item
-                table.insert(itemNeedsChar, false)
+                self.items[item.assignedGlyph] = item
+                table.insert(itemNeedsGlyph, false)
             end
         else
-            table.insert(itemNeedsChar, true)
+            table.insert(itemNeedsGlyph, true)
         end
     end
-    -- Alphabetic Char assignment
+    -- Alphabetic Glyph assignment
     local currentByte = charByteStart
     for index, item in ipairs(items) do
-        if (itemNeedsChar[index]) then
-            local char = string.char(currentByte)
-            while self.items[char] ~= nil do
+        if (itemNeedsGlyph[index]) then
+            local glyph = string.char(currentByte)
+            while self.items[glyph] ~= nil do
                 currentByte += 1
             end
 
-            if (self.items[char] == nil) then
+            if (self.items[glyph] == nil) then
                 if (self:checkForSubMenu(index, item, items)) then
                     items = nil
                     break
                 else
-                    item.assignedChar = char
-                    self.items[item.assignedChar] = item
+                    item.assignedGlyph = glyph
+                    self.items[item.assignedGlyph] = item
                 end
             end
             currentByte += 1
@@ -119,8 +119,8 @@ function Menu:checkForSubMenu(index, item, items)
         end
         self.subMenu = Menu(self.manager, self.name, subItems, self.subMenuCount + 1)
 
-        local char = "a"
-        self.items[char] = MenuItem("...", char, true, false, false, function ()
+        local glyph = "a"
+        self.items[glyph] = MenuItem("...", glyph, true, false, false, function ()
             self.manager:addMenu(self.subMenu)
         end)
 
@@ -128,16 +128,16 @@ function Menu:checkForSubMenu(index, item, items)
     end
 end
 
-function Menu:addItem(item, assignedChar)
-    item.assignedChar = assignedChar
-    self.items[item.assignedChar] = item
+function Menu:addItem(item, assignedGlyph)
+    item.assignedGlyph = assignedGlyph
+    self.items[item.assignedGlyph] = item
     -- check if submenu
 end
 
 function Menu:removeItem(index)
     if (index ~= nil and not math.inBoundsOfArray(index, #self.items)) then
         index = nil
-        pDebug:error(self.name .. " remove Item index out of bounds") -- TODO error catch?
+        pDebug:error(self.name .. " remove Item index out of bounds")
     end
     table.remove(self.items, index or #self.items) -- remove index or the last item
 end

@@ -176,8 +176,8 @@ function Level:draw()
     local fontSize = screenManager.currentLevelFont.size
 
     -- TODO replace this math with pre-calcuated shit per font so that the screen is properly placed
-    local startTileX = self.camera.position.x - math.floor(screenManager.viewportCharDrawMax.x*0.5)
-    local startTileY = self.camera.position.y - math.floor(screenManager.viewportCharDrawMax.y*0.5)
+    local startTileX = self.camera.position.x - math.floor(screenManager.viewportGlyphDrawMax.x*0.5)
+    local startTileY = self.camera.position.y - math.floor(screenManager.viewportGlyphDrawMax.y*0.5)
 
     local xOffset = 0
     local yOffset = 0
@@ -185,17 +185,13 @@ function Level:draw()
     gfx.setImageDrawMode(gfx.kDrawModeNXOR)
     gfx.setFont(screenManager.currentLevelFont.font)
 
-    local drawPrint = table.create(screenManager.viewportCharDrawMax.x)
+    local drawPrint = table.create(screenManager.viewportGlyphDrawMax.x)
 
-    -- TODO create some sort of dijkstra map debug drawer - can create a debug menu with the cycles of maps
-    -- If > 10+ then use letters lowercase -> upper
-    -- Also add a drawCoord view
-    -- gfx.setFont(screenManager.logFont_6px.font)
-    -- gfx.drawText((xPos), drawCoord.x, drawCoord.y)
+    -- TODO create a debug Draw World to Console
 
-    for xPos = 0, screenManager.viewportCharDrawMax.x - 1, 1 do
+    for xPos = 0, screenManager.viewportGlyphDrawMax.x - 1, 1 do
         drawPrint[xPos+1] = {}
-        for yPos = 0, screenManager.viewportCharDrawMax.y - 1, 1 do
+        for yPos = 0, screenManager.viewportGlyphDrawMax.y - 1, 1 do
 
             local x = startTileX + xOffset
             local y = startTileY + yOffset
@@ -208,35 +204,36 @@ function Level:draw()
             --     break
             -- end
 
-            local char = ""
+            local glyph = ""
             local tile = nil
             if (self:inBounds(x, y)) then
                 tile = self.grid[x][y]
-                if (tile ~= nil and tile.currentVisibilityState ~= tile.visibilityState.unknown) then 
-                    if tile.actor ~= nil and tile.lightLevel > 0 then
-                        char = tile.actor:getChar()
-                    elseif #tile.effects > 0 then
-                        -- TODO add effects & drawing
-                    elseif tile.item ~= nil and (tile.lightLevel > 0 or tile.item.seen == true) then
-                        char = tile.item.char
-                        tile.item.seen = true 
-                            -- probably move this somewhere else
-                            -- item checks if tile is seen every frame? seems inefficient
-                    elseif tile.feature ~= nil then -- features: walls, ground
-                        char = tile.feature:getChar()
+                if (tile ~= nil and tile.currentVisibilityState ~= tile.visibilityState.unknown) then
+                    if (tile.lightLevel > 0) then
+                        if tile.actor ~= nil then
+                            glyph = tile.actor:getGlyph()
+                        elseif #tile.effects > 0 then
+                            -- TODO add effects & drawing
+                        elseif tile.item ~= nil then
+                            glyph = tile.item:getGlyph()
+                        elseif tile.feature ~= nil then
+                            glyph = tile.feature:getGlyph()
+                        end
+                    elseif tile.feature ~= nil then
+                        glyph = tile.feature:getGlyph()
                     end
                 end
             end
-            screenManager:drawGlyph(char, tile, drawCoord, { 
+            screenManager:drawGlyph(glyph, tile, drawCoord, { 
                 x = xPos,
                 y = yPos
             })
 
-            if (char == "") then
-                char = " "
+            if (glyph == "") then
+                glyph = " "
             end
 
-            drawPrint[xPos+1][yPos+1] = char
+            drawPrint[xPos+1][yPos+1] = glyph
             --gfx.setFont(screenManager.levelFont_8px.font)
             --gfx.drawText("X", drawCoord.x, drawCoord.y)
 
@@ -249,8 +246,8 @@ function Level:draw()
     local drawToConsole = false
     if (drawToConsole == true) then
         local str = ""
-        for y = 0, screenManager.viewportCharDrawMax.y - 1, 1 do
-            for x = 0, screenManager.viewportCharDrawMax.x - 1, 1 do
+        for y = 0, screenManager.viewportGlyphDrawMax.y - 1, 1 do
+            for x = 0, screenManager.viewportGlyphDrawMax.x - 1, 1 do
                 str = str .. drawPrint[x+1][y+1]
             end
             str = str .. "\n"

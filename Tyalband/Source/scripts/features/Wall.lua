@@ -2,7 +2,7 @@ class("Wall").extends(Feature)
 
 function Wall:init(theLevel, startPosition)
     Wall.super.init(self, theLevel, startPosition)
-    self.char = "#"
+    self.glyph = "#"
     self.name = "Wall"
     self.description = "A cold stone wall."
 
@@ -13,7 +13,7 @@ function Wall:init(theLevel, startPosition)
 end
 
 function Wall:interact(actor)
-    if (actor.name == "You") then --TODO think through interaction system
+    if (actor.name == "You") then
         gameManager.logManager:addToRound(self.description)
     end
 end

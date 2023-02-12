@@ -1,7 +1,7 @@
 class("MenuItemBool").extends(MenuItem)
 
-function MenuItemBool:init(text, assignedChar, closeKeyboardOnSelect, closeMenuOnSelect, allMenus, startingValue, selectionFunction)
-    MenuItemBool.super.init(self, text, assignedChar, closeKeyboardOnSelect, closeMenuOnSelect, allMenus, selectionFunction)
+function MenuItemBool:init(text, assignedGlyph, closeKeyboardOnSelect, closeMenuOnSelect, allMenus, startingValue, selectionFunction)
+    MenuItemBool.super.init(self, text, assignedGlyph, closeKeyboardOnSelect, closeMenuOnSelect, allMenus, selectionFunction)
     self.bool = startingValue
     self:updateText()
 end

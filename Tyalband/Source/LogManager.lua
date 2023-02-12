@@ -14,7 +14,7 @@ function LogManager:init(theLevelManager)
 	self.log = {} -- holds lines trimmed to fit the log view
     self.showingLog = true
     self.fullscreen = false
-    self.maxLogLines = 500 -- TODO: implement (34 avg char x 500 lines = 17 000 bytes)
+    self.maxLogLines = 500 -- TODO: implement (34 avg glyph x 500 lines = 17 000 bytes)
 
     self.lineMultiple = 1
     self.currentLineOffset = 0
@@ -72,11 +72,10 @@ function LogManager:init(theLevelManager)
     self:hideLog()
 
     self:add("Line 1.")
-    self:add("This is text...")
-    self:add("Super duper long text string that should be off the screen a a a by now.")
     self:add("This is a scroll of magic missle.")
     self:add("This is a scroll of magic missle.")
     self:add("This is a scroll of magic missle.")
+    self:add("This is a dragon. It has 45 HP (average). It is *slow* and attacks often. It has a *breath* *weapon* that deals 60 damage and its attacks deal 16 damage. It is immune to *fire* and *gas*, resistant to *poison* and weak to *piercing* and *electric*.")
     self:addToRound("You hit the skeleton for 5 damage, catching it unaware")
     self:addRoundLineToLog()
     self:addToRound("You hit the skeleton for 3 damage.")
@@ -85,8 +84,7 @@ function LogManager:init(theLevelManager)
     self:add("You destroy the skeleton.")
     self:add("You pick up the *Great* *Axe* *of* *Irunel.*")--It has 25 blah and can pierce armor of the highest grade. Only those with the mightest of shields can block such a blade.")
     -- self:add("---")
-    -- self:add("This is a dragon. It i2 *slow* and attacks often. It has a *breath weapon* that deals 60 damage (average) and its attacks deal 16 damage (average). It is immune to *fire* and *gas* based attacks but weak to *piercing*.")
-    -- self:add("This is a dragon. It is 4*slow* and attacks often. It has a *breath weapon* that deals 60 damage (average) and its attacks deal 16 damage (average). It is immune to *fire* and *gas* based attacks but weak to *piercing*.")
+    --     -- self:add("This is a dragon. It is 4*slow* and attacks often. It has a *breath weapon* that deals 60 damage (average) and its attacks deal 16 damage (average). It is immune to *fire* and *gas* based attacks but weak to *piercing*.")
     -- self:add("This is a dragon. It is3 *slow* and attacks often. It has a *breath weapon* that deals 60 damage (average) and its attacks deal 16 damage (average). It is immune to *fire* and *gas* based attacks but weak to *piercing*.")
     -- self:add("This is a dragon. It is *s5ow* and attacks often. It has a *breath weapon* that deals 60 damage (average) and its attacks deal 16 damage (average). It is immune to *fire* and *gas* based attacks but weak to *piercing*.")
 

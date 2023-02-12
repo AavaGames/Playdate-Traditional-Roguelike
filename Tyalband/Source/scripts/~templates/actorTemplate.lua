@@ -2,7 +2,7 @@ class("A").extends(Actor)
 
 function A:init(theLevel, startPosition)
     A.super.init(self, theLevel, startPosition)
-    self.char = "#"
+    self.glyph = "#"
     self.name = "Actor"
     self.description = "A nice individual."
 end

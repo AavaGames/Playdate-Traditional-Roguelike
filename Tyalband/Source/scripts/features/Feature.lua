@@ -1,7 +1,7 @@
 class("Feature").extends(Entity)
 
 function Feature:init(theLevel, startPosition)
-    self.char = "F"
+    self.glyph = "F"
     self.name = "Feature"
     self.description = "A feature of the level."
 
@@ -15,6 +15,6 @@ function Feature:interact(actor)
     -- abstract func for children
 end
 
-function Feature:getChar()
-    return self.char
+function Feature:getGlyph()
+    return self.glyph
 end
