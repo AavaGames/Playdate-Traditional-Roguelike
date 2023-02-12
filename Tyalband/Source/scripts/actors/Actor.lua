@@ -5,6 +5,7 @@ ACTIVE = 0
 INACTIVE = 1
 
 function Actor:init(theLevel, startPosition)
+    Actor.super.init(self)
     self.glyph = "a"
     self.name = "Actor"
     self.description = "An actor."

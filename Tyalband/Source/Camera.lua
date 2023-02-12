@@ -55,14 +55,17 @@ function Camera:centreOnTarget()
 end
 
 function Camera:calculateBounds()
-    -- the bounds are based on the screen right now but they need to be based on the DRAW
+    local range = self.target.visionRange
+    if (self.target:hasComponent(LightEmitter)) then
+        range = self.target:getComponent(LightEmitter):largestRange()
+    end
     self.bounds = {
-        x = screenManager.viewportGlyphDrawMax.x // 2 - self.target.visionRange,
-        y = screenManager.viewportGlyphDrawMax.y // 2 - self.target.visionRange
+        x = screenManager.viewportGlyphDrawMax.x // 2 - range,
+        y = screenManager.viewportGlyphDrawMax.y // 2 - range
     }
-    self.move = { -- (((self.target.visionRange + 1)  * 2) + 1) add padding to stop flip flop on move
-        x = screenManager.viewportGlyphDrawMax.x - self.target.visionRange * 2,
-        y = screenManager.viewportGlyphDrawMax.y - self.target.visionRange * 2
+    self.move = { -- (((range + 1)  * 2) + 1) add padding to stop flip flop on move
+        x = screenManager.viewportGlyphDrawMax.x - range * 2,
+        y = screenManager.viewportGlyphDrawMax.y - range * 2
     }
     self:centreOnTarget()
 end

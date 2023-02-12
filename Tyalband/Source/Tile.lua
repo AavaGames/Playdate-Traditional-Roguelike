@@ -17,7 +17,7 @@ function Tile:init(x, y)
     self.glow = false
 
     self.lightLevel = 0
-    self.lightSources = {}
+    self.lightEmitters = {}
 end
 
 function Tile:update()
@@ -47,12 +47,12 @@ end
 
 function Tile:resetLightLevel(baseLight)
     self.lightLevel = baseLight or 0
-    self.lightSources = {}
+    self.lightEmitters = {}
 end
 
-function Tile:addLightLevel(level, source)
-    if (self.lightSources[source] == nil) then
-        self.lightSources[source] = source
+function Tile:addLightLevel(level, emitter)
+    if (self.lightEmitters[emitter] == nil) then
+        self.lightEmitters[emitter] = emitter
         self.lightLevel += level
         -- TODO could optimize vis calls, if tile already had been called ignore (but what if the first check was dim and then lit)
         -- this shouldnt matter since light should always applies strongest first

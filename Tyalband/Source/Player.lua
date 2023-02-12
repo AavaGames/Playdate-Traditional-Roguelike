@@ -9,14 +9,13 @@ function Player:init(theLevel, startPosition)
     self.moveDir = { x = 0, y = 0 }
     self.state = INACTIVE
 
-    self.visionRange = 4
+    self.visionRange = -1 -- Infinity
 
-    self.equipped = {
-        lightSource = nil
-    }
+    self:addComponent(LightEmitter())
+    self:addComponent(Inventory())
+    self:addComponent(Equipment())
 
-    self.equipped.lightSource = LightSource()
-    self.equipped.lightSource.name = "Lantern"
+    --self:getComponent(Equipment).light = Lantern() -- TODO change to equipItem
 end
 
 function Player:update()
@@ -25,7 +24,7 @@ function Player:update()
         local actionTaken, moved = false, false
 
         if inputManager:justPressed(playdate.kButtonB) then
-            actionTaken = true
+            actionTaken = true -- wait
         elseif inputManager:justReleased(playdate.kButtonRight) then
             self.moveDir.x += 1
         elseif inputManager:justReleased(playdate.kButtonLeft) then

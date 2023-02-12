@@ -39,7 +39,11 @@ import "Tile"
 import "LogManager"
 import "Border"
 
+import "scripts/components/ComponentUtils"
+
+import "scripts/components/Component"
 import "/scripts/entities/Entity"
+
 import "/scripts/actors/Actor"
 import "/scripts/features/Feature"
 
@@ -53,16 +57,31 @@ import "/scripts/levels/Town"
 import "/scripts/levels/Dungeon"
 import "/scripts/levels/TestRoom"
 
-import "/scripts/actors/Animal"
-import "/scripts/actors/Cat"
+-- Components
+
+import "scripts/components/Inventory"
+import "scripts/components/Equipment"
+import "scripts/components/LightEmitter"
+import "scripts/components/LightSource"
+
+-- Items
+
+import "/scripts/items/Item"
+import "/scripts/items/Equipable"
+
+import "/scripts/items/Lantern"
+
+-- Features
 
 import "/scripts/features/Grass"
 import "/scripts/features/Ground"
 import "/scripts/features/Wall"
 import "/scripts/features/Crystal"
 
-import "/scripts/items/Item"
-import "/scripts/items/LightSource"
+-- Actors
+
+import "/scripts/actors/Animal"
+import "/scripts/actors/Cat"
 
 import "Player"
 import "Camera"

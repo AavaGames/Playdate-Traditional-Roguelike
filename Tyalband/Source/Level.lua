@@ -98,10 +98,6 @@ end
 function Level:updateView()
     frameProfiler:startTimer("Logic: Vision")
 
-    -- TODO loop / find light sources, if on screen + range then calc
-    -- change this to litTiles and remove visionRange form player
-    local litActor = self.player
-
     frameProfiler:startTimer("Vision: Reset")
 
     -- optimize further by just resetting the tiles not seen anymore
@@ -132,35 +128,42 @@ function Level:updateView()
             end
         end
     end
+    self.visionTiles = nil
     frameProfiler:endTimer("Vision: Reset")
 
-    frameProfiler:startTimer("Vision: Visible")
-    self.visionTiles = math.findAllDiamondPos(litActor.position.x, litActor.position.y, litActor.visionRange)
-    frameProfiler:endTimer("Vision: Visible")
+    -- TODO keep track of emitters on the level and loop through, if onScreen + largestRange then calc
+    if (self.player:hasComponent(LightEmitter)) then
+        local emitterEntity = self.player
+        local emitter = emitterEntity:getComponent(LightEmitter)
 
-    frameProfiler:startTimer("Vision: Apply Vis")
-    local max = #self.visionTiles
-    for i = 1, max, 1 do
-        local x, y, distance = self.visionTiles[i][1], self.visionTiles[i][2], self.visionTiles[i][3]
+        frameProfiler:startTimer("Vision: Visible")
+        self.visionTiles = math.findAllDiamondPos(emitterEntity.position.x, emitterEntity.position.y, emitter:largestRange())
+        frameProfiler:endTimer("Vision: Visible")
 
-        -- SetVisible
-        if (self:inBounds(x, y)) then
-            local tile = self.grid[x][y]
-            if (tile ~= nil) then
-                if (distance <= litActor.equipped.lightSource.litRange) then
-                    tile.currentVisibilityState = tile.visibilityState.lit
-                    tile:addLightLevel(2, litActor.equipped.lightSource)
-                    tile.seen = true
-                elseif (distance <= litActor.equipped.lightSource.dimRange) then
-                    tile.currentVisibilityState = tile.visibilityState.dim
-                    tile:addLightLevel(1, litActor.equipped.lightSource)
-                    tile.seen = true
+        frameProfiler:startTimer("Vision: Apply Vis")
+        local max = #self.visionTiles
+        for i = 1, max, 1 do
+            local x, y, distance = self.visionTiles[i][1], self.visionTiles[i][2], self.visionTiles[i][3]
+
+            -- SetVisible
+            if (self:inBounds(x, y)) then
+                local tile = self.grid[x][y]
+                if (tile ~= nil) then
+                    if (distance <= emitter.brightRange) then
+                        tile.currentVisibilityState = tile.visibilityState.lit
+                        tile:addLightLevel(2, emitter)
+                        tile.seen = true
+                    elseif (distance <= emitter.dimRange) then
+                        tile.currentVisibilityState = tile.visibilityState.dim
+                        tile:addLightLevel(1, emitter)
+                        tile.seen = true
+                    end
                 end
             end
-        end
 
+        end
+        frameProfiler:endTimer("Vision: Apply Vis")
     end
-    frameProfiler:endTimer("Vision: Apply Vis")
 
     frameProfiler:endTimer("Logic: Vision")
 end
@@ -200,9 +203,6 @@ function Level:draw()
                 x = viewport.x + fontSize.width * xPos,
                 y = viewport.y + fontSize.height * yPos
             }
-            -- if drawCoord.x > viewport.width or drawCoord.y > viewport.height then
-            --     break
-            -- end
 
             local glyph = ""
             local tile = nil

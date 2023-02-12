@@ -1,9 +1,9 @@
 local gfx <const> = playdate.graphics
 
-class("W").extends(Level)
+class("Template").extends(Level)
 
-function W:init(theLevelManager, thePlayer)
-    W.super.init(self, theLevelManager, thePlayer)
+function Template:init(theLevelManager, thePlayer)
+    Template.super.init(self, theLevelManager, thePlayer)
 
     -- do stuff
     self.name = "Level"
@@ -11,9 +11,9 @@ function W:init(theLevelManager, thePlayer)
     self.FullySeen = false
     self.playerSpawnPosition = { x = 16, y = 53 }
     
-    W.super.finishInit(self)
+    Template.super.finishInit(self)
 end
 
-function W:create()
+function Template:create()
     -- abstract function to create grid. JSON or generated
 end
