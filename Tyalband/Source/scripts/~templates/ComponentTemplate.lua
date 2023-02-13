@@ -1,7 +1,7 @@
 class("Template").extends(Component)
 
 function Template:init()
-
+    Template.super.init(self)
 end
 
 function Template:attach(entity)

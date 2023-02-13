@@ -15,7 +15,10 @@ function Player:init(theLevel, startPosition)
     self:addComponent(Inventory())
     self:addComponent(Equipment())
 
-    --self:getComponent(Equipment).light = Lantern() -- TODO change to equipItem
+    local lantern = Lantern()
+    lantern:equip(self)
+
+    --self:addComponent(LightSource(2, 4)):addToEmitter()
 end
 
 function Player:update()

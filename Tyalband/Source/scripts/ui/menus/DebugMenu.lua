@@ -7,7 +7,10 @@ function DebugMenu:init(menuManager)
 
 		MenuItemBool("Debug profile", nil, true, false, false, false, function (bool)
 			pDebug.profile = bool
-            pDebug:checkForSysMenu()
+		end),
+
+		MenuItemBool("Frame Time", nil, true, false, false, false, function (bool)
+			pDebug.frameTime = bool
 		end),
 
 		MenuItemBool("FPS", nil, true, false, false, false, function (bool)

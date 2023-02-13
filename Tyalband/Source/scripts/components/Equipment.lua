@@ -1,6 +1,7 @@
 class("Equipment").extends(Component)
 
 function Equipment:init()
+    Equipment.super.init(self)
     self.head = "Headpiece here"
     self.arms = nil
     self.chest = nil
@@ -27,6 +28,8 @@ function Equipment:equip(item)
     -- what kind of item
     -- can it be equipped
     -- unequip prev then equip
+    pDebug.log("equipped ", item.name)
+    self.light = item
 end
 
 function Equipment:unequip(item)

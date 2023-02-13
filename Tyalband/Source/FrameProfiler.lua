@@ -1,3 +1,5 @@
+local gfx <const> = playdate.graphics
+
 class("FrameProfiler").extends()
 
 function FrameProfiler:init()
@@ -19,8 +21,8 @@ function FrameProfiler:endTimer(purpose)
     self.timers[purpose]:endTimer()
 end
 
-function FrameProfiler:frameEnd()
-    if (pDebug.profile == true) then
+function FrameProfiler:endFrame(drew)
+    if (drew and pDebug.profile == true) then
         print("-- Frame Profile --")
         for index, purpose in ipairs(self.purposes) do 
             if (self.timers[purpose] ~= nil) then
@@ -34,5 +36,16 @@ function FrameProfiler:frameEnd()
         if stats ~= nil then printTable(stats) end
         print(1000 / (self.frameTime.endTime - self.frameTime.startTime) .. " fps")
         print("----")
+    end
+    if (drew and pDebug.frameTime == true) then
+        gfx.setColor(gfx.kColorWhite)
+        local font = screenManager.logFont_6px
+        local frameTime = 1000 / (self.frameTime.endTime - self.frameTime.startTime)
+        frameTime = math.floor(frameTime * 10) / 10
+        local width, height = gfx.getTextSize(frameTime)
+        gfx.fillRect(0, 0, width, height)
+        gfx.setImageDrawMode(gfx.kDrawModeNXOR)
+        gfx.setFont(font.font)
+        gfx.drawText(frameTime, 0, 0)
     end
 end

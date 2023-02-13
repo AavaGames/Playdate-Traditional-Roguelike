@@ -5,11 +5,12 @@
 
 class("Component").extends()
 
-function Component:init(entity)
-    self.entity = entity
+function Component:init()
+    self.entity = nil
 end
 
 function Component:attach(entity)
+    isObjectError(entity, Entity)
     self.entity = entity
 end
 

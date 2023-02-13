@@ -4,6 +4,7 @@ class("P_Debug").extends()
 
 function P_Debug:init()
     self.debug = true
+    self.frameTime = false
     self.profile = false
     self.systemMenuItem = nil
 	self.debugMenu = nil

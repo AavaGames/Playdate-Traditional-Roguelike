@@ -125,7 +125,7 @@ function ScreenManager:draw()
         playdate.drawFPS(0,0)
     end
 
-    if (drew) then frameProfiler:frameEnd() end
+    frameProfiler:endFrame(drew)
 end
 
 function ScreenManager:drawMenu()

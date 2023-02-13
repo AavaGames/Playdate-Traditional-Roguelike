@@ -1,8 +1,11 @@
 class("LightEmitter").extends(Component)
 
-function LightEmitter:init()
-    self.brightRange = 2
-    self.dimRange = 4
+function LightEmitter:init(baseBrightRange, baseDimRange)
+    LightEmitter.super.init(self)
+    self.baseBrightRange = baseBrightRange or 0
+    self.baseDimRange = baseDimRange or 0
+    self.brightRange = self.baseBrightRange
+    self.dimRange = self.baseDimRange
     self.lightSources = {}
 end
 
@@ -15,8 +18,9 @@ function LightEmitter:detatch(entity)
 end
 
 function LightEmitter:addLightSource(source)
-    -- TODO rework to take into consideration EQUIPMENT TYPE (Sword, Lantern, etc.)
-    isComponent(source)
+    -- TODO rework to take into consideration EQUIPMENT TYPE (Sword, Lantern, etc.) rather than className
+    -- TODO add to level so that to loop you
+    isObjectError(source, LightSource)
     self.lightSources[source.className] = source
     self:calculateLightRange()
 end
@@ -26,7 +30,7 @@ function LightEmitter:removeLightSource(source)
 end
 
 function LightEmitter:calculateLightRange()
-    self.brightRange, self.dimRange = 0, 0
+    self.brightRange, self.dimRange = self.baseBrightRange, self.baseDimRange
     for key, source in pairs(self.lightSources) do
         self.brightRange += source.brightRange
         self.dimRange += source.dimRange

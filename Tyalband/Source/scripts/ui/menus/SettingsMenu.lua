@@ -12,9 +12,13 @@ function SettingsMenu:init(menuManager)
 			screenManager:setLogFont(option)
 		end),
 
-        MenuItemBool("Camera Always Follows Character", nil, true, false, false, false, function (bool)
+        MenuItemBool("Center Camera on Character", nil, true, false, false, false, function (bool)
 			settings.cameraFollowPlayer = bool
 		end),
+
+		MenuItemBool("Pick Up Automatically", nil, true, false, false, true, function (bool) end),
+
+		
     })
 
 end

@@ -39,7 +39,7 @@ import "Tile"
 import "LogManager"
 import "Border"
 
-import "scripts/components/ComponentUtils"
+import "scripts/ClassUtils"
 
 import "scripts/components/Component"
 import "/scripts/entities/Entity"
