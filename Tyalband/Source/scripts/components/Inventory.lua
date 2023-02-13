@@ -2,7 +2,7 @@ class("Inventory").extends(Component)
 
 function Inventory:init()
     Inventory.super.init(self)
-    self.maxCapacity = 23
+    self.maxCapacity = 24
     self.items = table.create(self.maxCapacity)
     self.full = false
 end

@@ -6,13 +6,19 @@ function Dungeon:init(theLevelManager, thePlayer)
     Dungeon.super.init(self, theLevelManager, thePlayer)
     self.name = "Floor 1 (50 feet)"
 
-    self.FullyLit = false
+    self.FullyLit = true
 
     self.playerSpawnPosition = { x = 18, y = 19 }
-    --self.playerSpawnPosition = { x = 32, y = 16 }
+    self.playerSpawnPosition = { x = 18, y = 12 }
 
     Cat(self, Vector2.new(2, 2)) -- Cat locked away in top left corner
     Cat(self, Vector2.new(2, 13))
+    --Cat(self, Vector2.new(23, 2))
+
+    self.grid[2][2].glow = true
+    self.grid[2][3].glow = true
+    self.grid[3][2].glow = true
+    self.grid[3][3].glow = true
 
     self.grid[9][18].glow = true
     self.grid[9][19].glow = true

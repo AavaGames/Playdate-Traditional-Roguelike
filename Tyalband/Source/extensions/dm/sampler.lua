@@ -115,7 +115,7 @@ function Sampler:draw(x, y, width, height)
             self.current_sample_time = 0
 
             if #self.current_sample > 0 then
-                local current_sample_avg = self.currentAverage()
+                local current_sample_avg = self:currentAverage()
                 self.high_watermark = math.max(self.high_watermark, current_sample_avg)
                 self.samples[#self.samples + 1] = current_sample_avg
             end
