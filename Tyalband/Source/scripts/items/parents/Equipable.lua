@@ -1,9 +1,35 @@
 class("Equipable").extends(Item)
 
+local QualityTypes <const> = enum.new({
+    "Average",
+    "Good",
+    "Powerful",
+    "Artifact"
+})
+
+local EquipType <const> = enum.new({
+    "Weapon",
+    "OffHand",
+    "Head",
+    "Arms",
+    "Chest",
+    "Legs",
+    "Feet",
+    "Neck",
+    "Ring",
+    "Light"
+})
+
 function Equipable:init(actor)
     Equipable.super.init(self, actor)
 
-    -- Equipable type enum
+    self.EquipType = EquipType
+    self.QualityTypes = QualityTypes
+
+    self.equipType = nil
+    self.quality = nil
+
+    self.cursed = false
 end
 
 -- Equips the item to the actors equipment
@@ -20,8 +46,10 @@ function Equipable:equip(actor)
     self.heldBy:getComponent(Equipment):equip(self)
 end
 
+-- called by Equipment when removed
 function Equipable:unequip()
-    -- remove from equip and add to inventory or drop
+    -- TODO add to inventory or drop to ground
+    self:pickup(self.heldBy)
 end
 
 -- Super Functions

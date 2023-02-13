@@ -4,6 +4,10 @@ function Lantern:init(actor)
     Lantern.super.init(self, actor)
     self.name = "Lantern"
 
+    self.type = self.ItemType.Equipable
+    self.equipType = self.EquipType.Light
+    self.quality = self.QualityTypes.average
+
     self:addComponent(LightSource(2, 4))
 end
 

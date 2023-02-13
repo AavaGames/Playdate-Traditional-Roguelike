@@ -1,17 +1,19 @@
 class("Actor").extends(Entity)
 
--- TODO move to enum
-ACTIVE = 0
-INACTIVE = 1
+local ActorStates <const> = enum.new({
+    "Active",
+    "self.states.Inactive"
+})
 
 function Actor:init(theLevel, startPosition)
     Actor.super.init(self)
     self.glyph = "a"
     self.name = "Actor"
     self.description = "An actor."
-    
+
     self.position = Vector2.zero()
-    self.state = INACTIVE
+    self.states = ActorStates
+    self.state = self.states.Inactive
 
     self.level = theLevel
     self.tile = nil -- to let it know its been exited
@@ -21,7 +23,7 @@ function Actor:init(theLevel, startPosition)
 
     if (theLevel ~= nil and startPosition ~= nil) then
         self.level:spawnAt(startPosition, self) -- TODO: can spawn on top of another actor overwriting their pos (SpawnAt)
-        self.state = ACTIVE
+        self.state = self.states.Active
     end
 end
 

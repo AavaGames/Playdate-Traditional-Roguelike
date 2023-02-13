@@ -1,19 +1,21 @@
 class("MenuItem").extends()
 
+local ExecutionBehaviors <const> = enum.new({"Nothing", "CloseMenuOnSelect", "CloseAllMenus"})
+
 function MenuItem:init(text, assignedGlyph, closeKeyboardOnSelect, closeMenuOnSelect, allMenus, selectionFunction)
     self.baseText = text
     self.text = self.baseText
     self.assignedGlyph = assignedGlyph
     self.closeKeyboardOnSelect = closeKeyboardOnSelect
-    self.executionBehaviors = enum({"nothing", "closeMenuOnSelect", "closeAllMenus"})
+    self.ExecutionBehaviors = ExecutionBehaviors
     if (closeKeyboardOnSelect and closeMenuOnSelect) then
         if (allMenus) then
-            self.executionBehavior = self.executionBehaviors.closeAllMenus
+            self.executionBehavior = self.ExecutionBehaviors.CloseAllMenus
         else
-            self.executionBehavior = self.executionBehaviors.closeMenuOnSelect
+            self.executionBehavior = self.ExecutionBehaviors.CloseMenuOnSelect
         end
     else
-        self.executionBehavior = self.executionBehaviors.nothing
+        self.executionBehavior = self.ExecutionBehaviors.Nothing
     end
     self.selectionFunction = selectionFunction
 end

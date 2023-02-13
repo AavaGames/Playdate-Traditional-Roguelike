@@ -1,28 +1,40 @@
+local gfx <const> = playdate.graphics
+
 class("Player").extends(Actor)
 
-function Player:init(theLevel, startPosition)
-    Player.super.init(self, theLevel, startPosition)
+function Player:init(menuManager)
+    Player.super.init(self)
     self.glyph = "@"
     self.name = "You"
     self.description = "A striking individual, who seems to be quite powerful"
 
     self.moveDir = { x = 0, y = 0 }
-    self.state = INACTIVE
+    self.state = self.states.Inactive
 
     self.visionRange = -1 -- Infinity
 
+    self.inventory = self:addComponent(Inventory())
+    self.equipment = self:addComponent(Equipment())
+    self.equipment.onEquipmentChange = function() self:updateEquipmentMenuImage() end
+
     self:addComponent(LightEmitter())
-    self:addComponent(Inventory())
-    self:addComponent(Equipment())
 
     local lantern = Lantern()
     lantern:equip(self)
-
     --self:addComponent(LightSource(2, 4)):addToEmitter()
+
+    for i = 1, 28, 1 do
+        Item():pickup(self)
+    end
+
+    self.inventoryMenu = InventoryMenu(menuManager, self)
+	self.invPDMenu, error = playdate.getSystemMenu():addMenuItem("Inventory", function()
+        self.inventoryMenu:open()
+    end)
 end
 
 function Player:update()
-    if (self.state == ACTIVE) then
+    if (self.state == self.states.Active) then
         self.moveDir = Vector2.zero()
         local actionTaken, moved = false, false
 
@@ -62,7 +74,7 @@ end
 function Player:spawn(theLevel, startPosition)
     self.position = Vector2.zero()
     self.updated = false
-    self.state = ACTIVE
+    self.state = self.states.Active
 
     self.level = theLevel
     self.tile = nil
@@ -74,5 +86,27 @@ function Player:spawn(theLevel, startPosition)
 end
 
 function Player:despawn()
-    self.state = INACTIVE
+    self.state = self.states.Inactive
+end
+
+function Player:updateEquipmentMenuImage()
+    local screenManager = screenManager
+    local image = gfx.image.new(screenManager.screenDimensions.x, screenManager.screenDimensions.y, gfx.kColorBlack)
+    gfx.lockFocus(image)
+    gfx.setFont(screenManager.logFont_8px.font)
+    gfx.setImageDrawMode(gfx.kDrawModeNXOR)
+
+    gfx.drawTextAligned("Equipment", screenManager.screenDimensions.x / 4, 1, kTextAlignment.center)
+    local text = ""
+    -- TODO make a big if to properly show this
+    for key, value in pairs(self.equipment.slots) do
+        if (value ~= "") then
+            text = text .. key .. ": " .. value.name .. "\n"
+        else
+            text = text .. key .. ":\n"
+        end
+    end
+    gfx.drawTextInRect(text, 0, 20, 200, 200)
+    gfx.unlockFocus()
+    playdate.setMenuImage(image)
 end

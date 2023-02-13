@@ -1,28 +1,16 @@
 class("GameManager").extends()
 
+local GameStates <const> = enum.new({"Level", "FullLog", "Menu"})
+
 function GameManager:init()
 	math.randomseed(playdate.getSecondsSinceEpoch()) -- TODO call on new game start
 
 	self.menuManager = MenuManager(self)
 
-	self.player = Player()
-    self.levelManager = LevelManager(self.player)
-	self.logManager = LogManager(self.levelManager)
-
-	self.gameStates = enum({"level", "fullLog", "menu"})
-	self.currentGameState = self.gameStates.level
-
+	pDebug:createDebugMenu(self.menuManager)
 	self.settingsMenu = SettingsMenu(self.menuManager)
 	self.commandMenu = CommandMenu(self.menuManager)
 
-    -- local levelSizeMenu, error = menu:addOptionsMenuItem("level font", { "8px", "10px", "16px" }, "16px", function(value)
-	-- 	screenManager:setLevelFont(value)
-    -- end)
-    -- local logSizeMenu, error = menu:addOptionsMenuItem("log font", { "6px", "8px", "12px" }, "8px", function(value)
-	-- 	screenManager:setLogFont(value)
-    -- end)
-
-	pDebug:createDebugMenu(self.menuManager)
 	local sysMenu = playdate.getSystemMenu()
 	self.sysSettingsMenu, error = sysMenu:addMenuItem("Settings", function()
         self.settingsMenu:open()
@@ -30,26 +18,33 @@ function GameManager:init()
 	self.sysCommandMenu, error = sysMenu:addMenuItem("Commands", function()
         self.commandMenu:open()
     end)
+
+	self.player = Player(self.menuManager)
+    self.levelManager = LevelManager(self.player)
+	self.logManager = LogManager(self.levelManager)
+
+	self.GameStates = GameStates
+	self.currentGameState = self.GameStates.Level	
 end
 
 function GameManager:update()
-	if self:isState(self.gameStates.level) then
+	if self:isState(self.GameStates.Level) then
 		self.levelManager:update()
 		self.logManager:update()
-	elseif self:isState(self.gameStates.fullLog) then
+	elseif self:isState(self.GameStates.FullLog) then
 		self.logManager:update()
-	elseif self:isState(self.gameStates.menu) then
+	elseif self:isState(self.GameStates.Menu) then
 		self.menuManager:update()
 	end
 end
 
 function GameManager:lateUpdate()
-	if self:isState(self.gameStates.level) then
+	if self:isState(self.GameStates.Level) then
 		self.levelManager:lateUpdate()
 		self.logManager:lateUpdate()
-	elseif self:isState(self.gameStates.fullLog) then
+	elseif self:isState(self.GameStates.FullLog) then
 		self.logManager:lateUpdate()
-	elseif self:isState(self.gameStates.menu) then
+	elseif self:isState(self.GameStates.Menu) then
 
 	end
 end
@@ -57,11 +52,11 @@ end
 function GameManager:setState(state)
 	self.currentGameState = state
 	pDebug:log("GameManager State is now = " .. state)
-	if self:isState(self.gameStates.level) then
+	if self:isState(self.GameStates.Level) then
 		screenManager:redrawScreen()
-	elseif self:isState(self.gameStates.fullLog) then
+	elseif self:isState(self.GameStates.FullLog) then
 		screenManager:redrawScreen()
-	elseif self:isState(self.gameStates.menu) then
+	elseif self:isState(self.GameStates.Menu) then
 
 	else
 		pDebug:log("ERROR: " .. state .. " is an invalid GameManager state.")
@@ -81,7 +76,7 @@ end
 
 function GameManager:setFullscreenLog(full)
 	self.logManager:setFullscreen(full)
-	self:setState(full and self.gameStates.fullLog or self.gameStates.level)
+	self:setState(full and self.GameStates.FullLog or self.GameStates.Level)
 end
 
 --#endregion

@@ -19,7 +19,7 @@ end
 function MenuManager:addMenu(menu)
     if (self.showMenu == false) then
         self.showMenu = true
-        self.gameManager:setState(self.gameManager.gameStates.menu)
+        self.gameManager:setState(self.gameManager.GameStates.Menu)
     else
         self.menus[#self.menus]:setInactive()
     end
@@ -35,8 +35,8 @@ function MenuManager:removeMenu()
     if (#self.menus < 1) then
         self.currentMenu = nil
         self.showMenu = false
-        if (self.gameManager:isState(self.gameManager.gameStates.menu)) then
-            self.gameManager:setState(self.gameManager.gameStates.level)
+        if (self.gameManager:isState(self.gameManager.GameStates.Menu)) then
+            self.gameManager:setState(self.gameManager.GameStates.Level)
         end
     else
         self.currentMenu = self.menus[#self.menus]

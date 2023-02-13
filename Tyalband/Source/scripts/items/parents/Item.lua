@@ -1,10 +1,19 @@
 class("Item").extends(Entity)
 
+local ItemType <const> = enum.new({
+    "Equipable",
+    "Consumable",
+    "Money"
+})
+
 function Item:init(actor)
     Item.super.init(self)
     self.name = "Item" -- randomized name based on type
     self.glyph = "="
     self.description = "An item."
+
+    self.ItemType = ItemType
+    self.type = nil
 
     self.heldBy = actor or nil -- actor
 end
@@ -15,7 +24,7 @@ function Item:pickup(actor)
     if (not self.heldBy:hasComponent(Inventory)) then
         self.heldBy:addComponent(Inventory())
     end
-    self.heldBy:getComponent(Inventory):addItem(self)
+    return self.heldBy:getComponent(Inventory):addItem(self)
 end
 
 -- Removes the item from the inventory

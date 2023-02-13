@@ -2,8 +2,9 @@ class("Inventory").extends(Component)
 
 function Inventory:init()
     Inventory.super.init(self)
-    self.maxCapacity = 26
+    self.maxCapacity = 23
     self.items = table.create(self.maxCapacity)
+    self.full = false
 end
 
 function Inventory:attach(entity)
@@ -15,16 +16,19 @@ function Inventory:detatch(entity)
 end
 
 function Inventory:addItem(item)
-    -- check for stacks
-    isObjectError(item, Item)
-
-    if (item:isa(Item)) then
-        pDebug.log("Added ", item.name)
-        table.insert(self.items, item)
-    else
-        pDebug.error("Could not add item ", item)
-        -- not an item
+    -- TODO check for stacks
+    if (not self.full) then
+        isObjectError(item, Item)
+        if (item:isa(Item)) then
+            pDebug.log("Added ", item.name)
+            table.insert(self.items, item)
+            self.full = #self.items >= self.maxCapacity
+            return true
+        else
+            pDebug.log("Could not add item ", item)
+        end
     end
+    return false
 end
 
 -- Removes the item from the inventory

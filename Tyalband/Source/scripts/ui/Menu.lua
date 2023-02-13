@@ -5,6 +5,7 @@ class("Menu").extends()
 local charByteStart <const> = 65 -- "A"
 -- can add an alternate char set for the left side of the keyboard
 
+-- subMenuCount is used by menu itself, do not provide a number
 function Menu:init(manager, name, items, subMenuCount)
     self.manager = manager
     self.name = name
@@ -14,7 +15,7 @@ function Menu:init(manager, name, items, subMenuCount)
         x = 4,
         y = 18,
         width = screenManager.screenDimensions.x - 10,
-        height = screenManager.screenDimensions.y - self.font.size * 6,
+        height = screenManager.screenDimensions.y - self.font.size * 4,
     }
 
     self.items = {}
@@ -58,7 +59,7 @@ function Menu:draw()
         screenManager.screenDimensions.y - self.font.size * 4, kTextAlignment.right)
 
     -- Menu Items Text
-    gfx.drawTextInRect(self:getFullItemText(), self.itemTextDimensions.x, self.itemTextDimensions.y, 
+    gfx.drawTextInRect(self:getFullItemText(), self.itemTextDimensions.x, self.itemTextDimensions.y,
                     self.itemTextDimensions.width, self.itemTextDimensions.height)
 end
 
@@ -128,6 +129,7 @@ function Menu:checkForSubMenu(index, item, items)
     end
 end
 
+-- Unused
 function Menu:addItem(item, assignedGlyph)
     item.assignedGlyph = assignedGlyph
     self.items[item.assignedGlyph] = item
@@ -140,7 +142,9 @@ function Menu:removeItem(index)
         pDebug:error(self.name .. " remove Item index out of bounds")
     end
     table.remove(self.items, index or #self.items) -- remove index or the last item
+    -- remake all submenus
 end
+-- end
 
 function Menu:getFullItemText(extraItem)
     local text = ""
@@ -161,7 +165,7 @@ function Menu:setActive()
 end
 
 function Menu:setInactive()
-    --pDebug:log(self.name .. " set inactive")
+    --pDebug:log(self.name .. " set self.states.Inactive")
     self.kbInput = nil
     self:closeKeyboard()
 end
@@ -200,9 +204,9 @@ function Menu:selectItem()
     if (self.kbInput ~= nil) then
         local item = self.items[self.kbInput]
         item:selected()
-        if (item:isState(item.executionBehaviors.closeAllMenus)) then
+        if (item:isState(item.ExecutionBehaviors.CloseAllMenus)) then
             self.manager:removeAllMenu()
-        elseif (item:isState(item.executionBehaviors.closeMenuOnSelect)) then
+        elseif (item:isState(item.ExecutionBehaviors.CloseMenuOnSelect)) then
             self.manager:removeMenu()
         end
     end

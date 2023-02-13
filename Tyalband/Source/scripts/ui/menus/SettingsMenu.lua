@@ -2,9 +2,9 @@ class("SettingsMenu").extends()
 
 function SettingsMenu:init(menuManager)
     self.menuManager = menuManager
-    self.menu = Menu(menuManager, "SETTINGS", {
 
-        MenuItemOptions("Level Font", nil, false, false, false, { "8px", "10px", "16px" }, 3, function (option)
+	local items = {
+		MenuItemOptions("Level Font", nil, false, false, false, { "8px", "10px", "16px" }, 3, function (option)
 			screenManager:setLevelFont(option)
 		end),
 
@@ -14,13 +14,19 @@ function SettingsMenu:init(menuManager)
 
         MenuItemBool("Center Camera on Character", nil, true, false, false, false, function (bool)
 			settings.cameraFollowPlayer = bool
+			if (bool == true) then gameManager.levelManager.currentLevel.camera:centreOnTarget() end
 		end),
 
 		MenuItemBool("Pick Up Automatically", nil, true, false, false, true, function (bool) end),
+	}
 
-		
-    })
+	if (pDebug.debug) then
+		table.insert(items, MenuItem("Debug Menu", "1", true, false, false, function ()
+			pDebug.menu:open()
+		end))
+	end
 
+    self.menu = Menu(menuManager, "SETTINGS", items)
 end
 
 function SettingsMenu:open()

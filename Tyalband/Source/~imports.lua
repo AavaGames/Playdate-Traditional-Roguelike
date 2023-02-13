@@ -39,10 +39,10 @@ import "Tile"
 import "LogManager"
 import "Border"
 
-import "scripts/ClassUtils"
+import "/scripts/ClassUtils"
 
-import "scripts/components/Component"
-import "/scripts/entities/Entity"
+import "/scripts/Component"
+import "/scripts/Entity"
 
 import "/scripts/actors/Actor"
 import "/scripts/features/Feature"
@@ -52,6 +52,9 @@ import "/scripts/features/Feature"
 import "/scripts/ui/menus/DebugMenu"
 import "/scripts/ui/menus/CommandMenu"
 import "/scripts/ui/menus/SettingsMenu"
+
+import "/scripts/ui/menus/ItemMenu"
+import "/scripts/ui/menus/InventoryMenu"
 
 import "/scripts/levels/Town"
 import "/scripts/levels/Dungeon"
@@ -66,8 +69,8 @@ import "scripts/components/LightSource"
 
 -- Items
 
-import "/scripts/items/Item"
-import "/scripts/items/Equipable"
+import "/scripts/items/parents/Item"
+import "/scripts/items/parents/Equipable"
 
 import "/scripts/items/Lantern"
 

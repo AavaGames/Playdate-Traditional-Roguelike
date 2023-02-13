@@ -67,10 +67,10 @@ function ScreenManager:init()
     self._redrawMenu = false
 
     playdate.keyboard.keyboardAnimatingCallback = function ()
-        if gameManager:isState(gameManager.gameStates.level) then
-        elseif gameManager:isState(gameManager.gameStates.fullLog) then
+        if gameManager:isState(gameManager.GameStates.Level) then
+        elseif gameManager:isState(gameManager.GameStates.FullLog) then
             self:redrawScreen()
-        elseif gameManager:isState(gameManager.gameStates.menu) then
+        elseif gameManager:isState(gameManager.GameStates.Menu) then
         end
     end
     playdate.keyboard.keyboardDidHideCallback = function ()
@@ -106,7 +106,7 @@ function ScreenManager:draw()
         frameProfiler:endTimer("Draw: Screen Clear")
     end
 
-    if gameManager:isState(gameManager.gameStates.level) then
+    if gameManager:isState(gameManager.GameStates.Level) then
         drew = self:drawLevel()
         local drewLog = self:drawLog()
         drew = drew and drew or drewLog
@@ -115,9 +115,9 @@ function ScreenManager:draw()
             self:debugDrawViewportBlocks()
         end
 
-    elseif gameManager:isState(gameManager.gameStates.fullLog) then
+    elseif gameManager:isState(gameManager.GameStates.FullLog) then
         drew = self:drawLog()
-    elseif gameManager:isState(gameManager.gameStates.menu) then
+    elseif gameManager:isState(gameManager.GameStates.Menu) then
         drew = self:drawMenu()
     end
 
