@@ -25,7 +25,7 @@ function DebugMenu:init(menuManager)
 			gameManager.levelManager.currentLevel.debugDrawDistMap = bool
 		end),
 
-		MenuItemOptions("Level Font", nil, false, false, false, { "toPlayerPathMap", "smellMap", "soundMap" }, 1, function (option)
+		MenuItemOptions("Distance Map", nil, false, false, false, { "toPlayerPathMap", "smellMap", "soundMap" }, 1, function (option)
 			gameManager.levelManager.currentLevel.debugDistMap = option
 		end),
 
