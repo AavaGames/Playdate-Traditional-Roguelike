@@ -5,7 +5,7 @@ function Crystal:init(theLevel, startPosition)
     self.glyph = "%"
     self.name = "Glass"
     self.description = "A thin piece of crystal. Destructable."
-    
+
     self.collision = true
     self.renderWhenSeen = true
 

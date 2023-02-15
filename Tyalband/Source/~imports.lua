@@ -45,6 +45,7 @@ import "/scripts/Component"
 import "/scripts/Entity"
 
 import "/scripts/actors/Actor"
+import "/scripts/actors/Monster"
 import "/scripts/features/Feature"
 
 -- Subclasses
@@ -62,6 +63,7 @@ import "/scripts/levels/TestRoom"
 
 -- Components
 
+import "scripts/components/Health"
 import "scripts/components/Inventory"
 import "scripts/components/Equipment"
 import "scripts/components/LightEmitter"

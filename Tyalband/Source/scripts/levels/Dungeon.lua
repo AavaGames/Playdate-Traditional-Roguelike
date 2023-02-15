@@ -6,7 +6,7 @@ function Dungeon:init(theLevelManager, thePlayer)
     Dungeon.super.init(self, theLevelManager, thePlayer)
     self.name = "Floor 1 (50 feet)"
 
-    self.FullyLit = true
+    self.FullyLit = false
 
     self.playerSpawnPosition = { x = 18, y = 19 }
     self.playerSpawnPosition = { x = 18, y = 12 }

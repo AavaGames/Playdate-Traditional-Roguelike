@@ -1,4 +1,4 @@
-class("Cat").extends(Actor)
+class("Cat").extends(Monster)
 
 function Cat:init(theLevel, startPosition)
     Cat.super.init(self, theLevel, startPosition)
@@ -9,9 +9,13 @@ end
 
 function Cat:round()
     Cat.super.round(self)
-    local move = math.random() <= 0.20
+    local chanceToMove = 0.20
+    local move = math.random() <= chanceToMove
     if (move) then
         local dir = self.level.distanceMapManager:getStep("toPlayerPathMap", self.position)
+        if (dir == Vector2.zero()) then
+            self:move(Vector2.randomCardinal())
+        end
         self:move(dir)
     end
 end

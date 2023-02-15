@@ -6,7 +6,7 @@ function Template:init(actor)
 end
 
 
--- Super Functions
+-- Super Functions (Remove Unused)
 
 function Template:pickup(actor)
     Template.super.pickup(self, actor)

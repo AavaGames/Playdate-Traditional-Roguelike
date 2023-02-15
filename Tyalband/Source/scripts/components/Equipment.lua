@@ -23,14 +23,6 @@ function Equipment:init()
     self.onEquipmentChange = function () end
 end
 
-function Equipment:attach(entity)
-    Equipment.super.attach(self, entity)
-end
-
-function Equipment:detatch(entity)
-    Equipment.super.detatch(self, entity)
-end
-
 function Equipment:equip(item)
     pDebug:log(item.name .. " equipped in slot " .. enum.getName(item.EquipType, item.equipType))
     if (item.equipType == item.EquipType.Weapon) then

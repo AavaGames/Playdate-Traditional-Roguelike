@@ -145,6 +145,10 @@ function Vector2.copy(vector)
 	return Vector2.new(vector.x, vector.y)
 end
 
+function Vector2.isa(vector)
+	return vector.className == "Vector2"
+end
+
 --// METHODS //--
 
 function Vector2.addVectors(firstVector2, secondVector2)
@@ -255,6 +259,16 @@ end
 -- Taxicab distance (cardinal step based distance)
 function Vector2.distance_taxi(vector1, vector2)
 	return math.abs(vector2.x - vector1.x) + math.abs(vector2.y - vector1.y)
+end
+
+-- Returns a random Vector2 for a cardinal (up, right, down, left)
+function Vector2.randomCardinal()
+	local d = math.random(1, 4)
+	if (d == 1) then return Vector2.up()
+	elseif (d == 2) then return Vector2.right()
+	elseif (d == 3) then return Vector2.down()
+	elseif (d == 4) then return Vector2.left()
+	end
 end
 
 -- "Static"

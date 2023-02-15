@@ -21,31 +21,34 @@ function Actor:init(theLevel, startPosition)
     self.visionRange = 4
     self.renderWhenSeen = false
 
+    self.movespeed = 100
+
+    -- Status Effects
+    self.timedEffects = {}
+    self.permaEffects = {}
+
     if (theLevel ~= nil and startPosition ~= nil) then
         self.level:spawnAt(startPosition, self) -- TODO: can spawn on top of another actor overwriting their pos (SpawnAt)
         self.state = self.states.Active
     end
 end
 
-function Actor:round()
-
-end
-
-function Actor:interact()
-    -- abstract func for children
-end
+-- Abstract funcs
+function Actor:round() end
+function Actor:interact() end
 
 function Actor:move(moveAmount)
     local newPosition = self.position + Vector2.new(moveAmount.x, moveAmount.y)
     return self:moveTo(newPosition)
 end
 
+-- Takes a Vector2 and attemps to move to that tile on the level
 function Actor:moveTo(position)
-    -- check if position is a vector ?
-    if position.x ~= self.position.x or position.y ~= self.position.y then
+    if (not Vector2.isa(position)) then pDebug.error(position, "is not a Vector2") end -- sanity check
+    if position ~= self.position then
         local collision = self.level:collisionCheck(position)
         if collision[1] == false then
-            self:updateTile(collision[2])
+            self:updateTile(collision[2]) -- move to free tile
             return true
         elseif collision[2] ~= nil then
             collision[2]:interact(self) -- interact with actor or feature
@@ -54,13 +57,12 @@ function Actor:moveTo(position)
     return false
 end
 
--- called?
 function Actor:updateTile(tile)
     if self.tile ~= nil then
         self.tile:exit(self)
     end
     self.tile = tile 
-    self.position = Vector2.copy(self.tile.position) -- pointer to a vector
+    self.position = Vector2.copy(self.tile.position)
     self.tile:enter(self)
 end
 

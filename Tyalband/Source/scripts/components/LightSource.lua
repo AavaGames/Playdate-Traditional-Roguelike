@@ -6,14 +6,6 @@ function LightSource:init(brightRange, dimRange)
     self.dimRange = dimRange or 0
 end
 
-function LightSource:attach(entity)
-    LightSource.super.attach(self, entity)
-end
-
-function LightSource:detatch(entity)
-    LightSource.super.detatch(self, entity)
-end
-
 -- Adds / Creates then adds to its entity or the one given
 function LightSource:addToEmitter(entity)
     local entity = entity or self.entity

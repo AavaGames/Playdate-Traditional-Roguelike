@@ -6,6 +6,7 @@
 
 enum = {}
 
+-- Can be utilized in local const and added to a class for a read-only pointer enum
 function enum.new(t)
     local result = {}
     for index, name in pairs(t) do

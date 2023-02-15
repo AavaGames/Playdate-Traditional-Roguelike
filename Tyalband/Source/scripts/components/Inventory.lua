@@ -7,14 +7,6 @@ function Inventory:init()
     self.full = false
 end
 
-function Inventory:attach(entity)
-    Inventory.super.attach(self, entity)
-end
-
-function Inventory:detatch(entity)
-    Inventory.super.detatch(self, entity)
-end
-
 function Inventory:addItem(item)
     -- TODO check for stacks
     if (not self.full) then

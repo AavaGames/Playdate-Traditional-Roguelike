@@ -4,6 +4,11 @@ class("Player").extends(Actor)
 
 function Player:init(menuManager)
     Player.super.init(self)
+    self.inventoryMenu = InventoryMenu(menuManager, self)
+	self.invPDMenu, error = playdate.getSystemMenu():addMenuItem("Inventory", function()
+        self.inventoryMenu:open()
+    end)
+
     self.glyph = "@"
     self.name = "You"
     self.description = "A striking individual, who seems to be quite powerful"
@@ -12,25 +17,31 @@ function Player:init(menuManager)
     self.state = self.states.Inactive
 
     self.visionRange = -1 -- Infinity
+    self.scentRange = 6 -- range at which normal smell will detect
+    self.isMoving = false -- motion flag
+    self.soundRange = 0 -- 
+
+    -- update with class HP
+    self.inventory = self:addComponent(Health(10))
+    -- insert Stats
+    self.race = nil -- Race component
+        -- adds innate
+    self.class = nil -- Class component
+        -- adds spellbook / mana
 
     self.inventory = self:addComponent(Inventory())
     self.equipment = self:addComponent(Equipment())
     self.equipment.onEquipmentChange = function() self:updateEquipmentMenuImage() end
 
     self:addComponent(LightEmitter())
+    -- add inventory from race / class
 
     local lantern = Lantern()
     lantern:equip(self)
     --self:addComponent(LightSource(2, 4)):addToEmitter()
-
     for i = 1, 28, 1 do
         Item():pickup(self)
     end
-
-    self.inventoryMenu = InventoryMenu(menuManager, self)
-	self.invPDMenu, error = playdate.getSystemMenu():addMenuItem("Inventory", function()
-        self.inventoryMenu:open()
-    end)
 end
 
 function Player:update()

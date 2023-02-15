@@ -9,14 +9,6 @@ function LightEmitter:init(baseBrightRange, baseDimRange)
     self.lightSources = {}
 end
 
-function LightEmitter:attach(entity)
-    LightEmitter.super.attach(self, entity)
-end
-
-function LightEmitter:detatch(entity)
-    LightEmitter.super.detatch(self, entity)
-end
-
 function LightEmitter:addLightSource(source)
     -- TODO rework to take into consideration EQUIPMENT TYPE (Sword, Lantern, etc.) rather than className
     -- TODO add to level so that to loop you

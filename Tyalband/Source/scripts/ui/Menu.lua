@@ -87,6 +87,7 @@ function Menu:populateItems(items)
             local glyph = string.char(currentByte)
             while self.items[glyph] ~= nil do
                 currentByte += 1
+                glyph = string.char(currentByte)
             end
 
             if (self.items[glyph] == nil) then
