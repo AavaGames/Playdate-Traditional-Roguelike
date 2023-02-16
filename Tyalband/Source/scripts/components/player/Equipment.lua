@@ -39,7 +39,7 @@ end
 
 function Equipment:unequip(slot, skipChangeCallback)
     if (self.slots[slot] ~= false and not self.slots[slot].cursed) then
-        print("unequipped " .. self.slots[slot].name)
+        pDebug:log("Unequipped " .. self.slots[slot]:getName())
         self.slots[slot]:unequip()
         self.slots[slot] = false
         if (not skipChangeCallback) then

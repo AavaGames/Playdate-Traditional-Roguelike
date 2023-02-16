@@ -80,7 +80,7 @@ function Player:round() end
 
 function Player:interact(actor)
     if (actor ~= nil) then
-        gameManager.logManager:addToRound("The " .. actor.name .. " bumps into you.")
+        gameManager.logManager:addToRound("The " .. actor.name .. " bumps into " .. self.name .. ".")
         actor:interact(self)
     end
 end
@@ -114,7 +114,7 @@ function Player:updateEquipmentMenuImage()
     -- Character Name
     gfx.drawTextAligned(self.name, screenManager.screenDimensions.x / 4, 1, kTextAlignment.center)
     local text = ""
-    local emptyText <const> = "Ring of Awareness {+3}"
+    local emptyText <const> = "" --"Ring of Awareness {+3}"
     for index, value in ipairs(self.equipment.slots) do
         if (value ~= false) then
             text = text .. enum.getName(eEquipmentSlots, index) .. ": " .. value:getName() .. "\n"

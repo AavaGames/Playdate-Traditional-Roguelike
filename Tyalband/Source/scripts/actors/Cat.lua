@@ -20,8 +20,8 @@ function Cat:round()
     end
 end
 
-function Cat:interact(Actor)
-    if (Actor.name == "You") then
+function Cat:interact(actor)
+    if (actor:isa(Player)) then
         gameManager.logManager:addToRound(self.description)
     end
 end

@@ -9,16 +9,16 @@ function LightEmitter:init(baseBrightRange, baseDimRange)
     self.lightSources = {}
 end
 
-function LightEmitter:addLightSource(source)
-    -- TODO rework to take into consideration EQUIPMENT TYPE (Sword, Lantern, etc.) rather than className
-    -- TODO add to level so that to loop you
+function LightEmitter:addLightSource(source, slot)
+    -- TODO add to level for the lighting loop
     isObjectError(source, LightSource)
-    self.lightSources[source.className] = source
+    self.lightSources[source.entity.name] = source
     self:calculateLightRange()
 end
 
 function LightEmitter:removeLightSource(source)
-    self.lightSources[source.className] = nil
+    self.lightSources[source.entity.name] = nil
+    self:calculateLightRange()
 end
 
 function LightEmitter:calculateLightRange()

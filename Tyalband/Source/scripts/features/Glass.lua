@@ -13,7 +13,7 @@ function Crystal:init(theLevel, startPosition)
 end
 
 function Crystal:interact(actor)
-    if (actor.name == "You") then
+    if (actor:isa(Player)) then 
         gameManager.logManager:addToRound(self.description)
     end
 end

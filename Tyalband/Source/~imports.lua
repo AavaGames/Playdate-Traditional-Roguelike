@@ -74,6 +74,10 @@ import "scripts/components/LightSource"
 import "/scripts/items/parents/Item"
 import "/scripts/items/parents/Equipable"
 
+import "/scripts/items/types/Light"
+
+-- Subitems
+
 import "/scripts/items/Lantern"
 
 -- Features

@@ -30,6 +30,7 @@ end
 
 function Tile:enter(actor)
     self.actor = actor
+    -- TODO check setting and pickup item
 end
 
 function Tile:exit(actor)

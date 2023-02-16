@@ -7,6 +7,7 @@ function LogManager:init(theLevelManager)
     self.screenManager = screenManager
     self.screenManager.logManager = self
     self.levelManager = theLevelManager
+    self.player = theLevelManager.player
 
     -- the line of the current round, all events are added together to one large line
     self.roundLine = "" 
@@ -76,13 +77,15 @@ function LogManager:init(theLevelManager)
     self:add("This is a scroll of magic missle.")
     self:add("This is a scroll of magic missle.")
     self:add("This is a dragon. It has 45 HP (average). It is *slow* and attacks often. It has a *breath* *weapon* that deals 60 damage and its attacks deal 16 damage. It is immune to *fire* and *gas*, resistant to *poison* and weak to *piercing* and *electric*.")
-    self:addToRound("You hit the skeleton for 5 damage, catching it unaware")
+    self:addToRound("%s hits the skeleton, catching it unaware!")
     self:addRoundLineToLog()
-    self:addToRound("You hit the skeleton for 3 damage.")
-    self:addToRound("The skeleton misses you.")
+    self:addToRound("%s hits the skeleton.")
+    self:addToRound("The skeleton misses.")
     self:addRoundLineToLog()
-    self:add("You destroy the skeleton.")
-    self:add("You pick up the *Great* *Axe* *of* *Irunel.*")--It has 25 blah and can pierce armor of the highest grade. Only those with the mightest of shields can block such a blade.")
+    self:addToRound("%s hits the skeleton.")
+    self:addToRound("The skeleton falls into rubble.")
+    self:addRoundLineToLog()
+    self:add("%s picks up the *Great* *Axe* *of* *Irunel.*")--It has 25 blah and can pierce armor of the highest grade. Only those with the mightest of shields can block such a blade.")
     -- self:add("---")
     --     -- self:add("This is a dragon. It is 4*slow* and attacks often. It has a *breath weapon* that deals 60 damage (average) and its attacks deal 16 damage (average). It is immune to *fire* and *gas* based attacks but weak to *piercing*.")
     -- self:add("This is a dragon. It is3 *slow* and attacks often. It has a *breath weapon* that deals 60 damage (average) and its attacks deal 16 damage (average). It is immune to *fire* and *gas* based attacks but weak to *piercing*.")
@@ -181,6 +184,7 @@ function LogManager:lateUpdate()
 end
 
 function LogManager:add(text)
+    text = self:addPlayerNameToText(text)
     if (text == self.cleanLog[#self.cleanLog]) then
         self.lineMultiple = self.lineMultiple + 1
         text = text .. " <x" .. self.lineMultiple .. ">"
@@ -202,11 +206,16 @@ end
 
 -- Text must capitalize the sentence and end in punctuation.
 function LogManager:addToRound(text)
+    text = self:addPlayerNameToText(text)
     -- adds to a line that is split before drawing
     local separator <const> = " "
     local sep = self.roundLine == "" and "" or separator
     self.roundLine = self.roundLine .. sep .. text
     screenManager:redrawLog()
+end
+
+function LogManager:addPlayerNameToText(text)
+    return string.format(text, self.player.name) -- formats the %s in the text
 end
 
 --#region Utility

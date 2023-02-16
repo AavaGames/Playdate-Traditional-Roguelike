@@ -1,5 +1,6 @@
 class("LightSource").extends(Component)
 
+-- One Light Source per Entity (Monster / Lantern)
 function LightSource:init(brightRange, dimRange)
     LightSource.super.init(self)
     self.brightRange = brightRange or 0
@@ -11,9 +12,9 @@ function LightSource:addToEmitter(entity)
     local entity = entity or self.entity
     if (not entity:hasComponent(LightEmitter)) then
         entity:addComponent(LightEmitter())
-        print("has no emitter")
     end
     entity:getComponent(LightEmitter):addLightSource(self)
+
 end
 
 function LightSource:removeFromEmitter(entity)

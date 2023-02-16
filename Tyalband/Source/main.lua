@@ -42,7 +42,7 @@ end
 initializeGame()
 
 function playdate.update()
-	-- playdate.timer.updateTimers()
+	playdate.timer.updateTimers()
 	updateGame()
 	drawGame()
 end

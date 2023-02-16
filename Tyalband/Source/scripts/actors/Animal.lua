@@ -11,8 +11,8 @@ function Animal:round()
     self:move(Vector2.randomCardinal())
 end
 
-function Animal:interact(Actor)
-    if (Actor.name == "You") then 
+function Animal:interact(actor)
+    if (actor:isa(Player)) then 
         gameManager.logManager:addToRound(self.description)
     end
 end
