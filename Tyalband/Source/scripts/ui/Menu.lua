@@ -15,7 +15,7 @@ function Menu:init(manager, name, items, subMenuCount)
         x = 4,
         y = 18,
         width = screenManager.screenDimensions.x - 10,
-        height = screenManager.screenDimensions.y - self.font.size * 4,
+        height = screenManager.screenDimensions.y - self.font.size.height * 2,
     }
 
     self.items = {}
@@ -56,7 +56,7 @@ function Menu:draw()
     gfx.drawTextAligned(name, 200, 1, kTextAlignment.center)
     -- Input Text
     gfx.drawTextAligned("A - Open KB\nB - Close Menu", screenManager.screenDimensions.x, 
-        screenManager.screenDimensions.y - self.font.size * 4, kTextAlignment.right)
+        screenManager.screenDimensions.y - self.font.size.height * 2, kTextAlignment.right)
 
     -- Menu Items Text
     gfx.drawTextInRect(self:getFullItemText(), self.itemTextDimensions.x, self.itemTextDimensions.y,

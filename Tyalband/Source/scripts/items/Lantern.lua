@@ -5,10 +5,10 @@ function Lantern:init(actor)
     self.name = "Lantern"
 
     self.type = self.ItemType.Equipable
-    self.equipType = self.EquipType.Light
+    self.equipType = eEquipType.Light
     self.quality = self.QualityTypes.average
 
-    self:addComponent(LightSource(2, 4))
+    self.source = self:addComponent(LightSource(2, 4))
 end
 
 function Lantern:equip(actor)
@@ -19,6 +19,10 @@ end
 function Lantern:unequip()
     Lantern.super.unequip(self)
     self:getComponent(LightSource):removeFromEmitter(self.heldBy)
+end
+
+function Lantern:getName()
+    return self.name .. string.format(" {%d, %d}", self.source.brightRange, self.source.dimRange)
 end
 
 -- Super Functions

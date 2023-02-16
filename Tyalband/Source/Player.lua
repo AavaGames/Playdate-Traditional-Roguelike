@@ -10,8 +10,8 @@ function Player:init(menuManager)
     end)
 
     self.glyph = "@"
-    self.name = "You"
-    self.description = "A striking individual, who seems to be quite powerful"
+    self.name = "Vin"
+    self.description = "grew up as an urchin in the great city. They had to steal to survive."
 
     self.moveDir = { x = 0, y = 0 }
     self.state = self.states.Inactive
@@ -39,8 +39,11 @@ function Player:init(menuManager)
     local lantern = Lantern()
     lantern:equip(self)
     --self:addComponent(LightSource(2, 4)):addToEmitter()
-    for i = 1, 28, 1 do
+    for i = 1, 12, 1 do
         Item():pickup(self)
+    end
+    for i = 1, 12, 1 do
+        Equipable():pickup(self)
     end
 end
 
@@ -103,21 +106,29 @@ end
 function Player:updateEquipmentMenuImage()
     local screenManager = screenManager
     local image = gfx.image.new(screenManager.screenDimensions.x, screenManager.screenDimensions.y, gfx.kColorBlack)
+    local font = screenManager.logFont_6px
     gfx.lockFocus(image)
-    gfx.setFont(screenManager.logFont_8px.font)
+    gfx.setFont(font.font)
     gfx.setImageDrawMode(gfx.kDrawModeNXOR)
 
-    gfx.drawTextAligned("Equipment", screenManager.screenDimensions.x / 4, 1, kTextAlignment.center)
+    -- Character Name
+    gfx.drawTextAligned(self.name, screenManager.screenDimensions.x / 4, 1, kTextAlignment.center)
     local text = ""
-    -- TODO make a big if to properly show this
-    for key, value in pairs(self.equipment.slots) do
-        if (value ~= "") then
-            text = text .. key .. ": " .. value.name .. "\n"
+    local emptyText <const> = "Ring of Awareness {+3}"
+    for index, value in ipairs(self.equipment.slots) do
+        if (value ~= false) then
+            text = text .. enum.getName(eEquipmentSlots, index) .. ": " .. value:getName() .. "\n"
         else
-            text = text .. key .. ":\n"
+            text = text .. enum.getName(eEquipmentSlots, index) .. ": " .. emptyText .. "\n"
+        end
+        if (index == eEquipmentSlots.Light or index == eEquipmentSlots.OffHand or index == eEquipmentSlots.Feet) then
+            text = text .. "\n"
         end
     end
-    gfx.drawTextInRect(text, 0, 20, 200, 200)
+    text = text .. "\n" .. "Scent - " .. self.scentRange .. " / Sound - " .. self.soundRange
+
+    local offset = font.size.height + 1
+    gfx.drawTextInRect(text, 0, offset, 200, 240 - offset)
     gfx.unlockFocus()
     playdate.setMenuImage(image)
 end

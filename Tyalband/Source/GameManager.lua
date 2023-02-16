@@ -51,7 +51,7 @@ end
 
 function GameManager:setState(state)
 	self.currentGameState = state
-	pDebug:log("GameManager State is now = " .. state)
+	--pDebug:log("GameManager State is now = " .. enum.getName(self.GameStates, state))
 	if self:isState(self.GameStates.Level) then
 		screenManager:redrawScreen()
 	elseif self:isState(self.GameStates.FullLog) then

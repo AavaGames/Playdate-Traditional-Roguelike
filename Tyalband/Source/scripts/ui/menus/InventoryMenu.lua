@@ -8,10 +8,12 @@ function InventoryMenu:init(menuManager, player)
 end
 
 function InventoryMenu:open()
-	local items = {}
+	local items = { MenuItem("Equipment", "1", true, false, false, function ()
+		-- opens equipment menu
+	end) }
 	for index, value in ipairs(self.player.inventory.items) do
 		table.insert(items,
-		MenuItem(value.name, nil, true, false, false, function ()
+		MenuItem(value:getName(), nil, true, false, false, function ()
 			-- opens item menu
 			--ItemMenu(self.menuManager, value):open()
 		end))

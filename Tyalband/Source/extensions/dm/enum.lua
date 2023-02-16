@@ -15,6 +15,10 @@ function enum.new(t)
     return result
 end
 
+function enum.copy(enum)
+    return { table.unpack(enum) }
+end
+
 function enum.getName(enum, value)
     for name, v in pairs(enum) do
         if (value == v) then return name end

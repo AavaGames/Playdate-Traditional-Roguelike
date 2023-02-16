@@ -20,15 +20,15 @@ function ScreenManager:init()
     self.logFont_6px = { font = playdate.graphics.font.newFamily({
         [playdate.graphics.font.kVariantNormal] = "assets/fonts/DOS/dos-jpn12-6x12",
         [playdate.graphics.font.kVariantBold] = "assets/fonts/DOS/dos-jpn12-6x12", -- TODO make bold
-    }), size = 6, lineCount = 5, fullLineCount = 19 }
+    }), size = { width = 6, height = 12 }, lineCount = 5, fullLineCount = 19 }
     self.logFont_8px = { font = playdate.graphics.font.newFamily({
         [playdate.graphics.font.kVariantNormal] = "assets/fonts/Log/CompaqThin_8x16",
         [playdate.graphics.font.kVariantBold] = "assets/fonts/Log/Nix8810_M15",
-    }), size = 8, lineCount = 4, fullLineCount = 14 }
+    }), size = { width = 8, height = 16 }, lineCount = 4, fullLineCount = 14 }
     self.logFont_12px = { font = playdate.graphics.font.newFamily({
         [playdate.graphics.font.kVariantNormal] = "assets/fonts/Log/Portfolio_6x8_2x",
         [playdate.graphics.font.kVariantBold] = "assets/fonts/Log/Portfolio_6x8_2x", -- TODO make bold
-    }), size = 12, lineCount = 4, fullLineCount = 14 }
+    }), size = { width = 12, height = 16 }, lineCount = 4, fullLineCount = 14 }
 
     self.currentLevelFont, self.currentLogFont = nil, nil
 

@@ -10,4 +10,3 @@ end
 function isComponent(component)
     return component:isa(Component)
 end
-

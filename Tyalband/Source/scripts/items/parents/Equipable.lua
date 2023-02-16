@@ -1,13 +1,14 @@
 class("Equipable").extends(Item)
 
-local QualityTypes <const> = enum.new({
+eQualityTypes = enum.new({
     "Average",
     "Good",
     "Powerful",
     "Artifact"
 })
 
-local EquipType <const> = enum.new({
+eEquipType = enum.new({
+    "Light", -- 1
     "Weapon",
     "OffHand",
     "Head",
@@ -16,19 +17,20 @@ local EquipType <const> = enum.new({
     "Legs",
     "Feet",
     "Neck",
-    "Ring",
-    "Light"
+    "Ring" -- 10
 })
 
 function Equipable:init(actor)
     Equipable.super.init(self, actor)
+    self.name = "Equip"
 
-    self.EquipType = EquipType
-    self.QualityTypes = QualityTypes
+    self.EquipType = eEquipType
+    self.QualityTypes = eQualityTypes
 
     self.equipType = nil
     self.quality = nil
 
+    self.stackable = false
     self.cursed = false
 end
 
@@ -38,10 +40,6 @@ function Equipable:equip(actor)
         self.heldBy = actor
     else -- remove from inventory
         self.heldBy:getComponent(Inventory):removeItem(self)
-    end 
-
-    if (not self.heldBy:hasComponent(Equipment)) then
-        self.heldBy:addComponent(Equipment())
     end
     self.heldBy:getComponent(Equipment):equip(self)
 end

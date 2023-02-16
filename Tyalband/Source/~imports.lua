@@ -64,8 +64,8 @@ import "/scripts/levels/TestRoom"
 -- Components
 
 import "scripts/components/Health"
-import "scripts/components/Inventory"
-import "scripts/components/Equipment"
+import "scripts/components/player/Inventory"
+import "scripts/components/player/Equipment"
 import "scripts/components/LightEmitter"
 import "scripts/components/LightSource"
 
