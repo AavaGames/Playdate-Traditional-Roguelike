@@ -16,7 +16,7 @@ function Entity:init()
     self.components = {} -- make it a set?
 end
 
--- Add the initalized component to the entity
+-- Add the initialized component to the entity
 function Entity:addComponent(component)
     isObjectError(component, Component)
     if (self.components[component.className] ~= nil) then

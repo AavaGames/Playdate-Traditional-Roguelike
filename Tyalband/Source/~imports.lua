@@ -18,6 +18,9 @@ import "/extensions/Set"
 import "/scripts/structs/Vector2"
 import "/extensions/ChunkTimer"
 
+import "Datastoring"
+import "GameStats"
+
 import "Settings"
 import "P_Debug"
 import "GameManager"

@@ -3,6 +3,7 @@ import "~imports"
 local gfx <const> = playdate.graphics
 
 local function initializeGame()
+
 	pDebug = P_Debug()
 	settings = Settings()
 	inputManager = InputManager()
@@ -52,4 +53,12 @@ function playdate.keyPressed(key)
 	if key == "n" then
 
 	end
+end
+
+function playdate.gameWillTerminate()
+	--saveGame()
+end
+
+function playdate.deviceWillSleep()
+	--saveGame()
 end

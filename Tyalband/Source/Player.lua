@@ -75,6 +75,7 @@ function Player:update()
         end
 
         if actionTaken then
+            gameManager.gameStats.actionCounter += 1
             self.level:round(moved)
         end
     end

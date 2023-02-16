@@ -7,9 +7,9 @@ function HealthDisplay:init(player)
 
     -- Border/Health glyphs change depending on status effect
     -- Border is one category (impairment?) and health is another (poison?)
-    self.borderGlyph = "~"
+    self.borderGlyph = "-"
     self.healthGlyph = "*"
-    self.fillGlyph = "|"
+    self.fillGlyph = "│"
 
     self.font = screenManager.levelFont_8px
 end

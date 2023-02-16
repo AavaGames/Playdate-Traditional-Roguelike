@@ -7,6 +7,8 @@ function GameManager:init()
 
 	self.menuManager = MenuManager(self)
 
+	self.gameStats = createGameStats()
+
 	pDebug:createDebugMenu(self.menuManager)
 	self.settingsMenu = SettingsMenu(self.menuManager)
 	self.commandMenu = CommandMenu(self.menuManager)
@@ -26,6 +28,8 @@ function GameManager:init()
 
 	self.GameStates = GameStates
 	self.currentGameState = self.GameStates.Level
+
+	self.initialized = true -- used for saving
 end
 
 function GameManager:update()

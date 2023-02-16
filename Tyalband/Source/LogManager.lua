@@ -42,14 +42,14 @@ function LogManager:init(theLevelManager)
     self.levelLogViewport = {
         textPosition = { x = 5, y = 173},
         textSize = { x = 400-8, y = 64 },
-        dimensions = { x = 1, y = math.floor(screenManager.screenDimensions.y * 0.71) + 1,
-            width = 400 - 2, height = math.floor(screenManager.screenDimensions.y * 0.29) - 1}
+        dimensions = { x = 0, y = math.floor(screenManager.screenDimensions.y * 0.71),
+            width = 400, height = math.floor(screenManager.screenDimensions.y * 0.29) + 1}
     }
 
     self.fullLogViewport = {
         textPosition = { x = 5, y = 5},
         textSize = { x = 390, y = 230 },
-        dimensions = { x = 1, y = 1, width = 400 - 2, height = 240 - 2}
+        dimensions = { x = 0, y = 0, width = 400, height = 240}
     }
 
     self.currentLogViewport = self.levelLogViewport
@@ -125,16 +125,14 @@ function LogManager:draw()
         local f = self.levelManager.currentLevel.healthDisplay.font
         gfx.fillRect(0,0, f.size.width, self.currentLogViewport.dimensions.y)
         gfx.setFont(f.font)
-        local txt = { "~", "|","|","***","***","***","***","***","***","***","***","***","***","***","***","***", "~"}
+        local txt = { "?", "?","?","***","***","***","***","***","***","***","***","***","***","***","***","***", "?" }
         for i = 1, #txt, 1 do
-            gfx.drawText(txt[i], 1, 1 + ((i-1) * f.size.height))
+            gfx.drawText(txt[i], 0, ((i-1) * f.size.height))
         end
-        for i = 1, #txt, 1 do
-            gfx.drawText(txt[i], 400-f.size.width, 1 + ((i-1) * f.size.height))
-        end
-
-        Border(0,0,f.size.width+2,self.currentLogViewport.dimensions.y+2 , 1, gfx.kColorXOR):draw()
-
+        -- local txt = { "-", "│","│","***","***","***","***","***","***","***","***","***","***","***","***","***", "-" }
+        -- for i = 1, #txt, 1 do
+        --     gfx.drawText(txt[i], 400-f.size.width, 1 + ((i-1) * f.size.height))
+        -- end
 
         -- Clear
         gfx.setColor(screenManager.bgColor)
