@@ -5,6 +5,7 @@ class("Level").extends()
 function Level:init(theLevelManager, thePlayer)
     self.levelManager = theLevelManager
     self.player = thePlayer
+    self.healthDisplay = HealthDisplay(self.player)
 
     self.name = "Level"
     self.playerSpawnPosition = Vector2.zero()
@@ -169,6 +170,8 @@ function Level:updateView()
 end
 
 function Level:draw()
+    self.healthDisplay:draw()
+
     if (self.debugDrawDistMap) then
         self.distanceMapManager:debugDrawMap(self.debugDistMap, self.camera)
         return
@@ -190,7 +193,7 @@ function Level:draw()
 
     local drawPrint = table.create(screenManager.viewportGlyphDrawMax.x)
 
-    -- TODO create a debug Draw World to Console
+    -- TODO create a debug Draw Level to Console
 
     for xPos = 0, screenManager.viewportGlyphDrawMax.x - 1, 1 do
         drawPrint[xPos+1] = {}

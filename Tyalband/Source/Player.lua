@@ -33,6 +33,8 @@ function Player:init(menuManager)
     self.equipment = self:addComponent(Equipment())
     self.equipment.onEquipmentChange = function() self:updateEquipmentMenuImage() end
 
+    self.currentTarget = nil
+
     self:addComponent(LightEmitter())
     -- add inventory from race / class
 
@@ -67,6 +69,8 @@ function Player:update()
         if (self.moveDir ~= Vector2.zero()) then
             if self:move(self.moveDir) then
                 actionTaken, moved = true, true
+            else
+                self.currentTarget = nil
             end
         end
 
@@ -80,6 +84,7 @@ function Player:round() end
 
 function Player:interact(actor)
     if (actor ~= nil) then
+        self.currentTarget = actor
         gameManager.logManager:addToRound("The " .. actor.name .. " bumps into " .. self.name .. ".")
         actor:interact(self)
     end

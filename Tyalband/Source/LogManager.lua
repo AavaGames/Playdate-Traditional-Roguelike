@@ -23,15 +23,17 @@ function LogManager:init(theLevelManager)
     self.fontLineCount = nil
     self:getFontLineCount()
 
-    local worldHeight = math.floor(screenManager.screenDimensions.y * 0.71)
+    local levelHeight = math.floor(screenManager.screenDimensions.y * 0.71)
     self.logLevelViewport = function ()
-        local height = worldHeight
-        local x = (screenManager.screenDimensions.x - ((screenManager.screenDimensions.x // screenManager.currentLevelFont.size.width) * screenManager.currentLevelFont.size.width)) // 2
+        local xOffset = self.levelManager.currentLevel.healthDisplay.font.size.width
+        local width = screenManager.screenDimensions.x - xOffset * 2
+        local height = levelHeight
+        local x = (width - ((width // screenManager.currentLevelFont.size.width) * screenManager.currentLevelFont.size.width)) // 2
         local y = (height - ((height // screenManager.currentLevelFont.size.height) * screenManager.currentLevelFont.size.height)) // 2
         local v = {
-            x = x + 1,
+            x = x + 1 + xOffset,
             y = y + 1,
-            width = screenManager.screenDimensions.x - x * 2,
+            width = width - x * 2,
             height = height - y * 2
         }
         return v
@@ -118,6 +120,22 @@ end
 
 function LogManager:draw()
     if (self.showingLog) then
+
+        gfx.setColor(screenManager.bgColor)
+        local f = self.levelManager.currentLevel.healthDisplay.font
+        gfx.fillRect(0,0, f.size.width, self.currentLogViewport.dimensions.y)
+        gfx.setFont(f.font)
+        local txt = { "~", "|","|","***","***","***","***","***","***","***","***","***","***","***","***","***", "~"}
+        for i = 1, #txt, 1 do
+            gfx.drawText(txt[i], 1, 1 + ((i-1) * f.size.height))
+        end
+        for i = 1, #txt, 1 do
+            gfx.drawText(txt[i], 400-f.size.width, 1 + ((i-1) * f.size.height))
+        end
+
+        Border(0,0,f.size.width+2,self.currentLogViewport.dimensions.y+2 , 1, gfx.kColorXOR):draw()
+
+
         -- Clear
         gfx.setColor(screenManager.bgColor)
         gfx.fillRect(self.currentLogViewport.dimensions.x, self.currentLogViewport.dimensions.y, 
@@ -132,8 +150,7 @@ function LogManager:draw()
                 text = text .. self.log[#self.log-i] .. "\n"
             end
         end
-        gfx.drawTextInRect(text, self.currentLogViewport.textPosition.x, self.currentLogViewport.textPosition.y,
-                                self.currentLogViewport.textSize.x, self.currentLogViewport.textSize.y)
+        gfx.drawTextInRect(text, self.currentLogViewport.textPosition.x, self.currentLogViewport.textPosition.y, self.currentLogViewport.textSize.x, self.currentLogViewport.textSize.y)
 
         if (self.fullscreen) then
             self.fullLogBorder:draw()

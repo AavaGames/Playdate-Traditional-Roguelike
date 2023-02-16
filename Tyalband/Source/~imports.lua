@@ -30,6 +30,7 @@ import "/scripts/ui/MenuItem"
 import "/scripts/ui/MenuItemBool"
 import "/scripts/ui/MenuItemOptions"
 import "/scripts/ui/Menu"
+import "/scripts/ui/HealthDisplay"
 
 import "DistanceMapManager"
 import "LevelManager"

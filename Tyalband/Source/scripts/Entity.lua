@@ -1,5 +1,5 @@
 --[[
-    An entity is any world object (Actor, Player, Feature, Item, Equipable, etc.) they can hold components.
+    An entity is any level object (Actor, Player, Feature, Item, Equipable, etc.) they can hold components.
     Only ONE component of each class.
 ]]
 

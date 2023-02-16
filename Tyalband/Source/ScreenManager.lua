@@ -179,7 +179,7 @@ function ScreenManager:debugDrawViewportBlocks()
         gfx.drawText("LOG", self.logManager.currentLogViewport.dimensions.x, self.logManager.currentLogViewport.dimensions.y)
     end
     gfx.fillRect(self.viewport.x, self.viewport.y, self.viewport.width, self.viewport.height)
-    gfx.drawText("WORLD", self.viewport.x, self.viewport.y)
+    gfx.drawText("LEVEL", self.viewport.x, self.viewport.y)
 end
 
 --#endregion

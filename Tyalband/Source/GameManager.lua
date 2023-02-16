@@ -19,12 +19,13 @@ function GameManager:init()
         self.commandMenu:open()
     end)
 
+
 	self.player = Player(self.menuManager)
     self.levelManager = LevelManager(self.player)
 	self.logManager = LogManager(self.levelManager)
 
 	self.GameStates = GameStates
-	self.currentGameState = self.GameStates.Level	
+	self.currentGameState = self.GameStates.Level
 end
 
 function GameManager:update()
