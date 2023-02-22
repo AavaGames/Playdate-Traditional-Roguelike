@@ -32,7 +32,7 @@ function ScreenManager:init()
 
     self.currentLevelFont, self.currentLogFont = nil, nil
 
-    self.defaultViewport = function(self)
+    self.fullLevelViewport = function(self)
         local x = (self.screenDimensions.x - ((self.screenDimensions.x // self.currentLevelFont.size.width) * self.currentLevelFont.size.width)) // 2
         local y = (self.screenDimensions.y - ((self.screenDimensions.y // self.currentLevelFont.size.height) * self.currentLevelFont.size.height)) // 2
         local v = {
@@ -43,7 +43,7 @@ function ScreenManager:init()
         }
         return v
     end
-    self.viewportCalcFunction = self.defaultViewport
+    self.viewportCalcFunction = self.fullLevelViewport
     self.viewport = nil
 
     -- Max characters that can be drawn in the viewport
@@ -89,8 +89,10 @@ function ScreenManager:setBGColor(color)
     self:redrawScreen()
 end
 
-function ScreenManager:update() 
-
+function ScreenManager:update()
+    if (gameManager:isState(gameManager.GameStates.Level)) then
+        self.combatView = not inputManager:isCrankDocked()
+    end
 end
 function ScreenManager:lateUpdate() end
 
@@ -309,7 +311,7 @@ end
 
 function ScreenManager:setViewport(viewportCalcFunction)
     -- IDEA: Coroutine to have smooth transition
-    local func = viewportCalcFunction or self.defaultViewport
+    local func = viewportCalcFunction or self.fullLevelViewport
     self.viewportCalcFunction = func
     self:recalculateViewport()
     self:redrawScreen()

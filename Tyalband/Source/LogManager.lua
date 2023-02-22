@@ -24,14 +24,14 @@ function LogManager:init(theLevelManager)
     self:getFontLineCount()
 
     local levelHeight = math.floor(screenManager.screenDimensions.y * 0.71)
-    self.logLevelViewport = function ()
+    self.combatViewport = function ()
         local xOffset = self.levelManager.currentLevel.healthDisplay.font.size.width
         local width = screenManager.screenDimensions.x - xOffset * 2
         local height = levelHeight
         local x = (width - ((width // screenManager.currentLevelFont.size.width) * screenManager.currentLevelFont.size.width)) // 2
         local y = (height - ((height // screenManager.currentLevelFont.size.height) * screenManager.currentLevelFont.size.height)) // 2
         local v = {
-            x = x + 1 + xOffset,
+            x = x + xOffset + 1,
             y = y + 1,
             width = width - x * 2,
             height = height - y * 2
@@ -53,19 +53,6 @@ function LogManager:init(theLevelManager)
     }
 
     self.currentLogViewport = self.levelLogViewport
-    
-    -- Inspect Window Dimensions
-    -- self.textPosition = { x = math.floor(screenManager.screenDimensions.x * 0.5) + 3, y = 2}
-    -- self.textSize = { x = math.floor(screenManager.screenDimensions.x * 0.5)-6, y = screenManager.screenDimensions.y}
-    -- self.dimensions = { x = math.floor(screenManager.screenDimensions.x * 0.5), y = 1, width = math.floor(screenManager.screenDimensions.x * 0.5)-1, height = screenManager.screenDimensions.y -2}
-    -- self.inspectLevelViewport = function ()
-    --     return {
-    --         x = 1,
-    --         y = 1,
-    --         width = math.floor(screenManager.screenDimensions.x * 0.5),
-    --         height = screenManager.screenDimensions.y
-    --     }
-    -- end
 
     self.levelLogBorder = Border(self.levelLogViewport.dimensions.x, self.levelLogViewport.dimensions.y, 
                             self.levelLogViewport.dimensions.width, self.levelLogViewport.dimensions.height, 2, gfx.kColorXOR)
@@ -97,7 +84,7 @@ end
 
 function LogManager:showLog()
     if (not self.showingLog) then
-        screenManager:setViewport(self.logLevelViewport) -- log view
+        screenManager:setViewport(self.combatViewport) -- log view
         self.showingLog = true
         self.currentLineOffset = 0
         screenManager:redrawScreen()
@@ -120,20 +107,6 @@ end
 
 function LogManager:draw()
     if (self.showingLog) then
-
-        gfx.setColor(screenManager.bgColor)
-        local f = self.levelManager.currentLevel.healthDisplay.font
-        gfx.fillRect(0,0, f.size.width, self.currentLogViewport.dimensions.y)
-        gfx.setFont(f.font)
-        local txt = { "?", "?","?","***","***","***","***","***","***","***","***","***","***","***","***","***", "?" }
-        for i = 1, #txt, 1 do
-            gfx.drawText(txt[i], 0, ((i-1) * f.size.height))
-        end
-        -- local txt = { "-", "│","│","***","***","***","***","***","***","***","***","***","***","***","***","***", "-" }
-        -- for i = 1, #txt, 1 do
-        --     gfx.drawText(txt[i], 400-f.size.width, 1 + ((i-1) * f.size.height))
-        -- end
-
         -- Clear
         gfx.setColor(screenManager.bgColor)
         gfx.fillRect(self.currentLogViewport.dimensions.x, self.currentLogViewport.dimensions.y, 
@@ -178,7 +151,7 @@ function LogManager:update()
             self:addLineOffset(-1)
         end
     else
-        if not inputManager:isCrankDocked() then
+        if screenManager.combatView then
             self:showLog()
         else
             self:hideLog()

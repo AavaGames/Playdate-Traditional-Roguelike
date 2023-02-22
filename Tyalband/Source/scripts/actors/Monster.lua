@@ -55,6 +55,10 @@ function Monster:init(theLevel, startPosition)
 
     self.dropType = nil
     self.allies = nil
+
+    -- Components
+
+    self.health = self:addComponent(Health())
 end
 
 function Monster:round()

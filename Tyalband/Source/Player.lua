@@ -51,6 +51,8 @@ end
 
 function Player:update()
     if (self.state == self.states.Active) then
+        self.currentTarget = nil  -- show only when hitting? or only stop after not seen or mon death
+
         self.moveDir = Vector2.zero()
         local actionTaken, moved = false, false
 
@@ -69,8 +71,6 @@ function Player:update()
         if (self.moveDir ~= Vector2.zero()) then
             if self:move(self.moveDir) then
                 actionTaken, moved = true, true
-            else
-                self.currentTarget = nil
             end
         end
 
@@ -83,7 +83,7 @@ end
 
 function Player:round() end
 
-function Player:interact(actor)
+function Player:interact(actor) -- they interact with player
     if (actor ~= nil) then
         self.currentTarget = actor
         gameManager.logManager:addToRound("The " .. actor.name .. " bumps into " .. self.name .. ".")

@@ -1,3 +1,4 @@
+-- rounds to the nearest whole number
 function math.round(value)
     return math.floor(value+0.5)
 end
