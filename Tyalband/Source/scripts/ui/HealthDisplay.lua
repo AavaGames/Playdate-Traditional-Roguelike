@@ -5,7 +5,7 @@ class("HealthDisplay").extends()
 function HealthDisplay:init(player)
     self.player = player
     self.playerHealth = player:getComponent(Health)
-    self.prevPlayerHP = -1
+    self.prevPlayerHP = nil
     self.hadTarget = false
 
     self.screenManager = screenManager
@@ -36,9 +36,9 @@ function HealthDisplay:update() end
 
 function HealthDisplay:draw()
     if (self.screenManager.combatView) then
-        gfx.setFont(self.font.font)
-        gfx.setImageDrawMode(gfx.kDrawModeNXOR)
         gfx.setColor(self.screenManager.bgColor)
+        gfx.setImageDrawMode(gfx.kDrawModeNXOR)
+        gfx.setFont(self.font.font)
 
         -- draw player HP on the left
         if (self.prevPlayerHP ~= self.playerHealth.currentHP) then
@@ -50,8 +50,10 @@ function HealthDisplay:draw()
         if (self.player.currentTarget ~= nil) then
             local target = self.player.currentTarget
             local targetHealth = target:getComponent(Health)
-            self:drawHealthBar(targetHealth:percent(), false)
-            self.hadTarget = true
+            if (targetHealth ~= nil) then
+                self:drawHealthBar(targetHealth:percent(), false)
+                self.hadTarget = true
+            end
         elseif (self.hadTarget) then
             self:clearHealthBar(false)
             self.hadTarget = false

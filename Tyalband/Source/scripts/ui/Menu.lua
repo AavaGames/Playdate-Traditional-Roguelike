@@ -166,7 +166,7 @@ function Menu:setActive()
 end
 
 function Menu:setInactive()
-    --pDebug:log(self.name .. " set self.states.Inactive")
+    --pDebug:log(self.name .. " set self.States.Inactive")
     self.kbInput = nil
     self:closeKeyboard()
 end

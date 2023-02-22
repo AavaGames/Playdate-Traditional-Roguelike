@@ -14,7 +14,7 @@ function Player:init(menuManager)
     self.description = "grew up as an urchin in the great city. They had to steal to survive."
 
     self.moveDir = { x = 0, y = 0 }
-    self.state = self.states.Inactive
+    self.state = self.States.Inactive
 
     self.visionRange = -1 -- Infinity
     self.scentRange = 6 -- range at which normal smell will detect
@@ -50,7 +50,7 @@ function Player:init(menuManager)
 end
 
 function Player:update()
-    if (self.state == self.states.Active) then
+    if (self.state == self.States.Active) then
         self.currentTarget = nil  -- show only when hitting? or only stop after not seen or mon death
 
         self.moveDir = Vector2.zero()
@@ -94,7 +94,7 @@ end
 function Player:spawn(theLevel, startPosition)
     self.position = Vector2.zero()
     self.updated = false
-    self.state = self.states.Active
+    self.state = self.States.Active
 
     self.level = theLevel
     self.tile = nil
@@ -106,7 +106,7 @@ function Player:spawn(theLevel, startPosition)
 end
 
 function Player:despawn()
-    self.state = self.states.Inactive
+    self.state = self.States.Inactive
 end
 
 function Player:updateEquipmentMenuImage()
