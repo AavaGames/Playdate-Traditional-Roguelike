@@ -11,9 +11,3 @@ function Wall:init(theLevel, startPosition)
 
     self.moveCost = 1
 end
-
-function Wall:interact(actor)
-    if (actor:isa(Player)) then 
-        gameManager.logManager:addToRound(self.description)
-    end
-end

@@ -58,13 +58,29 @@ function Monster:init(theLevel, startPosition)
 
     -- Components
 
-    self.health = self:addComponent(Health())
-end
-
-function Monster:round()
+    self.health:setMaxHP(10)
 
 end
 
 function Monster:interact()
+    if (self.currentTarget:isa(Player)) then
+        --self:attack()
+        gameManager.logManager:addToRound("The " .. self.name .. " bumps into " .. self.currentTarget.name .. ".")
+        self.currentTarget.health:damage(1)
 
+    -- none possible?
+    elseif (self.currentTarget:isa(Monster)) then
+    elseif (self.currentTarget:isa(Feature)) then
+    elseif (self.currentTarget:isa(NPC)) then
+    end
+
+end
+
+function Monster:attack()
+    Monster.super.attack(self)
+
+end
+
+function Monster:death()
+    gameManager.logManager:addToRound(self.name .. " is tired of %s shit.")
 end

@@ -7,21 +7,16 @@ function Cat:init(theLevel, startPosition)
     self.description = "A cute white cat tipped in black. It purrs loudly."
 end
 
-function Cat:round()
-    Cat.super.round(self)
+function Cat:doAction()
     local chanceToMove = 0.20
     local move = math.random() <= chanceToMove
     if (move) then
         local dir = self.level.distanceMapManager:getStep("toPlayerPathMap", self.position)
         if (dir == Vector2.zero()) then
-            self:move(Vector2.randomCardinal())
+            dir = Vector2.randomCardinal()
         end
         self:move(dir)
+        return
     end
-end
-
-function Cat:interact(actor)
-    if (actor:isa(Player)) then
-        gameManager.logManager:addToRound(self.description)
-    end
+    self:wait()
 end

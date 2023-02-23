@@ -16,7 +16,7 @@ function Level:init(theLevelManager, thePlayer)
     self.grid = nil
     self.gridDimensions = Vector2.zero()
 
-    self.actors = {}
+    self.monsters = {}
     self.effects = {}
 
     self.visionTiles = nil
@@ -25,6 +25,8 @@ function Level:init(theLevelManager, thePlayer)
 
     self.debugDrawDistMap = false
     self.debugDistMap = "toPlayerPathMap"
+
+    self.tickCounter = 0
 
     self:create()
 end
@@ -63,7 +65,7 @@ function Level:finishInit()
     end)
 
     if (not self.FullyLit) then
-        self:updateView()
+        self:updateLighting()
     end
 end
 
@@ -75,33 +77,40 @@ function Level:update() end
 function Level:lateUpdate() end
 
 -- Called by player on action taken
-function Level:round(playerMoved)
-    frameProfiler:startTimer("Logic: Actor Update")
+function Level:round()
+    frameProfiler:startTimer("Logic: Monster Update")
 
     self.distanceMapManager:reset()
 
-    local actorMax = #self.actors
-    for i = 1, actorMax, 1 do
-        self.actors[i]:round(); -- rename to monsters? cause player aint here
+    local ticks = self.player.ticksTillNextAction
+    self.tickCounter += ticks
+
+    print("round tick = ", ticks)
+    --if (self.tickCounter % TurnTicks * 10) then end -- 10 turns: regenerate player, poison
+    --if (self.tickCounter % TurnTicks * 100) then end -- 100 turns: regenerate monsters
+
+    local monstersMax = #self.monsters
+    for i = 1, monstersMax, 1 do
+        self.monsters[i]:round(ticks);
     end
 
     self.camera:update() -- must update last to follow player, if anything moved them
 
-    frameProfiler:endTimer("Logic: Actor Update")
+    frameProfiler:endTimer("Logic: Monster Update")
 
-    if (playerMoved == true) then
-        self:updateView() -- rework for multi lights
-    end
+    self:updateLighting() -- TODO rework for multi lights
 
     screenManager:redrawLevel()
 end
 
 --region Drawing & Lighting
 
-function Level:updateView()
+function Level:updateLighting()
     frameProfiler:startTimer("Logic: Vision")
 
     frameProfiler:startTimer("Vision: Reset")
+
+    -- Only update if the light has moved
 
     -- optimize further by just resetting the tiles not seen anymore
     if (self.visionTiles ~= nil) then
@@ -299,10 +308,10 @@ function Level:collisionCheck(position)
     end
 end
 
-function Level:spawnAt(position, actor)
+function Level:spawnAt(position, monster)
 
-    table.insert(self.actors, actor)
-    actor:moveTo(position)
+    table.insert(self.monsters, monster)
+    monster:moveTo(position)
 
     --[[
         collision check spawn area
@@ -311,14 +320,14 @@ function Level:spawnAt(position, actor)
     ]]
 
     -- if (self:collisionCheck(position)) then
-    --     table.insert(self.actors, actor)
-    --     -- give actor the index so it can then remove itself?
-    --     -- keep track of an index and place actors there to make sure no interferance
+    --     table.insert(self.monsters, monster)
+    --     -- give monster the index so it can then remove itself?
+    --     -- keep track of an index and place monster there to make sure no interferance
     -- else
     --     return true
     -- end
 end
 
-function Level:despawn(actor)
-    --table.remove(self.actors, actor.index)
+function Level:despawn(monster)
+    --table.remove(self.monsters, monster.index)
 end

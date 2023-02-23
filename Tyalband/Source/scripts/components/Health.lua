@@ -44,3 +44,8 @@ function Health:setDeathThreshold(percent)
         self:damage(0)
     end
 end
+
+function Health:setMaxHP(value)
+    self.maxHP = value
+    self.currentHP = self.maxHP
+end

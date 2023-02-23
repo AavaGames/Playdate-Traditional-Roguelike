@@ -50,6 +50,7 @@ import "/scripts/Entity"
 
 import "/scripts/actors/Actor"
 import "/scripts/actors/Monster"
+import "/scripts/actors/NPC"
 import "/scripts/features/Feature"
 
 -- Subclasses

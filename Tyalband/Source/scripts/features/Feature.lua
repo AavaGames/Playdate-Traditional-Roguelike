@@ -11,10 +11,10 @@ function Feature:init(theLevel, startPosition)
     self.moveCost = 1
 end
 
-function Feature:interact(actor)
-    -- abstract func for children
-end
-
 function Feature:getGlyph()
     return self.glyph
+end
+
+function Feature:logDescription()
+    gameManager.logManager:addToRound(self.description)
 end

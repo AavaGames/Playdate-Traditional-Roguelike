@@ -1,5 +1,7 @@
 class("Actor").extends(Entity)
 
+local TurnTicks <const> = 100
+
 local ActorStates <const> = enum.new({
     "Active",
     "self.States.Inactive"
@@ -21,12 +23,28 @@ function Actor:init(theLevel, startPosition)
     self.visionRange = 4
     self.renderWhenSeen = false
 
-    self.ticksTillNextAction = 0
-    self.movespeed = 100
+    -- tick cost of a turn
+    self.TurnTicks = TurnTicks
+    -- all actions cost a multiple (0.5) of this value
+    self.baseActionTicks = self.TurnTicks
+
+    self.ticksTillNextAction = self.baseActionTicks
+
+    -- the multiple cost of moving (0.5 slow, 1.0 normal, 2.0 haste)
+    self.moveCost = 1.0
 
     -- Status Effects
     self.timedEffects = {}
     self.permaEffects = {}
+
+    self.currentTarget = nil
+
+    -- Components
+
+    self.health = self:addComponent(Health())
+    self.health.onDeath = function() self:death() end
+
+    --
 
     if (theLevel ~= nil and startPosition ~= nil) then
         self.level:spawnAt(startPosition, self) -- TODO: can spawn on top of another actor overwriting their pos (SpawnAt)
@@ -34,14 +52,21 @@ function Actor:init(theLevel, startPosition)
     end
 end
 
--- Abstract funcs
-function Actor:round() end
-function Actor:interact() end
-
-function Actor:move(moveAmount)
-    local newPosition = self.position + Vector2.new(moveAmount.x, moveAmount.y)
-    return self:moveTo(newPosition)
+function Actor:round(ticks)
+    self.ticksTillNextAction -= ticks -- decrease by player action ticks
+    while self.ticksTillNextAction <= 0 do
+        self:doAction() -- take actions until needing to wait again
+    end
 end
+
+--#region Abstract functions
+
+function Actor:doAction() end -- Actor finds and does an action. Actions must increment self.ticksTillNextAction
+function Actor:interact() end -- interact with currentTarget, actor or feature
+
+function Actor:death() end
+
+--#endregion
 
 -- Takes a Vector2 and attemps to move to that tile on the level
 function Actor:moveTo(position)
@@ -52,7 +77,8 @@ function Actor:moveTo(position)
             self:updateTile(collision[2]) -- move to free tile
             return true
         elseif collision[2] ~= nil then
-            collision[2]:interact(self) -- interact with actor or feature
+            self.currentTarget = collision[2]
+            self:interact() -- interact with actor or feature
         end
     end
     return false
@@ -70,3 +96,33 @@ end
 function Actor:getGlyph()
     return self.glyph
 end
+
+function Actor:getTicks(cost)
+    --if (cost == 1) then return self.baseActionTicks end
+    return math.round(self.baseActionTicks * cost)
+end
+
+--#region General Actions
+
+-- Movement action
+function Actor:move(moveAmount)
+    local newPosition = self.position + Vector2.new(moveAmount.x, moveAmount.y)
+    local moved = self:moveTo(newPosition)
+    if (moved) then
+        self.ticksTillNextAction += self:getTicks(self.moveCost)
+    else
+        -- couldn't move, wait instead?
+    end
+    return moved
+end
+
+function Actor:wait()
+    self.ticksTillNextAction += self.TurnTicks --self.addTicks(self.moveCost)
+end
+
+function Actor:attack()
+    -- attack currentTarget
+    self.ticksTillNextAction += self.TurnTicks
+end
+
+--#endregion

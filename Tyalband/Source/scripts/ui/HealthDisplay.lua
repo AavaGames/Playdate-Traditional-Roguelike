@@ -53,7 +53,7 @@ function HealthDisplay:draw()
         end
 
         -- draw monster HP on the right
-        if (self.player.currentTarget ~= nil) then
+        if (self.player.currentTarget ~= nil and self.player.currentTarget:isa(Monster)) then
             local target = self.player.currentTarget
             local targetHealth = target:getComponent(Health)
             if (targetHealth ~= nil) then
