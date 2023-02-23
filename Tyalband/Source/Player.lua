@@ -45,6 +45,8 @@ function Player:init(menuManager)
     for i = 1, 12, 1 do
         Equipable():pickup(self)
     end
+
+    --self.moveSpeed = 1
 end
 
 function Player:update()
@@ -66,7 +68,7 @@ function Player:update()
         end
         if (self.moveDir ~= Vector2.zero()) then
             if self:move(self.moveDir) then
-                self:actionTaken(self:getTicks(self.moveCost))
+                self:actionTaken(self:getTicks(self.moveSpeed))
             end
         end
 

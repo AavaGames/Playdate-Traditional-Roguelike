@@ -23,15 +23,18 @@ function Actor:init(theLevel, startPosition)
     self.visionRange = 4
     self.renderWhenSeen = false
 
-    -- tick cost of a turn
+    -- tick speed of a turn
     self.TurnTicks = TurnTicks
-    -- all actions cost a multiple (0.5) of this value
+    -- all action are cost multiple (0.5) of this value
     self.baseActionTicks = self.TurnTicks
 
-    self.ticksTillNextAction = self.baseActionTicks
+    self.ticksTillNextAction = self.TurnTicks
 
     -- the multiple cost of moving (0.5 slow, 1.0 normal, 2.0 haste)
-    self.moveCost = 1.0
+    self.moveSpeed = 1.0
+    -- the speed at which actors attack (0.5 very fast, 1.0 normal, 2 slow)
+    -- brogue based attack speed not angband
+    self.attackSpeed = 1.0
 
     -- Status Effects
     self.timedEffects = {}
@@ -88,7 +91,7 @@ function Actor:updateTile(tile)
     if self.tile ~= nil then
         self.tile:exit(self)
     end
-    self.tile = tile 
+    self.tile = tile
     self.position = Vector2.copy(self.tile.position)
     self.tile:enter(self)
 end
@@ -97,9 +100,9 @@ function Actor:getGlyph()
     return self.glyph
 end
 
-function Actor:getTicks(cost)
-    --if (cost == 1) then return self.baseActionTicks end
-    return math.round(self.baseActionTicks * cost)
+function Actor:getTicks(speed)
+    --if (speed == 1) then return self.baseActionTicks end
+    return math.round(self.baseActionTicks * speed)
 end
 
 --#region General Actions
@@ -109,7 +112,7 @@ function Actor:move(moveAmount)
     local newPosition = self.position + Vector2.new(moveAmount.x, moveAmount.y)
     local moved = self:moveTo(newPosition)
     if (moved) then
-        self.ticksTillNextAction += self:getTicks(self.moveCost)
+        self.ticksTillNextAction += self:getTicks(self.moveSpeed)
     else
         -- couldn't move, wait instead?
     end
@@ -117,12 +120,12 @@ function Actor:move(moveAmount)
 end
 
 function Actor:wait()
-    self.ticksTillNextAction += self.TurnTicks --self.addTicks(self.moveCost)
+    self.ticksTillNextAction += self:getTicks(self.moveSpeed)
 end
 
 function Actor:attack()
     -- attack currentTarget
-    self.ticksTillNextAction += self.TurnTicks
+    self.ticksTillNextAction += self:getTicks(self.attackSpeed)
 end
 
 --#endregion

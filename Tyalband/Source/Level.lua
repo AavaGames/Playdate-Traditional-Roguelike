@@ -1,4 +1,5 @@
 local gfx <const> = playdate.graphics
+local TurnTicks <const> = 100
 
 class("Level").extends()
 
@@ -86,6 +87,7 @@ function Level:round()
     self.tickCounter += ticks
 
     print("round tick = ", ticks)
+
     --if (self.tickCounter % TurnTicks * 10) then end -- 10 turns: regenerate player, poison
     --if (self.tickCounter % TurnTicks * 100) then end -- 100 turns: regenerate monsters
 

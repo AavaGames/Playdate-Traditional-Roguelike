@@ -5,7 +5,7 @@ function Animal:init(theLevel, startPosition)
     self.name = "Sabi"
     self.description = "A cute white cat tipped in black. It purrs loudly."
 
-    self.moveCost = 0.5 -- double speed
+    self.moveSpeed = 0.5 -- double speed
 end
 
 function Animal:doAction()

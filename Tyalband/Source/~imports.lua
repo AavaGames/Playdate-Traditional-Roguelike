@@ -97,6 +97,9 @@ import "/scripts/features/Crystal"
 import "/scripts/actors/Animal"
 import "/scripts/actors/Cat"
 
+import "/scripts/actors/Zombie"
+
+
 import "Player"
 import "Camera"
 
