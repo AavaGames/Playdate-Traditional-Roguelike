@@ -24,6 +24,8 @@ function HealthDisplay:init(player)
 
     self.font = screenManager.levelFont_8px
     self.drawHeight = math.floor(screenManager.screenDimensions.y * 0.71) -- size of combat viewport
+
+    self:redraw()
 end
 
 
@@ -36,6 +38,10 @@ function HealthDisplay:update() end
 
 function HealthDisplay:draw()
     if (self.screenManager.combatView) then
+        if (self.screenManager:redrawingScreen()) then
+            self:redraw()
+        end
+
         gfx.setColor(self.screenManager.bgColor)
         gfx.setImageDrawMode(gfx.kDrawModeNXOR)
         gfx.setFont(self.font.font)
@@ -59,8 +65,12 @@ function HealthDisplay:draw()
             self.hadTarget = false
         end
     else
-        self.prevPlayerHP = nil
+        self:redraw()
     end
+end
+
+function HealthDisplay:redraw()
+    self.prevPlayerHP = nil
 end
 
 function HealthDisplay:drawHealthBar(percent, leftSide)

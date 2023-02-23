@@ -21,6 +21,7 @@ function Actor:init(theLevel, startPosition)
     self.visionRange = 4
     self.renderWhenSeen = false
 
+    self.ticksTillNextAction = 0
     self.movespeed = 100
 
     -- Status Effects

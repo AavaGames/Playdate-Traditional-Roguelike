@@ -74,6 +74,7 @@ end
 function Level:update() end
 function Level:lateUpdate() end
 
+-- Called by player on action taken
 function Level:round(playerMoved)
     frameProfiler:startTimer("Logic: Actor Update")
 
@@ -83,12 +84,13 @@ function Level:round(playerMoved)
     for i = 1, actorMax, 1 do
         self.actors[i]:round(); -- rename to monsters? cause player aint here
     end
-    self.camera:update() -- must update last to follow player
+
+    self.camera:update() -- must update last to follow player, if anything moved them
 
     frameProfiler:endTimer("Logic: Actor Update")
 
     if (playerMoved == true) then
-        self:updateView()
+        self:updateView() -- rework for multi lights
     end
 
     screenManager:redrawLevel()

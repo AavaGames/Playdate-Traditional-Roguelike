@@ -104,7 +104,6 @@ function ScreenManager:draw()
     if (self._redrawScreen == true) then
         frameProfiler:startTimer("Draw: Screen Clear")
         gfx.clear()
-        self._redrawScreen = false
         frameProfiler:endTimer("Draw: Screen Clear")
     end
 
@@ -127,6 +126,7 @@ function ScreenManager:draw()
         playdate.drawFPS(0,0)
     end
 
+    self._redrawScreen = false
     frameProfiler:endFrame(drew)
 end
 
@@ -193,6 +193,10 @@ function ScreenManager:redrawScreen()
     self:redrawLevel()
     self:redrawLog()
     self:redrawMenu()
+end
+
+function ScreenManager:redrawingScreen()
+    return self._redrawScreen
 end
 
 function ScreenManager:redrawLevel()

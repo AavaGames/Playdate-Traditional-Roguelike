@@ -81,6 +81,10 @@ function Player:update()
     end
 end
 
+function Player:actionTaken(tickAmount)
+    self.level:round(tickAmount)
+end
+
 function Player:round() end
 
 function Player:interact(actor) -- they interact with player
