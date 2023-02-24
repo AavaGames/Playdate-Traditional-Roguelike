@@ -28,7 +28,7 @@ function Actor:init(theLevel, startPosition)
     -- all action are cost multiple (0.5) of this value
     self.baseActionTicks = self.TurnTicks
 
-    self.ticksTillNextAction = self.TurnTicks
+    self.ticksTillAction = self.TurnTicks
 
     -- the multiple cost of moving (0.5 slow, 1.0 normal, 2.0 haste)
     self.moveSpeed = 1.0
@@ -50,21 +50,21 @@ function Actor:init(theLevel, startPosition)
     --
 
     if (theLevel ~= nil and startPosition ~= nil) then
-        self.level:spawnAt(startPosition, self) -- TODO: can spawn on top of another actor overwriting their pos (SpawnAt)
+        self.level:spawnAt(startPosition, self)
         self.state = self.States.Active
     end
 end
 
 function Actor:round(ticks)
-    self.ticksTillNextAction -= ticks -- decrease by player action ticks
-    while self.ticksTillNextAction <= 0 do
+    self.ticksTillAction -= ticks -- decrease by player action ticks
+    while self.ticksTillAction <= 0 do
         self:doAction() -- take actions until needing to wait again
     end
 end
 
 --#region Abstract functions
 
-function Actor:doAction() end -- Actor finds and does an action. Actions must increment self.ticksTillNextAction
+function Actor:doAction() end -- Actor finds and does an action. Actions must increment self.ticksTillAction
 function Actor:interact() end -- interact with currentTarget, actor or feature
 
 function Actor:death() end
@@ -112,7 +112,7 @@ function Actor:move(moveAmount)
     local newPosition = self.position + Vector2.new(moveAmount.x, moveAmount.y)
     local moved = self:moveTo(newPosition)
     if (moved) then
-        self.ticksTillNextAction += self:getTicks(self.moveSpeed)
+        self.ticksTillAction += self:getTicks(self.moveSpeed)
     else
         -- couldn't move, wait instead?
     end
@@ -120,12 +120,12 @@ function Actor:move(moveAmount)
 end
 
 function Actor:wait()
-    self.ticksTillNextAction += self:getTicks(self.moveSpeed)
+    self.ticksTillAction += self:getTicks(self.moveSpeed)
 end
 
 function Actor:attack()
     -- attack currentTarget
-    self.ticksTillNextAction += self:getTicks(self.attackSpeed)
+    self.ticksTillAction += self:getTicks(self.attackSpeed)
 end
 
 --#endregion

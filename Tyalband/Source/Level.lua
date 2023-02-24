@@ -83,7 +83,7 @@ function Level:round()
 
     self.distanceMapManager:reset()
 
-    local ticks = self.player.ticksTillNextAction
+    local ticks = self.player.ticksTillAction
     self.tickCounter += ticks
 
     print("round tick = ", ticks)
@@ -274,6 +274,78 @@ end
 
 --#endregion
 
+function Level:spawnAt(position, monster)
+    -- floodfill until a free position is found
+
+    local validPos = self:floodFindValidPosition(position)
+    if (validPos) then
+        table.insert(self.monsters, monster)
+        monster:moveTo(validPos)
+        -- monsters flag for death to stop being updated and are they ever removed aside form level change?
+    else
+        pDebug.error("Could not find valid floodfilled position.")
+    end
+
+end
+
+function Level:despawn(monster)
+    --table.remove(self.monsters, monster.index)
+end
+
+--#region Utility
+
+-- @param position Vector2
+function Level:floodFindValidPosition(position)
+    local validPos = position
+
+    if (self:collisionCheck(validPos)[1] == true) then -- collision
+
+        local toCheck = {}
+        table.insert(toCheck, Vector2.unpack(validPos))
+
+        print(#toCheck)
+
+        while #toCheck >= 1 do
+
+            local v = toCheck[1]
+            local startPos = Vector2.new(v[1], v[2])
+
+            for i = 1, 4, 1 do
+                local pos = nil
+                if (i == 1) then
+                    pos = startPos + Vector2.up()
+                elseif (i == 2) then
+                    pos = startPos + Vector2.right()
+                elseif (i == 3) then
+                    pos = startPos + Vector2.down()
+                elseif (i == 4) then
+                    pos = startPos + Vector2.left()
+                end
+
+                local collision = self:collisionCheck(pos)
+                if (collision[1] == false) then
+                    print("found spot")
+                    validPos = pos
+                    toCheck = {}
+                    break
+                elseif (collision[1] == true and collision[2] ~= nil) then
+                    print("adding new neighbor")
+                    table.insert(toCheck, Vector2.unpack(pos))
+                end
+            end
+
+            table.remove(toCheck, 1)
+        end
+    end
+
+    return validPos
+end
+
+-- @param position Vector2
+function Level:randomValidMoveDirection(position)
+
+end
+
 function Level:inBounds(x, y)
     return x >= 1 and x <= self.gridDimensions.x and y >= 1 and y <= self.gridDimensions.y
 end
@@ -310,26 +382,4 @@ function Level:collisionCheck(position)
     end
 end
 
-function Level:spawnAt(position, monster)
-
-    table.insert(self.monsters, monster)
-    monster:moveTo(position)
-
-    --[[
-        collision check spawn area
-        What to do if something blocks the area? spawn in a sweeping circle around it.
-            same code at item placement
-    ]]
-
-    -- if (self:collisionCheck(position)) then
-    --     table.insert(self.monsters, monster)
-    --     -- give monster the index so it can then remove itself?
-    --     -- keep track of an index and place monster there to make sure no interferance
-    -- else
-    --     return true
-    -- end
-end
-
-function Level:despawn(monster)
-    --table.remove(self.monsters, monster.index)
-end
+--#endregion

@@ -56,7 +56,7 @@ function Player:update()
 
         self.moveDir = Vector2.zero()
         if inputManager:justPressed(playdate.kButtonB) then
-            self:actionTaken(self.TurnTicks) -- wait 1 turn, change to movespeed?
+            self:actionEnd(self.TurnTicks) -- wait 1 turn, change to movespeed?
         elseif inputManager:justReleased(playdate.kButtonRight) then
             self.moveDir.x += 1
         elseif inputManager:justReleased(playdate.kButtonLeft) then
@@ -68,7 +68,7 @@ function Player:update()
         end
         if (self.moveDir ~= Vector2.zero()) then
             if self:move(self.moveDir) then
-                self:actionTaken(self:getTicks(self.moveSpeed))
+                self:actionEnd(self:getTicks(self.moveSpeed))
             end
         end
 
@@ -77,8 +77,8 @@ end
 
 function Player:round(ticks) end -- remove super round
 
-function Player:actionTaken(ticks)
-    self.ticksTillNextAction = ticks -- used to give monsters energy
+function Player:actionEnd(ticks)
+    self.ticksTillAction = ticks -- used to give monsters energy
 
     gameManager.gameStats.actionCounter += 1
     self.level:round()
@@ -92,7 +92,7 @@ function Player:interact()
 
         self.currentTarget.health:damage(1)
 
-        self:actionTaken(self.TurnTicks)
+        self:actionEnd(self.TurnTicks)
 
     elseif (self.currentTarget:isa(Feature)) then
         self.currentTarget:logDescription()

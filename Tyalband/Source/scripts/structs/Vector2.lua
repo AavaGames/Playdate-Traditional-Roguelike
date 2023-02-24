@@ -271,6 +271,10 @@ function Vector2.randomCardinal()
 	end
 end
 
+function Vector2.unpack(v)
+	return { v.x, v.y }
+end
+
 -- "Static"
 
 function Vector2.zero()

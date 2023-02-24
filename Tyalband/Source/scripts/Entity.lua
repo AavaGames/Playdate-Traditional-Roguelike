@@ -13,6 +13,8 @@ function Entity:init()
     self.name = "Entity"
     self.description = "An entity which exists in the level."
 
+    --self.position = Vector2.new(0, 0)
+
     self.components = {} -- make it a set?
 end
 
