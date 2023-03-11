@@ -303,8 +303,6 @@ function Level:floodFindValidPosition(position)
         local toCheck = {}
         table.insert(toCheck, Vector2.unpack(validPos))
 
-        print(#toCheck)
-
         while #toCheck >= 1 do
 
             local v = toCheck[1]
@@ -324,12 +322,12 @@ function Level:floodFindValidPosition(position)
 
                 local collision = self:collisionCheck(pos)
                 if (collision[1] == false) then
-                    print("found spot")
+                    --print("found spot")
                     validPos = pos
                     toCheck = {}
                     break
                 elseif (collision[1] == true and collision[2] ~= nil) then
-                    print("adding new neighbor")
+                    --print("adding new neighbor")
                     table.insert(toCheck, Vector2.unpack(pos))
                 end
             end

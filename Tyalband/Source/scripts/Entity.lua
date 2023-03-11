@@ -22,7 +22,7 @@ end
 function Entity:addComponent(component)
     isObjectError(component, Component)
     if (self.components[component.className] ~= nil) then
-        pDebug.log("Entity: " .. self.name .. " overwritting " .. component.className .. " component")
+        pDebug:log("Entity: " .. self.name .. " overwritting " .. component.className .. " component")
     end
 
     if (component.attach ~= nil) then

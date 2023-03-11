@@ -61,7 +61,7 @@ function DebugMenu:init(menuManager)
 		end),
 
 		-- MenuItem("Nest Another Debug Menu", nil, true, false, false, function ()
-		-- 	pDebug.log("i didnt re add this")
+		-- 	pDebug:log("i didnt re add this")
 		-- end),
 
 		MenuItem("Close All Menus", "Z", true, true, true, function () end),
