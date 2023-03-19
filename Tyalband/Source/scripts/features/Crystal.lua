@@ -39,7 +39,16 @@ function Crystal:findWallGlyph()
         self.glyph = "│"
     elseif (neighbors[2] and neighbors[8]) then
         self.glyph = "─"
+
+    elseif (neighbors[4] and neighbors[8]) then -- left down
+        self.glyph = "┐"
+    elseif (neighbors[4] and neighbors[2]) then -- left up
+        self.glyph = "┘"
+    elseif (neighbors[6] and neighbors[8]) then -- right down
+        self.glyph = "┌"
+    elseif (neighbors[6] and neighbors[2]) then -- right up
+        self.glyph = "└"
     else
-        --self.glyph = ""
+        self.glyph = "#"
     end
 end
