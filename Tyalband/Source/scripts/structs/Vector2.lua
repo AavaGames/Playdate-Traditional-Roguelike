@@ -261,6 +261,9 @@ function Vector2.distance_taxi(vector1, vector2)
 	return math.abs(vector2.x - vector1.x) + math.abs(vector2.y - vector1.y)
 end
 
+-- Default function of distance
+Vector2.distance = Vector2.distance_taxi
+
 -- Returns a random Vector2 for a cardinal (up, right, down, left)
 function Vector2.randomCardinal()
 	local d = math.random(1, 4)

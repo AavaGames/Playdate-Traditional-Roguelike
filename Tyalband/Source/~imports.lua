@@ -66,6 +66,8 @@ import "/scripts/levels/Town"
 import "/scripts/levels/Dungeon"
 import "/scripts/levels/TestRoom"
 
+import "/scripts/levels/Prototype"
+
 -- Components
 
 import "scripts/components/Health"

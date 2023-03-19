@@ -7,7 +7,7 @@ function LevelManager:init(player)
     self.player = player
     self.currentLevel = nil
 
-    self:loadLevel(Dungeon)
+    self:loadLevel(Prototype)
 end
 
 function LevelManager:update()

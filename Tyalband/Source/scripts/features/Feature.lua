@@ -8,6 +8,9 @@ function Feature:init(theLevel, startPosition)
     self.collision = true
     self.renderWhenSeen = true
 
+    self.level = theLevel
+    self.position = startPosition -- Vector2
+
     self.moveCost = 1
 end
 

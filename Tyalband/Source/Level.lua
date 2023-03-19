@@ -63,6 +63,10 @@ function Level:finishInit()
         else
             tile.currentVisibilityState = tile.visibilityState.unknown
         end
+
+        if (tile.feature.findWallGlyph ~= nil) then
+            tile.feature:findWallGlyph()
+        end
     end)
 
     if (not self.FullyLit) then
@@ -120,24 +124,22 @@ function Level:updateLighting()
         for i = 1, max, 1 do
             local x, y = self.visionTiles[i][1], self.visionTiles[i][2]
             -- Reset previous lit tiles
-            if (self:inBounds(x, y)) then
-                local tile = self.grid[x][y]
-                if (tile ~= nil) then
-                    if (tile.glow == true) then
-                        tile:resetLightLevel(2)
-                    else
-                        tile:resetLightLevel()
-                    end
+            local tile = self:getTile(x, y)
+            if (tile ~= nil) then
+                if (tile.glow == true) then
+                    tile:resetLightLevel(2)
+                else
+                    tile:resetLightLevel()
+                end
 
-                    if (self.FullyLit) then
-                        tile:addLightLevel(2, "Level")
-                    end
+                if (self.FullyLit) then
+                    tile:addLightLevel(2, "Level")
+                end
 
-                    if (tile.seen == true) then
-                        tile.currentVisibilityState = tile.visibilityState.seen
-                    else
-                        tile.currentVisibilityState = tile.visibilityState.unknown
-                    end
+                if (tile.seen == true) then
+                    tile.currentVisibilityState = tile.visibilityState.seen
+                else
+                    tile.currentVisibilityState = tile.visibilityState.unknown
                 end
             end
         end
@@ -160,18 +162,16 @@ function Level:updateLighting()
             local x, y, distance = self.visionTiles[i][1], self.visionTiles[i][2], self.visionTiles[i][3]
 
             -- SetVisible
-            if (self:inBounds(x, y)) then
-                local tile = self.grid[x][y]
-                if (tile ~= nil) then
-                    if (distance <= emitter.brightRange) then
-                        tile.currentVisibilityState = tile.visibilityState.lit
-                        tile:addLightLevel(2, emitter)
-                        tile.seen = true
-                    elseif (distance <= emitter.dimRange) then
-                        tile.currentVisibilityState = tile.visibilityState.dim
-                        tile:addLightLevel(1, emitter)
-                        tile.seen = true
-                    end
+            local tile = self:getTile(x, y)
+            if (tile ~= nil) then
+                if (distance <= emitter.brightRange) then
+                    tile.currentVisibilityState = tile.visibilityState.lit
+                    tile:addLightLevel(2, emitter)
+                    tile.seen = true
+                elseif (distance <= emitter.dimRange) then
+                    tile.currentVisibilityState = tile.visibilityState.dim
+                    tile:addLightLevel(1, emitter)
+                    tile.seen = true
                 end
             end
 
@@ -221,23 +221,20 @@ function Level:draw()
             }
 
             local glyph = ""
-            local tile = nil
-            if (self:inBounds(x, y)) then
-                tile = self.grid[x][y]
-                if (tile ~= nil and tile.currentVisibilityState ~= tile.visibilityState.unknown) then
-                    if (tile.lightLevel > 0) then
-                        if tile.actor ~= nil then
-                            glyph = tile.actor:getGlyph()
-                        elseif #tile.effects > 0 then
-                            -- TODO add effects & drawing
-                        elseif tile.item ~= nil then
-                            glyph = tile.item:getGlyph()
-                        elseif tile.feature ~= nil then
-                            glyph = tile.feature:getGlyph()
-                        end
+            local tile = self:getTile(x, y)
+            if (tile ~= nil and tile.currentVisibilityState ~= tile.visibilityState.unknown) then
+                if (tile.lightLevel > 0) then
+                    if tile.actor ~= nil then
+                        glyph = tile.actor:getGlyph()
+                    elseif #tile.effects > 0 then
+                        -- TODO add effects & drawing
+                    elseif tile.item ~= nil then
+                        glyph = tile.item:getGlyph()
                     elseif tile.feature ~= nil then
                         glyph = tile.feature:getGlyph()
                     end
+                elseif tile.feature ~= nil then
+                    glyph = tile.feature:getGlyph()
                 end
             end
             screenManager:drawGlyph(glyph, tile, drawCoord, { 
@@ -298,6 +295,8 @@ end
 function Level:floodFindValidPosition(position)
     local validPos = position
 
+    -- TODO optimize
+
     if (self:collisionCheck(validPos)[1] == true) then -- collision
 
         local toCheck = {}
@@ -342,6 +341,17 @@ end
 -- @param position Vector2
 function Level:randomValidMoveDirection(position)
 
+end
+
+-- Returns the tile if it is in bounds and not nil
+function Level:getTile(x, y)
+    if (self:inBounds(x, y)) then
+        local tile = self.grid[x][y]
+        if (tile ~= nil) then
+            return tile
+        end
+    end
+    return nil
 end
 
 function Level:inBounds(x, y)

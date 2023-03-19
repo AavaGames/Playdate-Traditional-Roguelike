@@ -84,3 +84,22 @@ end
 function Monster:death()
     gameManager.logManager:addToRound(self.name .. " is tired of %s shit.")
 end
+
+function Monster:doAction()
+
+    self.aggroRange = 5
+    -- CHANGE TO SENSE RANGE?
+    if (Vector2.distance(self.position, self.level.player.position) <= self.aggroRange) then
+        local dir = self.level.distanceMapManager:getStep("toPlayerPathMap", self.position)
+        if (dir == Vector2.zero()) then
+            dir = Vector2.randomCardinal()
+        end
+        if not self:move(dir) then
+            self:wait()
+        end
+        return
+    end
+
+    self:wait()
+
+end

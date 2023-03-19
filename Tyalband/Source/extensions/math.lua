@@ -83,7 +83,7 @@ function math.findAllDiamondPos(xCenter, yCenter, radius)
     for x = xCenter - radius, xCenter, 1 do
         local yy = radius
         for y = yCenter - radius, yCenter, 1 do
-            local dist = xx + yy
+            local dist = xx + yy -- taxicab distance
             if (dist <= radius) then
                 local xSym = xCenter - (x - xCenter);
                 local ySym = yCenter - (y - yCenter);
