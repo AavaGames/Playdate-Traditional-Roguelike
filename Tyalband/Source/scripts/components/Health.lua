@@ -29,9 +29,13 @@ function Health:below(percent)
     return self.currentHP < self.maxHP * percent
 end
 
+function Health:belowOrEqual(percent)
+    return self.currentHP <= self.maxHP * percent
+end
+
 function Health:damage(amount)
     self.currentHP -= amount
-    if (self:below(self.maxHP * self.deathThreshold)) then
+    if (self:belowOrEqual(self.maxHP * self.deathThreshold)) then
         self.dead = true
         self.onDeath()
     end

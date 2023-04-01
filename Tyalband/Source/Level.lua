@@ -97,7 +97,10 @@ function Level:round()
 
     local monstersMax = #self.monsters
     for i = 1, monstersMax, 1 do
-        self.monsters[i]:round(ticks);
+        local mon = self.monsters[i]
+        if (not mon.dead) then
+            mon:round(ticks);
+        end
     end
 
     self.camera:update() -- must update last to follow player, if anything moved them

@@ -22,7 +22,7 @@ function Player:init(menuManager)
     self.soundRange = 0 -- 
 
     -- update health with class HP
-    self.health:setMaxHP(10)
+    self.health:setMaxHP(50)
     -- insert Stats
     self.race = nil -- Race component
         -- adds innate
@@ -88,7 +88,7 @@ function Player:interact()
 
     if (self.currentTarget:isa(Monster)) then
         --self:attack()
-        gameManager.logManager:addToRound(self.name .. " bumps into " .. self.currentTarget.name .. ".")
+        gameManager.logManager:addToRound(self.name .. " attacks the " .. self.currentTarget.name .. ".")
 
         self.currentTarget.health:damage(1)
 

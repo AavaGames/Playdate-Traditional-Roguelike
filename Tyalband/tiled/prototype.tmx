@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="38" height="28" tilewidth="8" tileheight="8" infinite="0" nextlayerid="4" nextobjectid="27">
+<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="38" height="28" tilewidth="8" tileheight="8" infinite="0" nextlayerid="4" nextobjectid="30">
  <editorsettings>
   <export target="prototype.json" format="json"/>
  </editorsettings>
@@ -77,5 +77,12 @@
    </properties>
   </object>
   <object id="24" name="SpawnPosition" class="Info" gid="6" x="264" y="80" width="8" height="8"/>
+  <object id="27" name="Z" class="Zombie" gid="5" x="24" y="152" width="8" height="8">
+   <properties>
+    <property name="Class" value="Kobold"/>
+   </properties>
+  </object>
+  <object id="28" name="K" class="Kobold" gid="5" x="64" y="168" width="8" height="8"/>
+  <object id="29" name="K" class="Kobold" gid="5" x="32" y="192" width="8" height="8"/>
  </objectgroup>
 </map>

@@ -94,13 +94,16 @@ import "/scripts/features/Ground"
 import "/scripts/features/Wall"
 import "/scripts/features/Crystal"
 
+import "/scripts/features/Stairs"
+
+
 -- Actors
 
 import "/scripts/actors/Animal"
 import "/scripts/actors/Cat"
 
 import "/scripts/actors/Zombie"
-
+import "/scripts/actors/Kobold"
 
 import "Player"
 import "Camera"

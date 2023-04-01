@@ -7,4 +7,7 @@ function Zombie:init(theLevel, startPosition)
     self.description = "A walking corpse."
 
     self.moveSpeed = 2
+    self.visionRange = 3
+
+    self.health:setMaxHP(7)
 end

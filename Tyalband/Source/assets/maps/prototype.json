@@ -207,6 +207,48 @@
                  "width":8,
                  "x":264,
                  "y":80
+                }, 
+                {
+                 "class":"Zombie",
+                 "gid":5,
+                 "height":8,
+                 "id":27,
+                 "name":"Z",
+                 "properties":[
+                        {
+                         "name":"Class",
+                         "type":"string",
+                         "value":"Kobold"
+                        }],
+                 "rotation":0,
+                 "visible":true,
+                 "width":8,
+                 "x":24,
+                 "y":152
+                }, 
+                {
+                 "class":"Kobold",
+                 "gid":5,
+                 "height":8,
+                 "id":28,
+                 "name":"K",
+                 "rotation":0,
+                 "visible":true,
+                 "width":8,
+                 "x":64,
+                 "y":168
+                }, 
+                {
+                 "class":"Kobold",
+                 "gid":5,
+                 "height":8,
+                 "id":29,
+                 "name":"K",
+                 "rotation":0,
+                 "visible":true,
+                 "width":8,
+                 "x":32,
+                 "y":192
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -215,7 +257,7 @@
          "y":0
         }],
  "nextlayerid":4,
- "nextobjectid":27,
+ "nextobjectid":30,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.9.2",

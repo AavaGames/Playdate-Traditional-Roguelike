@@ -31,6 +31,11 @@ end
 function Tile:enter(actor)
     self.actor = actor
     -- TODO check setting and pickup item
+
+    -- for traps and stairs, etc
+    if (self.feature and self.feature.entered) then
+        self.feature:entered()
+    end
 end
 
 function Tile:exit(actor)

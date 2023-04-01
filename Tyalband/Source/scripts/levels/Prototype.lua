@@ -8,7 +8,7 @@ function Prototype:init(theLevelManager, thePlayer)
     Prototype.super.init(self, theLevelManager, thePlayer) -- create call here
     self.name = "Floor 1 (50 feet)"
 
-    self.FullyLit = true
+    self.FullyLit = false
 
     -- self.grid[2][2].glow = true
     -- self.grid[2][3].glow = true
@@ -73,13 +73,12 @@ function Prototype:create()
         if (obj.name == "SpawnPosition") then
             self.playerSpawnPosition = { x = math.round(obj.x / SPRITE_SIZE) + 1, y = math.round(obj.y / SPRITE_SIZE) }
         elseif (obj.name == "UpStairs") then
-            -- place up stairs
-        elseif (obj.name == "UpStairs") then
-
+            local v = Vector2.new(math.round(obj.x / SPRITE_SIZE) + 1, math.round(obj.y / SPRITE_SIZE))
+            self.grid[v.x][v.y].feature = Stairs(self, v, false, Town)
         elseif (obj.name == "Z") then
             Zombie(self, Vector2.new(math.round(obj.x / SPRITE_SIZE) + 1, math.round(obj.y / SPRITE_SIZE)))
         elseif (obj.name == "K") then
-            Animal(self, Vector2.new(math.round(obj.x / SPRITE_SIZE) + 1, math.round(obj.y / SPRITE_SIZE))) -- random moving placeholder
+            Kobold(self, Vector2.new(math.round(obj.x / SPRITE_SIZE) + 1, math.round(obj.y / SPRITE_SIZE))) -- random moving placeholder
 
         end
 
