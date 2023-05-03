@@ -1,6 +1,8 @@
 # Tyalband, Oronmaril
 
-The repo for Tyalband, a roguelike for the Playdate console.
+The INACTIVE repo for Tyalband, a roguelike for the Playdate console. 
+
+Feel free to use any code, shoot me questions on [mastodon](https://peoplemaking.games/@aava)/twitter.
 
 #
 
