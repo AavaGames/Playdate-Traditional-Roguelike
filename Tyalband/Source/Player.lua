@@ -29,6 +29,8 @@ function Player:init(menuManager)
     self.class = nil -- Class component
         -- adds spellbook / mana
 
+    --self.moveSpeed = 1
+
     self.inventory = self:addComponent(Inventory())
     self.equipment = self:addComponent(Equipment())
     self.equipment.onEquipmentChange = function() self:updateEquipmentMenuImage() end
@@ -38,15 +40,15 @@ function Player:init(menuManager)
 
     local lantern = Lantern()
     lantern:equip(self)
+
+    -- Testing Items
     --self:addComponent(LightSource(2, 4)):addToEmitter()
     for i = 1, 12, 1 do
         Item():pickup(self)
     end
-    for i = 1, 12, 1 do
+    for i = 1, 1, 1 do
         Equipable():pickup(self)
     end
-
-    --self.moveSpeed = 1
 end
 
 function Player:update()
@@ -88,9 +90,12 @@ function Player:interact()
 
     if (self.currentTarget:isa(Monster)) then
         --self:attack()
-        gameManager.logManager:addToRound(self.name .. " attacks the " .. self.currentTarget.name .. ".")
-
-        self.currentTarget.health:damage(1)
+        if (self.currentTarget.combatant) then
+            gameManager.logManager:addToRound(self.name .. " attacks the " .. self.currentTarget.name .. ".")
+            self.currentTarget.health:damage(1)
+        else
+            gameManager.logManager:addToRound(self.name .. " pets the " .. self.currentTarget.name .. ".")
+        end
 
         self:actionEnd(self.TurnTicks)
 

@@ -2,10 +2,11 @@ class("Animal").extends(Monster)
 
 function Animal:init(theLevel, startPosition)
     Animal.super.init(self, theLevel, startPosition)
-    self.name = "Sabi"
-    self.description = "A cute white cat tipped in black. It purrs loudly."
+    self.name = "Animal"
+    self.description = "A cute fluffy mass. You can't help but want to pet it."
 
     self.moveSpeed = 1
+    self.combatant = false
 end
 
 function Animal:doAction()

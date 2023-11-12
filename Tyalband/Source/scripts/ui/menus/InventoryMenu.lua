@@ -18,6 +18,6 @@ function InventoryMenu:open()
 			--ItemMenu(self.menuManager, value):open()
 		end))
 	end
-	self.menu = Menu(self.menuManager, "Inventory", items)
+	self.menu = Menu(self.menuManager, "Inventory (Non-functional)", items)
     self.menuManager:addMenu(self.menu)
 end

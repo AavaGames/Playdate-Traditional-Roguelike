@@ -5,6 +5,8 @@ function Cat:init(theLevel, startPosition)
     self.name = "Cat"
     self.glyph = "c"
     self.description = "A cute white cat tipped in black. It purrs loudly."
+    
+    self.combatant = false
 end
 
 function Cat:doAction()

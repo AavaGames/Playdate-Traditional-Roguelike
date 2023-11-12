@@ -57,6 +57,7 @@ function Monster:init(theLevel, startPosition)
 
     self.dropType = nil
     self.allies = nil
+    self.combatant = true
 
     -- Components
 
@@ -67,8 +68,12 @@ end
 function Monster:interact()
     if (self.currentTarget:isa(Player)) then
         --self:attack()
-        gameManager.logManager:addToRound("The " .. self.name .. " attacks " .. self.currentTarget.name .. ".")
-        self.currentTarget.health:damage(1)
+        if (self.combatant) then
+            gameManager.logManager:addToRound("The " .. self.name .. " attacks " .. self.currentTarget.name .. ".")
+            self.currentTarget.health:damage(1)
+        else
+            gameManager.logManager:addToRound("The " .. self.name .. " bumps into " .. self.currentTarget.name .. ".")
+        end
 
     -- none possible?
     elseif (self.currentTarget:isa(Monster)) then
