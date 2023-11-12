@@ -50,6 +50,7 @@ import "/scripts/Entity"
 
 import "/scripts/actors/Actor"
 import "/scripts/actors/Monster"
+import "/scripts/actors/NPC"
 import "/scripts/features/Feature"
 
 -- Subclasses
@@ -64,6 +65,8 @@ import "/scripts/ui/menus/InventoryMenu"
 import "/scripts/levels/Town"
 import "/scripts/levels/Dungeon"
 import "/scripts/levels/TestRoom"
+
+import "/scripts/levels/Prototype"
 
 -- Components
 
@@ -91,10 +94,16 @@ import "/scripts/features/Ground"
 import "/scripts/features/Wall"
 import "/scripts/features/Crystal"
 
+import "/scripts/features/Stairs"
+
+
 -- Actors
 
 import "/scripts/actors/Animal"
 import "/scripts/actors/Cat"
+
+import "/scripts/actors/Zombie"
+import "/scripts/actors/Kobold"
 
 import "Player"
 import "Camera"

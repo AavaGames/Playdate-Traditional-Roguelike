@@ -1,4 +1,5 @@
 local gfx <const> = playdate.graphics
+local TurnTicks <const> = 100
 
 class("Level").extends()
 
@@ -16,7 +17,7 @@ function Level:init(theLevelManager, thePlayer)
     self.grid = nil
     self.gridDimensions = Vector2.zero()
 
-    self.actors = {}
+    self.monsters = {}
     self.effects = {}
 
     self.visionTiles = nil
@@ -25,6 +26,8 @@ function Level:init(theLevelManager, thePlayer)
 
     self.debugDrawDistMap = false
     self.debugDistMap = "toPlayerPathMap"
+
+    self.tickCounter = 0
 
     self:create()
 end
@@ -60,10 +63,14 @@ function Level:finishInit()
         else
             tile.currentVisibilityState = tile.visibilityState.unknown
         end
+
+        if (tile.feature.findWallGlyph ~= nil) then
+            tile.feature:findWallGlyph()
+        end
     end)
 
     if (not self.FullyLit) then
-        self:updateView()
+        self:updateLighting()
     end
 end
 
@@ -74,32 +81,45 @@ end
 function Level:update() end
 function Level:lateUpdate() end
 
-function Level:round(playerMoved)
-    frameProfiler:startTimer("Logic: Actor Update")
+-- Called by player on action taken
+function Level:round()
+    frameProfiler:startTimer("Logic: Monster Update")
 
     self.distanceMapManager:reset()
 
-    local actorMax = #self.actors
-    for i = 1, actorMax, 1 do
-        self.actors[i]:round(); -- rename to monsters? cause player aint here
-    end
-    self.camera:update() -- must update last to follow player
+    local ticks = self.player.ticksTillAction
+    self.tickCounter += ticks
 
-    frameProfiler:endTimer("Logic: Actor Update")
+    print("round tick = ", ticks)
 
-    if (playerMoved == true) then
-        self:updateView()
+    --if (self.tickCounter % TurnTicks * 10) then end -- 10 turns: regenerate player, poison
+    --if (self.tickCounter % TurnTicks * 100) then end -- 100 turns: regenerate monsters
+
+    local monstersMax = #self.monsters
+    for i = 1, monstersMax, 1 do
+        local mon = self.monsters[i]
+        if (not mon.dead) then
+            mon:round(ticks);
+        end
     end
+
+    self.camera:update() -- must update last to follow player, if anything moved them
+
+    frameProfiler:endTimer("Logic: Monster Update")
+
+    self:updateLighting() -- TODO rework for multi lights
 
     screenManager:redrawLevel()
 end
 
 --region Drawing & Lighting
 
-function Level:updateView()
+function Level:updateLighting()
     frameProfiler:startTimer("Logic: Vision")
 
     frameProfiler:startTimer("Vision: Reset")
+
+    -- Only update if the light has moved
 
     -- optimize further by just resetting the tiles not seen anymore
     if (self.visionTiles ~= nil) then
@@ -107,24 +127,22 @@ function Level:updateView()
         for i = 1, max, 1 do
             local x, y = self.visionTiles[i][1], self.visionTiles[i][2]
             -- Reset previous lit tiles
-            if (self:inBounds(x, y)) then
-                local tile = self.grid[x][y]
-                if (tile ~= nil) then
-                    if (tile.glow == true) then
-                        tile:resetLightLevel(2)
-                    else
-                        tile:resetLightLevel()
-                    end
+            local tile = self:getTile(x, y)
+            if (tile ~= nil) then
+                if (tile.glow == true) then
+                    tile:resetLightLevel(2)
+                else
+                    tile:resetLightLevel()
+                end
 
-                    if (self.FullyLit) then
-                        tile:addLightLevel(2, "Level")
-                    end
+                if (self.FullyLit) then
+                    tile:addLightLevel(2, "Level")
+                end
 
-                    if (tile.seen == true) then
-                        tile.currentVisibilityState = tile.visibilityState.seen
-                    else
-                        tile.currentVisibilityState = tile.visibilityState.unknown
-                    end
+                if (tile.seen == true) then
+                    tile.currentVisibilityState = tile.visibilityState.seen
+                else
+                    tile.currentVisibilityState = tile.visibilityState.unknown
                 end
             end
         end
@@ -147,18 +165,16 @@ function Level:updateView()
             local x, y, distance = self.visionTiles[i][1], self.visionTiles[i][2], self.visionTiles[i][3]
 
             -- SetVisible
-            if (self:inBounds(x, y)) then
-                local tile = self.grid[x][y]
-                if (tile ~= nil) then
-                    if (distance <= emitter.brightRange) then
-                        tile.currentVisibilityState = tile.visibilityState.lit
-                        tile:addLightLevel(2, emitter)
-                        tile.seen = true
-                    elseif (distance <= emitter.dimRange) then
-                        tile.currentVisibilityState = tile.visibilityState.dim
-                        tile:addLightLevel(1, emitter)
-                        tile.seen = true
-                    end
+            local tile = self:getTile(x, y)
+            if (tile ~= nil) then
+                if (distance <= emitter.brightRange) then
+                    tile.currentVisibilityState = tile.visibilityState.lit
+                    tile:addLightLevel(2, emitter)
+                    tile.seen = true
+                elseif (distance <= emitter.dimRange) then
+                    tile.currentVisibilityState = tile.visibilityState.dim
+                    tile:addLightLevel(1, emitter)
+                    tile.seen = true
                 end
             end
 
@@ -208,23 +224,20 @@ function Level:draw()
             }
 
             local glyph = ""
-            local tile = nil
-            if (self:inBounds(x, y)) then
-                tile = self.grid[x][y]
-                if (tile ~= nil and tile.currentVisibilityState ~= tile.visibilityState.unknown) then
-                    if (tile.lightLevel > 0) then
-                        if tile.actor ~= nil then
-                            glyph = tile.actor:getGlyph()
-                        elseif #tile.effects > 0 then
-                            -- TODO add effects & drawing
-                        elseif tile.item ~= nil then
-                            glyph = tile.item:getGlyph()
-                        elseif tile.feature ~= nil then
-                            glyph = tile.feature:getGlyph()
-                        end
+            local tile = self:getTile(x, y)
+            if (tile ~= nil and tile.currentVisibilityState ~= tile.visibilityState.unknown) then
+                if (tile.lightLevel > 0) then
+                    if tile.actor ~= nil then
+                        glyph = tile.actor:getGlyph()
+                    elseif #tile.effects > 0 then
+                        -- TODO add effects & drawing
+                    elseif tile.item ~= nil then
+                        glyph = tile.item:getGlyph()
                     elseif tile.feature ~= nil then
                         glyph = tile.feature:getGlyph()
                     end
+                elseif tile.feature ~= nil then
+                    glyph = tile.feature:getGlyph()
                 end
             end
             screenManager:drawGlyph(glyph, tile, drawCoord, { 
@@ -260,6 +273,89 @@ function Level:draw()
 end
 
 --#endregion
+
+function Level:spawnAt(position, monster)
+    -- floodfill until a free position is found
+
+    local validPos = self:floodFindValidPosition(position)
+    if (validPos) then
+        table.insert(self.monsters, monster)
+        monster:moveTo(validPos)
+        -- monsters flag for death to stop being updated and are they ever removed aside form level change?
+    else
+        pDebug.error("Could not find valid floodfilled position.")
+    end
+
+end
+
+function Level:despawn(monster)
+    --table.remove(self.monsters, monster.index)
+end
+
+--#region Utility
+
+-- @param position Vector2
+function Level:floodFindValidPosition(position)
+    local validPos = position
+
+    -- TODO optimize
+
+    if (self:collisionCheck(validPos)[1] == true) then -- collision
+
+        local toCheck = {}
+        table.insert(toCheck, Vector2.unpack(validPos))
+
+        while #toCheck >= 1 do
+
+            local v = toCheck[1]
+            local startPos = Vector2.new(v[1], v[2])
+
+            for i = 1, 4, 1 do
+                local pos = nil
+                if (i == 1) then
+                    pos = startPos + Vector2.up()
+                elseif (i == 2) then
+                    pos = startPos + Vector2.right()
+                elseif (i == 3) then
+                    pos = startPos + Vector2.down()
+                elseif (i == 4) then
+                    pos = startPos + Vector2.left()
+                end
+
+                local collision = self:collisionCheck(pos)
+                if (collision[1] == false) then
+                    --print("found spot")
+                    validPos = pos
+                    toCheck = {}
+                    break
+                elseif (collision[1] == true and collision[2] ~= nil) then
+                    --print("adding new neighbor")
+                    table.insert(toCheck, Vector2.unpack(pos))
+                end
+            end
+
+            table.remove(toCheck, 1)
+        end
+    end
+
+    return validPos
+end
+
+-- @param position Vector2
+function Level:randomValidMoveDirection(position)
+
+end
+
+-- Returns the tile if it is in bounds and not nil
+function Level:getTile(x, y)
+    if (self:inBounds(x, y)) then
+        local tile = self.grid[x][y]
+        if (tile ~= nil) then
+            return tile
+        end
+    end
+    return nil
+end
 
 function Level:inBounds(x, y)
     return x >= 1 and x <= self.gridDimensions.x and y >= 1 and y <= self.gridDimensions.y
@@ -297,26 +393,4 @@ function Level:collisionCheck(position)
     end
 end
 
-function Level:spawnAt(position, actor)
-
-    table.insert(self.actors, actor)
-    actor:moveTo(position)
-
-    --[[
-        collision check spawn area
-        What to do if something blocks the area? spawn in a sweeping circle around it.
-            same code at item placement
-    ]]
-
-    -- if (self:collisionCheck(position)) then
-    --     table.insert(self.actors, actor)
-    --     -- give actor the index so it can then remove itself?
-    --     -- keep track of an index and place actors there to make sure no interferance
-    -- else
-    --     return true
-    -- end
-end
-
-function Level:despawn(actor)
-    --table.remove(self.actors, actor.index)
-end
+--#endregion

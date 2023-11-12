@@ -14,15 +14,15 @@ function Player:init(menuManager)
     self.description = "grew up as an urchin in the great city. They had to steal to survive."
 
     self.moveDir = { x = 0, y = 0 }
-    self.state = self.states.Inactive
+    self.state = self.States.Inactive
 
     self.visionRange = -1 -- Infinity
     self.scentRange = 6 -- range at which normal smell will detect
     self.isMoving = false -- motion flag
     self.soundRange = 0 -- 
 
-    -- update with class HP
-    self.inventory = self:addComponent(Health(10))
+    -- update health with class HP
+    self.health:setMaxHP(50)
     -- insert Stats
     self.race = nil -- Race component
         -- adds innate
@@ -32,8 +32,6 @@ function Player:init(menuManager)
     self.inventory = self:addComponent(Inventory())
     self.equipment = self:addComponent(Equipment())
     self.equipment.onEquipmentChange = function() self:updateEquipmentMenuImage() end
-
-    self.currentTarget = nil
 
     self:addComponent(LightEmitter())
     -- add inventory from race / class
@@ -47,17 +45,18 @@ function Player:init(menuManager)
     for i = 1, 12, 1 do
         Equipable():pickup(self)
     end
+
+    --self.moveSpeed = 1
 end
 
 function Player:update()
-    if (self.state == self.states.Active) then
+    if (self.state == self.States.Active) then
+
         self.currentTarget = nil  -- show only when hitting? or only stop after not seen or mon death
 
         self.moveDir = Vector2.zero()
-        local actionTaken, moved = false, false
-
         if inputManager:justPressed(playdate.kButtonB) then
-            actionTaken = true -- wait
+            self:actionEnd(self.TurnTicks) -- wait 1 turn, change to movespeed?
         elseif inputManager:justReleased(playdate.kButtonRight) then
             self.moveDir.x += 1
         elseif inputManager:justReleased(playdate.kButtonLeft) then
@@ -67,34 +66,52 @@ function Player:update()
         elseif inputManager:justReleased(playdate.kButtonDown) then
             self.moveDir.y += 1
         end
-
         if (self.moveDir ~= Vector2.zero()) then
             if self:move(self.moveDir) then
-                actionTaken, moved = true, true
+                self:actionEnd(self:getTicks(self.moveSpeed))
             end
         end
 
-        if actionTaken then
-            gameManager.gameStats.actionCounter += 1
-            self.level:round(moved)
-        end
     end
 end
 
-function Player:round() end
+function Player:round(ticks) end -- remove super round
 
-function Player:interact(actor) -- they interact with player
-    if (actor ~= nil) then
-        self.currentTarget = actor
-        gameManager.logManager:addToRound("The " .. actor.name .. " bumps into " .. self.name .. ".")
-        actor:interact(self)
+function Player:actionEnd(ticks)
+    self.ticksTillAction = ticks -- used to give monsters energy
+
+    gameManager.gameStats.actionCounter += 1
+    self.level:round()
+end
+
+function Player:interact()
+
+    if (self.currentTarget:isa(Monster)) then
+        --self:attack()
+        gameManager.logManager:addToRound(self.name .. " attacks the " .. self.currentTarget.name .. ".")
+
+        self.currentTarget.health:damage(1)
+
+        self:actionEnd(self.TurnTicks)
+
+    elseif (self.currentTarget:isa(Feature)) then
+        self.currentTarget:logDescription()
+
+    elseif (self.currentTarget:isa(NPC)) then
+        -- self.currentTarget:talk()
     end
+
+end
+
+function Player:attack()
+    Player.super.attack(self)
+    
 end
 
 function Player:spawn(theLevel, startPosition)
     self.position = Vector2.zero()
     self.updated = false
-    self.state = self.states.Active
+    self.state = self.States.Active
 
     self.level = theLevel
     self.tile = nil
@@ -106,7 +123,7 @@ function Player:spawn(theLevel, startPosition)
 end
 
 function Player:despawn()
-    self.state = self.states.Inactive
+    self.state = self.States.Inactive
 end
 
 function Player:updateEquipmentMenuImage()
@@ -137,4 +154,8 @@ function Player:updateEquipmentMenuImage()
     gfx.drawTextInRect(text, 0, offset, 200, 240 - offset)
     gfx.unlockFocus()
     playdate.setMenuImage(image)
+end
+
+function Player:death()
+    gameManager.logManager:addToRound("%s is cuddled to death.")
 end

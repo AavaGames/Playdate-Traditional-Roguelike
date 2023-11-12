@@ -13,6 +13,9 @@ function Town:init(theLevelManager, thePlayer)
     Cat(self, Vector2.new(6, 43))
     Animal(self, Vector2.new(7, 43))
 
+    local downPos = Vector2.new(16, 1)
+    self.grid[downPos.x][downPos.y].feature = Stairs(self, downPos, true, Prototype)
+
     Town.super.finishInit(self)
 end
 

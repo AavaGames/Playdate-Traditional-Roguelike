@@ -30,7 +30,7 @@ function DebugMenu:init(menuManager)
 		end),
 
 		MenuItem("Load *Town*", nil, true, true, true, function () 
-			if (gameManager.levelManager.currentLevel.name ~= "Base Camp") then
+			if (gameManager.levelManager.currentLevel.className ~= "Town") then
 				pDebug:log("Changed level to town")
 				gameManager.levelManager:loadLevel(Town, true)
 			else
@@ -39,9 +39,18 @@ function DebugMenu:init(menuManager)
 		end),
 
 		MenuItem("Load Dungeon", nil, true, true, true, function () 
-			if (gameManager.levelManager.currentLevel.name ~= "Floor 1 (50 feet)") then
+			if (gameManager.levelManager.currentLevel.className ~= "Dungeon") then
 				pDebug:log("Changed level to dungeon")
 				gameManager.levelManager:loadLevel(Dungeon, true)
+			else
+				gameManager.logManager:add("Already at level")
+			end
+		end),
+
+		MenuItem("Load Prototype", nil, true, true, true, function () 
+			if (gameManager.levelManager.currentLevel.className ~= "Prototype") then
+				pDebug:log("Changed level to Prototype")
+				gameManager.levelManager:loadLevel(Prototype, true)
 			else
 				gameManager.logManager:add("Already at level")
 			end
@@ -61,7 +70,7 @@ function DebugMenu:init(menuManager)
 		end),
 
 		-- MenuItem("Nest Another Debug Menu", nil, true, false, false, function ()
-		-- 	pDebug.log("i didnt re add this")
+		-- 	pDebug:log("i didnt re add this")
 		-- end),
 
 		MenuItem("Close All Menus", "Z", true, true, true, function () end),

@@ -8,13 +8,16 @@ function Feature:init(theLevel, startPosition)
     self.collision = true
     self.renderWhenSeen = true
 
-    self.moveCost = 1
-end
+    self.level = theLevel
+    self.position = startPosition -- Vector2
 
-function Feature:interact(actor)
-    -- abstract func for children
+    self.moveCost = 1
 end
 
 function Feature:getGlyph()
     return self.glyph
+end
+
+function Feature:logDescription()
+    gameManager.logManager:addToRound(self.description)
 end

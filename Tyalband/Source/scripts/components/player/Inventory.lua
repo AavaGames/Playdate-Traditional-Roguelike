@@ -20,12 +20,12 @@ function Inventory:addItem(item)
     if (not self.full) then
         isObjectError(item, Item)
         if (item:isa(Item)) then
-            pDebug.log("Added ", item:getName())
+            pDebug:log("Added ", item:getName(), "item")
             table.insert(self.items, item)
             self.full = #self.items >= self.maxCapacity
             return true -- added to new slot
         else
-            pDebug.log("Could not add item ", item)
+            pDebug:log("Could not add item ", item)
         end
     end
     return false

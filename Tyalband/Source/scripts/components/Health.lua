@@ -9,6 +9,7 @@ function Health:init(maxHP)
     self.onDeath = function () end
 
     self.maxHP = maxHP or 1
+    self.currentHP = self.maxHP
 end
 
 -- gets health percent to nearest 2 decimal places (0.55 = 55%). Can overcap 100% and go into negatives
@@ -28,9 +29,13 @@ function Health:below(percent)
     return self.currentHP < self.maxHP * percent
 end
 
+function Health:belowOrEqual(percent)
+    return self.currentHP <= self.maxHP * percent
+end
+
 function Health:damage(amount)
     self.currentHP -= amount
-    if (self:below(self.maxHP * self.deathThreshold)) then
+    if (self:belowOrEqual(self.maxHP * self.deathThreshold)) then
         self.dead = true
         self.onDeath()
     end
@@ -42,4 +47,9 @@ function Health:setDeathThreshold(percent)
         self.deathThreshold = percent
         self:damage(0)
     end
+end
+
+function Health:setMaxHP(value)
+    self.maxHP = value
+    self.currentHP = self.maxHP
 end

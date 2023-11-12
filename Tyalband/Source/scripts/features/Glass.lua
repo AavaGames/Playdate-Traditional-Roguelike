@@ -1,7 +1,7 @@
-class("Crystal").extends(Feature)
+class("Glass").extends(Feature)
 
-function Crystal:init(theLevel, startPosition)
-    Crystal.super.init(self, theLevel, startPosition)
+function Glass:init(theLevel, startPosition)
+    Glass.super.init(self, theLevel, startPosition)
     self.glyph = "%"
     self.name = "Glass"
     self.description = "A thin piece of crystal. Destructable."
@@ -10,10 +10,4 @@ function Crystal:init(theLevel, startPosition)
     self.renderWhenSeen = true
 
     self.moveCost = 1
-end
-
-function Crystal:interact(actor)
-    if (actor:isa(Player)) then 
-        gameManager.logManager:addToRound(self.description)
-    end
 end

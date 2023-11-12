@@ -13,6 +13,8 @@ function Entity:init()
     self.name = "Entity"
     self.description = "An entity which exists in the level."
 
+    --self.position = Vector2.new(0, 0)
+
     self.components = {} -- make it a set?
 end
 
@@ -20,7 +22,7 @@ end
 function Entity:addComponent(component)
     isObjectError(component, Component)
     if (self.components[component.className] ~= nil) then
-        pDebug.log("Entity: " .. self.name .. " overwritting " .. component.className .. " component")
+        pDebug:log("Entity: " .. self.name .. " overwritting " .. component.className .. " component")
     end
 
     if (component.attach ~= nil) then

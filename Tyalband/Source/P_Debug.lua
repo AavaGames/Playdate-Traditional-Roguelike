@@ -18,6 +18,7 @@ end
 
 function P_Debug:error(text)
     print("ERROR: " .. text .. "\n\t" .. where())
+    -- TODO write to a log file for players to send bug reports
 end
 
 function P_Debug:createDebugMenu(menuManager)
