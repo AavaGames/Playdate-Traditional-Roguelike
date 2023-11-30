@@ -1,3 +1,5 @@
+-- MIT License https://github.com/EvandroLG/set-lua
+
 local function to_array(hash)
   local output = {}
 
