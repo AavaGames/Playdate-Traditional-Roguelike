@@ -6,3 +6,5 @@
 *\.vs
 *\pdex.dll
 *\pdex.bin
+
+*\.luarc.json
