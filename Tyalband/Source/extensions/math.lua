@@ -120,7 +120,11 @@ function math.loopIndexOfArray(index, arraySize)
     return index
 end
 
-function pairsByKeys (t, f)
+--- Use to loop through a table in a sorted order
+---@param t table
+---@param f? function
+---@return function
+function math.pairsByKeys(t, f)
     local a = {}
     for n in pairs(t) do table.insert(a, n) end
     table.sort(a, f)

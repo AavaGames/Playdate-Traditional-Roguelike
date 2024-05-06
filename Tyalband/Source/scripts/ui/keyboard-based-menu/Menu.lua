@@ -1,43 +1,62 @@
-local gfx <const> = playdate.graphics
-
 ---@class Menu
----@overload fun(): Menu
+---@overload fun(menuManager, name: string, font, items: table, subMenuCount?: integer): Menu
 Menu = class("Menu").extends() or Menu
 
+local gfx <const> = playdate.graphics
+
 local charByteStart <const> = 65 -- "A"
--- can add an alternate char set for the left side of the keyboard
 
--- subMenuCount is used by menu itself, do not provide a number
-function Menu:init(manager, name, items, subMenuCount)
-    self.manager = manager
+--[[
+    Initializes a menu.
+
+    Parameters:
+        menuManager (object): The menu manager object.
+        name (string): The name of the menu. Shown at the top of the menu
+        items (table): A table containing the items of the menu.
+        subMenuCount (number): The sub menu number. Should not be set, used internally by the menu itself when creating pages.
+]]
+function Menu:init(menuManager, name, font, items, subMenuCount)
+    self.menuManager = menuManager
     self.name = name
-    self.font = screenManager.logFont_8px
+    self.font = font == nil and gfx.getFont() or font
 
-    self.itemTextDimensions = {
-        x = 4,
-        y = 18,
-        width = screenManager.screenDimensions.x - 10,
-        height = screenManager.screenDimensions.y - self.font.size.height * 2,
-    }
+    -- If you'd like to change the padding, tweak these numbers
+    self:SetPadding(4, 4)
 
     self.items = {}
     self.subMenu = nil
     self.subMenuCount = subMenuCount or 1
 
+    -- used to ignore inputs on first frame of opening
+    self.justOpened = false
     self.kbInput = nil
 
     self:populateItems(items)
 end
 
+function Menu:SetPadding(horizontalPadding, verticalPadding)
+    self.itemTextDimensions = {
+        x = horizontalPadding,
+        y = self.font:getHeight() + verticalPadding,
+        width = self.menuManager.screenWidth - (horizontalPadding * 2),
+        height = self.menuManager.screenHeight - self.font:getHeight() * 2,
+    }
+end
+
 function Menu:update()
+    if (self.justOpened) then
+        self.justOpened = false
+        return
+    end
+
     if (not playdate.keyboard.isVisible()) then
-        if (inputManager:justPressed(playdate.kButtonA)) then
+        if (playdate.buttonJustPressed(playdate.kButtonA)) then
             self:openKeyboard()
-        elseif (inputManager:justPressed(playdate.kButtonB)) then
-            self.manager:removeMenu()
+        elseif (playdate.buttonJustPressed(playdate.kButtonB)) then
+            self.menuManager:removeMenu()
         end
     else
-        if (inputManager:justPressed(playdate.kButtonB)) then
+        if (playdate.buttonJustPressed(playdate.kButtonB)) then
             self:closeKeyboard()
         end
         screenManager:redrawMenu()
@@ -45,9 +64,10 @@ function Menu:update()
 end
 
 function Menu:draw()
-    gfx.clear(gfx.kColorBlack)
+    gfx.clear(self.menuManager.backgroundColor)
 
-    gfx.setFont(self.font.font)
+    local oldFont = gfx.getFont()
+    gfx.setFont(self.font)
     gfx.setImageDrawMode(gfx.kDrawModeNXOR)
 
     -- Name Text
@@ -57,15 +77,21 @@ function Menu:draw()
     end
     gfx.drawTextAligned(name, 200, 1, kTextAlignment.center)
     -- Input Text
-    gfx.drawTextAligned("A - Open KB\nB - Close Menu", screenManager.screenDimensions.x, 
-        screenManager.screenDimensions.y - self.font.size.height * 2, kTextAlignment.right)
+    local inputText = "Open KB - A\nClose " .. (self.subMenuCount > 1 and "Page" or "Menu") .. " - B"
+    gfx.drawTextAligned(inputText, self.menuManager.screenWidth,
+        self.menuManager.screenHeight - self.font:getHeight() * 2, kTextAlignment.right)
 
     -- Menu Items Text
     gfx.drawTextInRect(self:getFullItemText(), self.itemTextDimensions.x, self.itemTextDimensions.y,
-                    self.itemTextDimensions.width, self.itemTextDimensions.height)
+        self.itemTextDimensions.width, self.itemTextDimensions.height)
+
+    gfx.setFont(oldFont)
 end
 
 function Menu:populateItems(items)
+    local oldFont = gfx.getFont()
+    gfx.setFont(self.font)
+
     local itemNeedsGlyph = {}
     -- check if item already has pre-assigned Glyph
     for index, item in ipairs(items) do
@@ -105,15 +131,10 @@ function Menu:populateItems(items)
         end
     end
 
-    local count = 0
-    for key, value in pairs(self.items) do
-        count += 1
-    end
-    --pDebug:log("Menu: " .. self.name .. " created with " .. count .. " items.")
+    gfx.setFont(oldFont)
 end
 
 function Menu:checkForSubMenu(index, item, items)
-    gfx.setFont(self.font.font)
     local text = self:getFullItemText(item)
     local textwidth, textHeight = gfx.getTextSizeForMaxWidth(text, self.itemTextDimensions.width)
     if (textHeight > self.itemTextDimensions.height) then
@@ -121,54 +142,38 @@ function Menu:checkForSubMenu(index, item, items)
         for i = index, #items, 1 do
             table.insert(subItems, items[i])
         end
-        self.subMenu = Menu(self.manager, self.name, subItems, self.subMenuCount + 1)
+        self.subMenu = Menu(self.menuManager, self.name, self.font, subItems, self.subMenuCount + 1)
 
         local glyph = "a"
         self.items[glyph] = MenuItem("...", glyph, true, false, false, function ()
-            self.manager:addMenu(self.subMenu)
+            self.menuManager:addMenu(self.subMenu)
         end)
 
         return true
     end
 end
 
--- Unused
-function Menu:addItem(item, assignedGlyph)
-    item.assignedGlyph = assignedGlyph
-    self.items[item.assignedGlyph] = item
-    -- check if submenu
-end
-
-function Menu:removeItem(index)
-    if (index ~= nil and not math.inBoundsOfArray(index, #self.items)) then
-        index = nil
-        pDebug:error(self.name .. " remove Item index out of bounds")
-    end
-    table.remove(self.items, index or #self.items) -- remove index or the last item
-    -- remake all submenus
-end
--- end
-
 function Menu:getFullItemText(extraItem)
     local text = ""
     if (extraItem) then 
         text = "M" .. ": " .. extraItem.text .. "\n"
     end
-    for key, item in pairsByKeys(self.items) do
+    for key, item in math.pairsByKeys(self.items) do
         text = text .. key .. ": " .. item.text .. "\n"
     end
     return text
 end
 
+function Menu:open()
+    self.menuManager:addMenu(self)
+end
+
 function Menu:setActive()
-    --pDebug:log(self.name .. " set active")
+    self.justOpened = true
     screenManager:redrawScreen()
-    -- Opening kb here results in a loop bug
-    -- guessing kb doesn't turn off visible before callback
 end
 
 function Menu:setInactive()
-    --pDebug:log(self.name .. " set self.States.Inactive")
     self.kbInput = nil
     self:closeKeyboard()
 end
@@ -188,7 +193,6 @@ function Menu:readKeyboard()
     self.kbInput = nil
     if (input ~= nil and input ~= "") then
         if (self.items[input] ~= nil) then
-            --pDebug:log(self.name .. ": " .. input)
             self.kbInput = input
             local closeKB = self.items[self.kbInput].closeKeyboardOnSelect
             if (closeKB) then
@@ -196,11 +200,10 @@ function Menu:readKeyboard()
             end
             self:selectItem()
         else
-            pDebug:log(input .. " out of bounds")
+            --print(input .. " out of bounds")
         end
     end
     playdate.keyboard.text = ""
-
 end
 
 function Menu:selectItem()
@@ -208,9 +211,9 @@ function Menu:selectItem()
         local item = self.items[self.kbInput]
         item:selected()
         if (item:isState(item.ExecutionBehaviors.CloseAllMenus)) then
-            self.manager:removeAllMenu()
+            self.menuManager:removeAllMenu()
         elseif (item:isState(item.ExecutionBehaviors.CloseMenuOnSelect)) then
-            self.manager:removeMenu()
+            self.menuManager:removeMenu()
         end
     end
     self.kbInput = nil

@@ -3,7 +3,7 @@ local gfx <const> = playdate.graphics
 local distanceMapMaxStepLimit <const> = 100
 
 ---@class DistanceMapManager
----@overload fun(): DistanceMapManager
+---@overload fun(level: Level, gridDimensions: Vector2): DistanceMapManager
 DistanceMapManager = class("DistanceMapManager").extends() or DistanceMapManager
 
 function DistanceMapManager:init(level, gridDimensions)
@@ -48,7 +48,7 @@ function DistanceMapManager:getMap(map)
     elseif (map ~= nil) then
         return map
     end
-    pDebug:error("DistanceMapManager ERROR: map recieved is nil", map)
+    pDebug:error("DistanceMapManager ERROR: map recieved is nil" .. map)
 end
 
 -- Returns direction to move towards nearest goal

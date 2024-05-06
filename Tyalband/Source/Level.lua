@@ -285,7 +285,7 @@ function Level:spawnAt(position, monster)
         monster:moveTo(validPos)
         -- monsters flag for death to stop being updated and are they ever removed aside form level change?
     else
-        pDebug.error("Could not find valid floodfilled position.")
+        pDebug:error("Could not find valid floodfilled position.")
     end
 
 end

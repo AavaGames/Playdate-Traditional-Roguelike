@@ -7,7 +7,15 @@ local GameStates <const> = enum.new({"Level", "FullLog", "Menu"})
 function GameManager:init()
 	math.randomseed(playdate.getSecondsSinceEpoch()) -- TODO call on new game start
 
-	self.menuManager = MenuManager(self)
+	self.menuManager = MenuManager(function ()
+		self:setState(GameStates.Menu)
+	end,
+	function ()
+		if (self:isState(GameStates.Menu)) then
+            self:setState(GameStates.Level)
+        end
+	end)
+	screenManager.menuManager = self.menuManager
 
 	self.gameStats = createGameStats()
 

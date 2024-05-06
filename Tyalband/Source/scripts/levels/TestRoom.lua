@@ -46,12 +46,12 @@ function TestRoom:create()
 
             --Create wall and corridor
             if (x == self.playerSpawnPosition.x + 8 and (y ~= self.playerSpawnPosition.y)) then
-                tile.feature = Crystal()
+                tile.feature = Crystal(self, Vector2.new(x, y))
             end
 
             if (x > self.playerSpawnPosition.x + 2 and x < self.playerSpawnPosition.x + 8) then
                 if (y == self.playerSpawnPosition.y + 1 or y == self.playerSpawnPosition.y - 1) then
-                    tile.feature = Crystal()
+                    tile.feature = Crystal(self, Vector2.new(x, y))
                 end
             end
         end

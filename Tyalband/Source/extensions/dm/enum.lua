@@ -26,7 +26,7 @@ end
 
 ---@param enum enum
 ---@param value integer
----@return string
+---@return string | nil
 function enum.getName(enum, value)
     for name, v in pairs(enum) do
         if (value == v) then 

@@ -1,5 +1,5 @@
 ---@class InventoryMenu
----@overload fun(menuManager: MenuManager): InventoryMenu
+---@overload fun(menuManager: MenuManager, player: Player): InventoryMenu
 InventoryMenu = class("InventoryMenu").extends() or InventoryMenu
 
 function InventoryMenu:init(menuManager, player)
@@ -20,6 +20,6 @@ function InventoryMenu:open()
 			--ItemMenu(self.menuManager, value):open()
 		end))
 	end
-	self.menu = Menu(self.menuManager, "Inventory (Non-functional)", items)
+	self.menu = Menu(self.menuManager, "Inventory (Non-functional)", screenManager.menuFont, items)
     self.menuManager:addMenu(self.menu)
 end

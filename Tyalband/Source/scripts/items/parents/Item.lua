@@ -30,7 +30,7 @@ function Item:pickup(actor)
         self.heldBy:addComponent(Inventory())
         return self.heldBy:getComponent(Inventory):addItem(self)
     else
-        pDebug.log("Cannot add item " .. self.name .. " to " .. actor.name .. " as it does not have an inventory.")
+        pDebug:log("Cannot add item " .. self.name .. " to " .. actor.name .. " as it does not have an inventory.")
     end
 end
 
@@ -41,7 +41,7 @@ function Item:remove()
     if (self.heldBy:hasComponent(Inventory)) then
         self.heldBy:getComponent(Inventory):removeItem(self)
     else
-        pDebug.error("Cannot remove item " .. self.name .. " from " .. actor.name .. " as it does not have an inventory.")
+        pDebug:error("Cannot remove item " .. self.name .. " from " .. actor.name .. " as it does not have an inventory.")
     end
 end
 

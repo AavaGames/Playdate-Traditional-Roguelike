@@ -9,6 +9,7 @@ local function initializeGame()
 	inputManager = InputManager()
 	frameProfiler = FrameProfiler()
 	screenManager = ScreenManager()
+	
 	gameManager = GameManager()
 
 	-- local v1 = Vector2.new(15, 10)

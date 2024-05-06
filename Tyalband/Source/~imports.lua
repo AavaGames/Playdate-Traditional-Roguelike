@@ -28,11 +28,8 @@ import "ScreenManager"
 import "FrameProfiler"
 import "InputManager"
 
-import "MenuManager"
-import "/scripts/ui/MenuItem"
-import "/scripts/ui/MenuItemBool"
-import "/scripts/ui/MenuItemOptions"
-import "/scripts/ui/Menu"
+import "/scripts/ui/keyboard-based-menu/imports"
+
 import "/scripts/ui/HealthDisplay"
 
 import "DistanceMapManager"

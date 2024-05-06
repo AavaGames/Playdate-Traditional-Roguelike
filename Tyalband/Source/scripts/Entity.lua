@@ -30,7 +30,7 @@ function Entity:addComponent(component)
     if (component.attach ~= nil) then
         component:attach(self)
     else
-        pDebug.error("Entity: " .. self.name .. " component has no attach function " .. component)
+        pDebug:error("Entity: " .. self.name .. " component has no attach function " .. component)
     end
 
     self.components[component.className] = component

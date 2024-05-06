@@ -28,7 +28,7 @@ function SettingsMenu:init(menuManager)
 		end))
 	end
 
-    self.menu = Menu(menuManager, "SETTINGS", items)
+    self.menu = Menu(menuManager, "SETTINGS", screenManager.menuFont, items)
 end
 
 function SettingsMenu:open()

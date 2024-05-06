@@ -5,7 +5,7 @@ DebugMenu = class("DebugMenu").extends() or DebugMenu
 function DebugMenu:init(menuManager)
 
     self.menuManager = menuManager
-    self.menu = Menu(self.menuManager, "DEBUG MENU #" .. math.random(0, 1000), {
+    self.menu = Menu(self.menuManager, "DEBUG MENU #" .. math.random(0, 1000), screenManager.menuFont, {
 
 		MenuItemBool("Debug profile", nil, true, false, false, false, function (bool)
 			pDebug.profile = bool

@@ -32,6 +32,8 @@ function ScreenManager:init()
         [playdate.graphics.font.kVariantBold] = "assets/fonts/Log/Portfolio_6x8_2x", -- TODO make bold
     }), size = { width = 12, height = 16 }, lineCount = 4, fullLineCount = 14 }
 
+    self.menuFont = self.logFont_8px.font[playdate.graphics.font.kVariantNormal]
+
     self.currentLevelFont, self.currentLogFont = nil, nil
 
     self.fullLevelViewport = function(self)
