@@ -33,10 +33,17 @@ end
 
 -- Removes the item from the inventory
 function Inventory:removeItem(item)
-
+    if (item.stackable) then
+        item:removeStack()
+        if (item.stack <= 0) then
+            item:remove()
+        end
+    else
+        item:remove()
+    end
 end
 
 -- Drops the item on the ground
 function Inventory:dropItem(item)
-
+ -- TODO drop to the floor
 end

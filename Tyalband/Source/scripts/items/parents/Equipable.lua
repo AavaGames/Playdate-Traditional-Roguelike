@@ -10,14 +10,7 @@ eQualityTypes = enum.new({
 eEquipType = enum.new({
     "Light", -- 1
     "Weapon",
-    "OffHand",
-    "Head",
-    "Arms",
-    "Chest",
-    "Legs",
-    "Feet",
-    "Neck",
-    "Ring" -- 10
+    "Equipment",
 })
 
 function Equipable:init(actor)
@@ -31,7 +24,6 @@ function Equipable:init(actor)
     self.quality = nil
 
     self.stackable = false
-    self.cursed = false
 end
 
 -- Equips the item to the actors equipment
