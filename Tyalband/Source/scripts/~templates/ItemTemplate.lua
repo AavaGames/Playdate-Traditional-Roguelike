@@ -1,6 +1,6 @@
 -- ---@class Template : Item
 -- ---@overload fun(actor: Actor): Template
--- Template = class("Template").extends(Item) or Template
+-- Template = class("Template").extends("Item") or Template
 
 function Template:init(actor)
     Template.super.init(self, actor)

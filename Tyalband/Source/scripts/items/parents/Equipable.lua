@@ -1,6 +1,6 @@
----@class Equipable
----@overload fun(actor: Actor): Equipable
-Equipable = class("Equipable").extends(Item) or Equipable
+---@class Equipable : Item
+---@overload fun(actor?: Actor): Equipable
+Equipable = class("Equipable").extends("Item") or Equipable
 
 
 eQualityTypes = enum.new({

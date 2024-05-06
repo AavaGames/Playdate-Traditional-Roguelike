@@ -1,6 +1,6 @@
 ---@class MenuItemOptions: MenuItem
 ---@overload fun(text: string, assignedGlyph, closeKeyboardOnSelect: boolean, closeMenuOnSelect: boolean, allMenus: boolean, options: table, startingIndex: number, selectionFunction: function): MenuItemOptions
-MenuItemOptions = class("MenuItemOptions").extends(MenuItem) or MenuItemOptions
+MenuItemOptions = class("MenuItemOptions").extends("MenuItem") or MenuItemOptions
 
 --[[
     Initializes an options menu item.

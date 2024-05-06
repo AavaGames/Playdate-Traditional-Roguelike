@@ -1,8 +1,8 @@
 local gfx <const> = playdate.graphics
 
----@class Player
+---@class Player : Actor
 ---@overload fun(menuManager: MenuManager): Player
-Player = class("Player").extends(Actor) or Player
+Player = class("Player").extends("Actor") or Player
 
 function Player:init(menuManager)
     Player.super.init(self)
@@ -40,8 +40,7 @@ function Player:init(menuManager)
     self:addComponent(LightEmitter())
     -- add inventory from race / class
 
-    local lantern = Lantern()
-    lantern:equip(self)
+    Lantern():equip(self)
 
     -- Testing Items
     --self:addComponent(LightSource(2, 4)):addToEmitter()
@@ -125,7 +124,7 @@ function Player:spawn(theLevel, startPosition)
     if (theLevel ~= nil and startPosition ~= nil) then
         self:moveTo(Vector2.new(startPosition.x, startPosition.y)) -- TODO: can spawn on top of another actor overwriting their pos (SpawnAt)
     else
-        pDebug:log("SPAWNING ERROR: ", theLevel.name, startPosition, " parameters failed to find appropriate location.")
+        pDebug:log("SPAWNING ERROR: " .. theLevel.name .. startPosition .. " parameters failed to find appropriate location.")
     end
 end
 

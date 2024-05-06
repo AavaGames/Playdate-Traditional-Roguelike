@@ -1,6 +1,6 @@
----@class Equipment
+---@class Equipment : Component
 ---@overload fun(): Equipment
-Equipment = class("Equipment").extends(Component) or Equipment
+Equipment = class("Equipment").extends("Component") or Equipment
 
 
 eEquipmentSlots = enum.new({

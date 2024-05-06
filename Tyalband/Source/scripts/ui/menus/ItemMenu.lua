@@ -1,4 +1,4 @@
----@class ItemMenu
+---@class ItemMenu : Object
 ---@overload fun(menuManager: MenuManager): ItemMenu
 ItemMenu = class("ItemMenu").extends() or ItemMenu
 

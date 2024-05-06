@@ -1,4 +1,4 @@
----@class Menu
+---@class Menu : Object
 ---@overload fun(menuManager, name: string, font, items: table, subMenuCount?: integer): Menu
 Menu = class("Menu").extends() or Menu
 

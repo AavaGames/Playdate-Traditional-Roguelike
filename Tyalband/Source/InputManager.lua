@@ -1,4 +1,4 @@
----@class InputManager
+---@class InputManager : Object
 ---@overload fun(): InputManager
 InputManager = class("InputManager").extends() or InputManager
 

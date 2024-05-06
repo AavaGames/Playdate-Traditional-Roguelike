@@ -1,6 +1,6 @@
----@class Monster
+---@class Monster : Actor
 ---@overload fun(theLevel: Level, startPosition: Vector2): Monster
-Monster = class("Monster").extends(Actor) or Monster
+Monster = class("Monster").extends("Actor") or Monster
 
 local SensitivityType <const> = enum.new({ "None", "Normal", "Enhanced", "Incredible" })
 local IntelligenceType <const> = enum.new({ "Stupid", "Average", "Intelligent" })

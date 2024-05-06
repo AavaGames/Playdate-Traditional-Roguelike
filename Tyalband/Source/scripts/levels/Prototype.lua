@@ -1,8 +1,8 @@
 local gfx <const> = playdate.graphics
 
----@class Prototype
+---@class Prototype : Level
 ---@overload fun(theLevelManager: LevelManager, thePlayer: Player): Prototype
-Prototype = class("Prototype").extends(Level) or Prototype
+Prototype = class("Prototype").extends("Level") or Prototype
 
 local SPRITE_SIZE <const> = 8 -- 8x8 
 

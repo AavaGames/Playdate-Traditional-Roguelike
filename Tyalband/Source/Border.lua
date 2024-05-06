@@ -1,4 +1,4 @@
----@class Border
+---@class Border : Object
 ---@overload fun(posX: integer, posY: integer, sizeX: integer, sizeY: integer, thickness: integer, color: integer): Border
 Border = class("Border").extends() or Border
 

@@ -1,6 +1,6 @@
----@class NPC
+---@class NPC : Actor
 ---@overload fun(theLevel: Level, startPosition: Vector2): NPC
-NPC = class("NPC").extends(Actor) or NPC
+NPC = class("NPC").extends("Actor") or NPC
 
 function NPC:init(theLevel, startPosition)
     NPC.super.init(self, theLevel, startPosition)

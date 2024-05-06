@@ -1,4 +1,4 @@
----@class ChunkTimer
+---@class ChunkTimer : Object
 ---@overload fun(purpose: string): ChunkTimer
 ChunkTimer = class("ChunkTimer").extends() or ChunkTimer
 

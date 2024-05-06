@@ -1,4 +1,4 @@
----@class Component
+---@class Component : Object
 ---@overload fun(): Component
 Component = class("Component").extends() or Component
 

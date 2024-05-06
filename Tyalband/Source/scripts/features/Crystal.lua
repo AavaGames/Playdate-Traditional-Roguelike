@@ -1,6 +1,6 @@
----@class Crystal
+---@class Crystal : Feature
 ---@overload fun(theLevel: Level, startPosition: Vector2): Crystal
-Crystal = class("Crystal").extends(Feature) or Crystal
+Crystal = class("Crystal").extends("Feature") or Crystal
 
 function Crystal:init(theLevel, startPosition)
     Crystal.super.init(self, theLevel, startPosition)

@@ -1,6 +1,6 @@
----@class Item
----@overload fun(actor: Actor): Item
-Item = class("Item").extends(Entity) or Item
+---@class Item : Entity
+---@overload fun(actor?: Actor): Item
+Item = class("Item").extends("Entity") or Item
 
 local ItemType <const> = enum.new({
     "Equipable",

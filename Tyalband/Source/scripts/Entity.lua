@@ -1,14 +1,13 @@
+---@class Entity : Object
+---@overload fun(): Entity
+Entity = class("Entity").extends() or Entity
+
+local gfx <const> = playdate.graphics
+
 --[[
     An entity is any level object (Actor, Player, Feature, Item, Equipable, etc.) they can hold components.
     Only ONE component of each class.
 ]]
-
-local gfx <const> = playdate.graphics
-
----@class Entity
----@overload fun(): Entity
-Entity = class("Entity").extends() or Entity
-
 --abstract class
 function Entity:init()
     self.glyph = "!"
@@ -45,6 +44,8 @@ function Entity:removeComponent(component)
     self.components[component.className] = nil
 end
 
+---@param component Object Component Class
+---@return Component | nil
 function Entity:getComponent(component)
     isObjectError(component, Component)
     return self.components[component.className] or nil

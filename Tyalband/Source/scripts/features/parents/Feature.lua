@@ -1,6 +1,6 @@
----@class Feature
+---@class Feature : Entity
 ---@overload fun(theLevel: Level, startPosition: Vector2): Feature
-Feature = class("Feature").extends(Entity) or Feature
+Feature = class("Feature").extends("Entity") or Feature
 
 function Feature:init(theLevel, startPosition)
     self.glyph = "F"

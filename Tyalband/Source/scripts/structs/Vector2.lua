@@ -1,7 +1,7 @@
 --[[
 	
 	Made by Hasnain Raza
-	Additions by Philip Fertsman (@aavagames)
+	Additions by Aava Fertsman (@aavagames)
 
 	Think of variables holding this class as a pointer. 
 		local vec = Vector2.new(5, 5)

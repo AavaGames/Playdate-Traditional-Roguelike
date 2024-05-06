@@ -1,4 +1,4 @@
----@class DebugMenu
+---@class DebugMenu : Object
 ---@overload fun(menuManager: MenuManager): DebugMenu
 DebugMenu = class("DebugMenu").extends() or DebugMenu
 

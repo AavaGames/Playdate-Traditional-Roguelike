@@ -1,4 +1,4 @@
----@class LogManager
+---@class LogManager : Object
 ---@overload fun(theLevelManager: LevelManager): LogManager
 LogManager = class("LogManager").extends() or LogManager
 

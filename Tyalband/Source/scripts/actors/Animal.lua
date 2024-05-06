@@ -1,6 +1,6 @@
----@class Animal
+---@class Animal : Monster
 ---@overload fun(theLevel: Level, startPosition: Vector2): Animal
-Animal = class("Animal").extends(Monster) or Animal
+Animal = class("Animal").extends("Monster") or Animal
 
 function Animal:init(theLevel, startPosition)
     Animal.super.init(self, theLevel, startPosition)

@@ -1,6 +1,6 @@
 local gfx <const> = playdate.graphics
 
----@class ScreenManager
+---@class ScreenManager : Object
 ---@overload fun(): ScreenManager
 ScreenManager = class("ScreenManager").extends() or ScreenManager
 

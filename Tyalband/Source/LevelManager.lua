@@ -1,6 +1,6 @@
 local gfx <const> = playdate.graphics
 
----@class LevelManager
+---@class LevelManager : Object
 ---@overload fun(player: Player): LevelManager
 LevelManager = class("LevelManager").extends() or LevelManager
 

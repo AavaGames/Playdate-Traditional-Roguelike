@@ -1,4 +1,4 @@
----@class InventoryMenu
+---@class InventoryMenu : Object
 ---@overload fun(menuManager: MenuManager, player: Player): InventoryMenu
 InventoryMenu = class("InventoryMenu").extends() or InventoryMenu
 

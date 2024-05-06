@@ -1,4 +1,4 @@
----@class GameManager
+---@class GameManager : Object
 ---@overload fun(): GameManager
 GameManager = class("GameManager").extends() or GameManager
 

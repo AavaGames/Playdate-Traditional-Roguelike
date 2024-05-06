@@ -1,6 +1,6 @@
 import "CoreLibs/utilities/where"
 
----@class P_Debug
+---@class P_Debug : Object
 ---@overload fun(): P_Debug
 P_Debug = class("P_Debug").extends() or P_Debug
 

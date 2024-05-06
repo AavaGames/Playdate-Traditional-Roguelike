@@ -1,6 +1,6 @@
 local gfx <const> = playdate.graphics
 
----@class FrameProfiler
+---@class FrameProfiler : Object
 ---@overload fun(): FrameProfiler
 FrameProfiler = class("FrameProfiler").extends() or FrameProfiler
 

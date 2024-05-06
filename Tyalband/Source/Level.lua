@@ -1,7 +1,7 @@
 local gfx <const> = playdate.graphics
 local TurnTicks <const> = 100
 
----@class Level
+---@class Level : Object
 ---@overload fun(theLevelManager :LevelManager, thePlayer :Player): Level
 Level = class("Level").extends() or Level
 

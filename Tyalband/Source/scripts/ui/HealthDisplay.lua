@@ -1,6 +1,6 @@
 local gfx <const> = playdate.graphics
 
----@class HealthDisplay
+---@class HealthDisplay : Object
 ---@overload fun(player: Player): HealthDisplay
 HealthDisplay = class("HealthDisplay").extends() or HealthDisplay
 

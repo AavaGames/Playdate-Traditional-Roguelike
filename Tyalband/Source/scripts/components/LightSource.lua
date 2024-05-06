@@ -1,6 +1,6 @@
----@class LightSource
+---@class LightSource : Component
 ---@overload fun(brightRange: integer, dimRange: integer): LightSource
-LightSource = class("LightSource").extends(Component) or LightSource
+LightSource = class("LightSource").extends("Component") or LightSource
 
 -- One Light Source per Entity (Monster / Lantern)
 function LightSource:init(brightRange, dimRange)

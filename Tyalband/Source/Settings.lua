@@ -1,4 +1,4 @@
----@class Settings
+---@class Settings : Object
 ---@overload fun(): Settings
 Settings = class("Settings").extends() or Settings
 

@@ -1,4 +1,4 @@
----@class SettingsMenu
+---@class SettingsMenu : Object
 ---@overload fun(menuManager: MenuManager): SettingsMenu
 SettingsMenu = class("SettingsMenu").extends() or SettingsMenu
 

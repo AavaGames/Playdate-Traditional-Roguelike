@@ -1,6 +1,6 @@
----@class Kobold
+---@class Kobold : Monster
 ---@overload fun(theLevel: Level, startPosition: Vector2): Kobold
-Kobold = class("Kobold").extends(Monster) or Kobold
+Kobold = class("Kobold").extends("Monster") or Kobold
 
 
 function Kobold:init(theLevel, startPosition)

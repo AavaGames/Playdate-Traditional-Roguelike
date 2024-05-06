@@ -1,6 +1,6 @@
 ---@class MenuItemBool: MenuItem
 ---@overload fun(text: string, assignedGlyph, closeKeyboardOnSelect: boolean, closeMenuOnSelect: boolean, allMenus: boolean, startingValue: boolean, selectionFunction: function): MenuItemBool
-MenuItemBool = class("MenuItemBool").extends(MenuItem) or MenuItemBool
+MenuItemBool = class("MenuItemBool").extends("MenuItem") or MenuItemBool
 
 --[[
     Initializes a boolean menu item.

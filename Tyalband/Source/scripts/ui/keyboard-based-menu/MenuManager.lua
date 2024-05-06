@@ -1,4 +1,4 @@
----@class MenuManager
+---@class MenuManager : Object
 ---@overload fun(onOpenFirstMenuCallback: function, onCloseAllMenusCallback:function): MenuManager
 MenuManager = class("MenuManager").extends() or MenuManager
 

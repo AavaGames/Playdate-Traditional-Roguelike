@@ -1,7 +1,7 @@
 name=Tyalband
-author=Philip Fertsman
+author=Aava Fertsman
 description=Enter Oronmaril, the mountain of glass and retrieve the Chosen Lord's amulet.
-bundleID=com.philipfertsman.tyalband
+bundleID=com.aavafertsman.tyalband
 version=0.1.0
 buildNumber=1
 imagePath=assets/cards

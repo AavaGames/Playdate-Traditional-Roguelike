@@ -1,7 +1,7 @@
 local gfx <const> = playdate.graphics
 
----@class Tile
----@overload fun(x: integer, y: integer): Tile
+---@class Tile : Object
+---@overload fun(x?: integer, y?: integer): Tile
 Tile = class("Tile").extends() or Tile
 
 function Tile:init(x, y)

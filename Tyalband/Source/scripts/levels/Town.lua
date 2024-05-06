@@ -1,8 +1,8 @@
 local gfx <const> = playdate.graphics
 
----@class Town
+---@class Town : Level
 ---@overload fun(theLevelManager: LevelManager, thePlayer: Player): Town
-Town = class("Town").extends(Level) or Town
+Town = class("Town").extends("Level") or Town
 
 
 function Town:init(theLevelManager, thePlayer)

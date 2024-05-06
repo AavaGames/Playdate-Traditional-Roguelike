@@ -1,6 +1,6 @@
 local gfx <const> = playdate.graphics
 
----@class Camera
+---@class Camera : Object
 ---@overload fun(target: Actor | nil, theLevel?: Level, startPosition?: Vector2): Camera
 Camera = class("Camera").extends() or Camera
 

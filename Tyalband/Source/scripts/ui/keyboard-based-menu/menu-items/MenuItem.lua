@@ -1,4 +1,4 @@
----@class MenuItem
+---@class MenuItem : Object
 ---@overload fun(text: string, assignedGlyph, closeKeyboardOnSelect: boolean, closeMenuOnSelect: boolean, allMenus: boolean, selectionFunction: function): MenuItem
 MenuItem = class("MenuItem").extends() or MenuItem
 

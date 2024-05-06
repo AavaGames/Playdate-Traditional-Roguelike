@@ -1,6 +1,6 @@
----@class Actor
+---@class Actor : Entity
 ---@overload fun(theLevel: Level, startPosition: Vector2): Actor
-Actor = class("Actor").extends(Entity) or Actor
+Actor = class("Actor").extends("Entity") or Actor
 
 
 local TurnTicks <const> = 100
@@ -76,7 +76,8 @@ function Actor:death() end
 
 -- Takes a Vector2 and attemps to move to that tile on the level
 function Actor:moveTo(position)
-    if (not Vector2.isa(position)) then pDebug:error(position, "is not a Vector2") end -- sanity check
+    if (not Vector2.isa(position)) then pDebug:error(position .. "is not a Vector2") end -- sanity check
+    
     if position ~= self.position then
         local collision = self.level:collisionCheck(position)
         if collision[1] == false then
