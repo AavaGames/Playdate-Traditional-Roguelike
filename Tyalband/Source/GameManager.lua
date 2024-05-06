@@ -1,4 +1,6 @@
-class("GameManager").extends()
+---@class GameManager
+---@overload fun(): GameManager
+GameManager = class("GameManager").extends() or GameManager
 
 local GameStates <const> = enum.new({"Level", "FullLog", "Menu"})
 

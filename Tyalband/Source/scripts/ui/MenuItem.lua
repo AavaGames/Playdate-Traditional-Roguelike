@@ -1,4 +1,6 @@
-class("MenuItem").extends()
+---@class MenuItem
+---@overload fun(): MenuItem
+MenuItem = class("MenuItem").extends() or MenuItem
 
 local ExecutionBehaviors <const> = enum.new({"Nothing", "CloseMenuOnSelect", "CloseAllMenus"})
 

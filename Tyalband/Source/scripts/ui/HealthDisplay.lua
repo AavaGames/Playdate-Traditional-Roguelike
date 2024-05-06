@@ -1,6 +1,8 @@
 local gfx <const> = playdate.graphics
 
-class("HealthDisplay").extends()
+---@class HealthDisplay
+---@overload fun(player: Player): HealthDisplay
+HealthDisplay = class("HealthDisplay").extends() or HealthDisplay
 
 function HealthDisplay:init(player)
     self.player = player

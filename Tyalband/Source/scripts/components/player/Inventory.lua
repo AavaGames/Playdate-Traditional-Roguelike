@@ -1,4 +1,6 @@
-class("Inventory").extends(Component)
+---@class Inventory
+---@overload fun(): Inventory
+Inventory = class("Inventory").extends(Component) or Inventory
 
 function Inventory:init()
     Inventory.super.init(self)

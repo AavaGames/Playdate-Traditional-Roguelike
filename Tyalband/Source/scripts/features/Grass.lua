@@ -1,4 +1,6 @@
-class("Grass").extends(Feature)
+---@class Grass
+---@overload fun(theLevel: Level, startPosition: Vector2): Grass
+Grass = class("Grass").extends(Feature) or Grass
 
 function Grass:init()
     Grass.super:init(self)

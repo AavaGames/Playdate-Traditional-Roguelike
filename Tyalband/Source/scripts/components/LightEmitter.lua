@@ -1,4 +1,6 @@
-class("LightEmitter").extends(Component)
+---@class LightEmitter
+---@overload fun(baseBrightRange: integer, baseDimRange: integer): LightEmitter
+LightEmitter = class("LightEmitter").extends(Component) or LightEmitter
 
 function LightEmitter:init(baseBrightRange, baseDimRange)
     LightEmitter.super.init(self)

@@ -1,4 +1,6 @@
-class("MenuManager").extends()
+---@class MenuManager
+---@overload fun(): MenuManager
+MenuManager = class("MenuManager").extends() or MenuManager
 
 function MenuManager:init(gameManager)
     self.gameManager = gameManager

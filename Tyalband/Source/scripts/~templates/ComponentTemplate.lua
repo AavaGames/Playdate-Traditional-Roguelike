@@ -1,4 +1,6 @@
-class("Template").extends(Component)
+---@class 
+---@overload fun(): Template
+Template = class("Template").extends(Component) or Template
 
 function Template:init()
     Template.super.init(self)

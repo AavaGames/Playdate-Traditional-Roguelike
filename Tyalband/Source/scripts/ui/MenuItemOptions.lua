@@ -1,4 +1,6 @@
-class("MenuItemOptions").extends(MenuItem)
+---@class MenuItemOptions
+---@overload fun(): MenuItemOptions
+MenuItemOptions = class("MenuItemOptions").extends(MenuItem) or MenuItemOptions
 
 function MenuItemOptions:init(text, assignedGlyph, closeKeyboardOnSelect, closeMenuOnSelect, allMenus, options, startingIndex, selectionFunction)
     MenuItemOptions.super.init(self, text, assignedGlyph, closeKeyboardOnSelect, closeMenuOnSelect, allMenus, selectionFunction)

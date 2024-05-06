@@ -9,6 +9,7 @@
 	Changing one of these variables changes the other
 ]]
 
+---@class Vector2
 Vector2 = {}
 
 --// METAMETHODS //--

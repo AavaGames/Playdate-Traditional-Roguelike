@@ -1,4 +1,6 @@
-class("ChunkTimer").extends()
+---@class ChunkTimer
+---@overload fun(purpose: string): ChunkTimer
+ChunkTimer = class("ChunkTimer").extends() or ChunkTimer
 
 function ChunkTimer:init(purpose)
     self.purpose = purpose or "Purpose"

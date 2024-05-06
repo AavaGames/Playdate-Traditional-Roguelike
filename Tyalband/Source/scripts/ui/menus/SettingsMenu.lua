@@ -1,4 +1,6 @@
-class("SettingsMenu").extends()
+---@class SettingsMenu
+---@overload fun(menuManager: MenuManager): SettingsMenu
+SettingsMenu = class("SettingsMenu").extends() or SettingsMenu
 
 function SettingsMenu:init(menuManager)
     self.menuManager = menuManager

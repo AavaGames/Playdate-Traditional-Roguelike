@@ -5,7 +5,9 @@
 
 local gfx <const> = playdate.graphics
 
-class("Entity").extends()
+---@class Entity
+---@overload fun(): Entity
+Entity = class("Entity").extends() or Entity
 
 --abstract class
 function Entity:init()

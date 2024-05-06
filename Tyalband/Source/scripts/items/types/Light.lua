@@ -1,4 +1,6 @@
-class("Light").extends(Equipable)
+---@class Light
+---@overload fun(actor: Actor): Light
+Light = class("Light").extends(Equipable) or Light
 
 function Light:init(actor)
     Light.super.init(self, actor)

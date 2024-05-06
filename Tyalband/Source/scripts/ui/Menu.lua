@@ -1,6 +1,8 @@
 local gfx <const> = playdate.graphics
 
-class("Menu").extends()
+---@class Menu
+---@overload fun(): Menu
+Menu = class("Menu").extends() or Menu
 
 local charByteStart <const> = 65 -- "A"
 -- can add an alternate char set for the left side of the keyboard

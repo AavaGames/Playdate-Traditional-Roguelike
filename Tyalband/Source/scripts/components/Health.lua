@@ -1,4 +1,6 @@
-class("Health").extends(Component)
+---@class Health
+---@overload fun(maxHP: integer): Health
+Health = class("Health").extends(Component) or Health
 
 function Health:init(maxHP)
     Health.super.init(self)

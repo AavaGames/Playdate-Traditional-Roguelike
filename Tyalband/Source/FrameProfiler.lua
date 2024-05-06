@@ -1,6 +1,8 @@
 local gfx <const> = playdate.graphics
 
-class("FrameProfiler").extends()
+---@class FrameProfiler
+---@overload fun(): FrameProfiler
+FrameProfiler = class("FrameProfiler").extends() or FrameProfiler
 
 function FrameProfiler:init()
     self:frameStart()

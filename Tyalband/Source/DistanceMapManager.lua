@@ -2,7 +2,9 @@ local gfx <const> = playdate.graphics
 
 local distanceMapMaxStepLimit <const> = 100
 
-class("DistanceMapManager").extends()
+---@class DistanceMapManager
+---@overload fun(): DistanceMapManager
+DistanceMapManager = class("DistanceMapManager").extends() or DistanceMapManager
 
 function DistanceMapManager:init(level, gridDimensions)
     self.level = level

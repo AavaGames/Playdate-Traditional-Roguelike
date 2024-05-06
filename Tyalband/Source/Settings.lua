@@ -1,4 +1,6 @@
-class("Settings").extends()
+---@class Settings
+---@overload fun(): Settings
+Settings = class("Settings").extends() or Settings
 
 function Settings:init()
     self.cameraFollowPlayer = false;

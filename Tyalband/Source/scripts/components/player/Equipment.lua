@@ -1,4 +1,7 @@
-class("Equipment").extends(Component)
+---@class Equipment
+---@overload fun(): Equipment
+Equipment = class("Equipment").extends(Component) or Equipment
+
 
 eEquipmentSlots = enum.new({
     "Light", -- 1

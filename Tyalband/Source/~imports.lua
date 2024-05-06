@@ -48,10 +48,11 @@ import "/scripts/ClassUtils"
 import "/scripts/Component"
 import "/scripts/Entity"
 
-import "/scripts/actors/Actor"
-import "/scripts/actors/Monster"
-import "/scripts/actors/NPC"
-import "/scripts/features/Feature"
+import "/scripts/actors/parents/Actor"
+import "/scripts/actors/parents/Monster"
+import "/scripts/actors/parents/NPC"
+
+import "/scripts/features/parents/Feature"
 
 -- Subclasses
 

@@ -1,6 +1,8 @@
 local gfx <const> = playdate.graphics
 
-class("Player").extends(Actor)
+---@class Player
+---@overload fun(menuManager: MenuManager): Player
+Player = class("Player").extends(Actor) or Player
 
 function Player:init(menuManager)
     Player.super.init(self)

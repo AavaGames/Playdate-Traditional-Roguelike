@@ -1,4 +1,7 @@
-class("Actor").extends(Entity)
+---@class Actor
+---@overload fun(theLevel: Level, startPosition: Vector2): Actor
+Actor = class("Actor").extends(Entity) or Actor
+
 
 local TurnTicks <const> = 100
 

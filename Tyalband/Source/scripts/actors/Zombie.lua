@@ -1,4 +1,7 @@
-class("Zombie").extends(Monster)
+---@class Zombie
+---@overload fun(theLevel: Level, startPosition: Vector2): Zombie
+Zombie = class("Zombie").extends(Monster) or Zombie
+
 
 function Zombie:init(theLevel, startPosition)
     Zombie.super.init(self, theLevel, startPosition)

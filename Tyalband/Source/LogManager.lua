@@ -1,4 +1,6 @@
-class("LogManager").extends()
+---@class LogManager
+---@overload fun(theLevelManager: LevelManager): LogManager
+LogManager = class("LogManager").extends() or LogManager
 
 local gfx <const> = playdate.graphics
 local logCrankTicks <const> = 12

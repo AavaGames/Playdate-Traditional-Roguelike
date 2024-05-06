@@ -1,4 +1,6 @@
-class("Lantern").extends(Light)
+---@class Lantern
+---@overload fun(actor: Actor): Lantern
+Lantern = class("Lantern").extends(Light) or Lantern
 
 function Lantern:init(actor)
     Lantern.super.init(self, actor)

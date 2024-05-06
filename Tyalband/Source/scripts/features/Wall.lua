@@ -1,4 +1,6 @@
-class("Wall").extends(Feature)
+---@class Wall
+---@overload fun(theLevel: Level, startPosition: Vector2): Wall
+Wall = class("Wall").extends(Feature) or Wall
 
 function Wall:init(theLevel, startPosition)
     Wall.super.init(self, theLevel, startPosition)

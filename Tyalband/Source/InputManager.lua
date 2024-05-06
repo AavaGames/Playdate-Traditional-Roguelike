@@ -1,4 +1,6 @@
-class("InputManager").extends()
+---@class InputManager
+---@overload fun(): InputManager
+InputManager = class("InputManager").extends() or InputManager
 
 function InputManager:init()
     self.active = true

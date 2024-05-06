@@ -1,6 +1,8 @@
 local gfx <const> = playdate.graphics
 
-class("TestRoom").extends(Level)
+---@class TestRoom
+---@overload fun(theLevelManager: LevelManager, thePlayer: Player): TestRoom
+TestRoom = class("TestRoom").extends(Level) or TestRoom
 
 function TestRoom:init(theLevelManager, thePlayer)
     TestRoom.super.init(self, theLevelManager, thePlayer) -- calls create

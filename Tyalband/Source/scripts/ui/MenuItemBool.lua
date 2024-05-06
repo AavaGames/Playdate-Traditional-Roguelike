@@ -1,4 +1,6 @@
-class("MenuItemBool").extends(MenuItem)
+---@class MenuItemBool
+---@overload fun(): MenuItemBool
+MenuItemBool = class("MenuItemBool").extends(MenuItem) or MenuItemBool
 
 function MenuItemBool:init(text, assignedGlyph, closeKeyboardOnSelect, closeMenuOnSelect, allMenus, startingValue, selectionFunction)
     MenuItemBool.super.init(self, text, assignedGlyph, closeKeyboardOnSelect, closeMenuOnSelect, allMenus, selectionFunction)

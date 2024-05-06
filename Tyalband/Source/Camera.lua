@@ -1,6 +1,8 @@
 local gfx <const> = playdate.graphics
 
-class("Camera").extends()
+---@class Camera
+---@overload fun(target: Actor, theLevel: Level, startPosition: Vector2): Camera
+Camera = class("Camera").extends() or Camera
 
 function Camera:init(target, theLevel, startPosition)
     self.settings = settings

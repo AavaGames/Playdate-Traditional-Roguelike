@@ -1,4 +1,6 @@
-class("Stairs").extends(Feature)
+---@class Stairs
+---@overload fun(theLevel: Level, startPosition: Vector2): Stairs
+Stairs = class("Stairs").extends(Feature) or Stairs
 
 function Stairs:init(theLevel, startPosition, goDown, levelClassToGoTo)
     Stairs.super.init(self, theLevel, startPosition)

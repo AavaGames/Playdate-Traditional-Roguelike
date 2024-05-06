@@ -1,6 +1,8 @@
 local gfx <const> = playdate.graphics
 
-class("Tile").extends()
+---@class Tile
+---@overload fun(x: integer, y: integer): Tile
+Tile = class("Tile").extends() or Tile
 
 function Tile:init(x, y)
     self.position = Vector2.new(x, y)

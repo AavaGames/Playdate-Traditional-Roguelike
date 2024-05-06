@@ -1,6 +1,8 @@
 local gfx <const> = playdate.graphics
 
-class("Dungeon").extends(Level)
+---@class Dungeon
+---@overload fun(theLevelManager: LevelManager, thePlayer: Player): Dungeon
+Dungeon = class("Dungeon").extends(Level) or Dungeon
 
 function Dungeon:init(theLevelManager, thePlayer)
     Dungeon.super.init(self, theLevelManager, thePlayer)

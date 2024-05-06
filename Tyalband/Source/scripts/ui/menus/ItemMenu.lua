@@ -1,4 +1,6 @@
-class("ItemMenu").extends()
+---@class ItemMenu
+---@overload fun(menuManager: MenuManager): ItemMenu
+ItemMenu = class("ItemMenu").extends() or ItemMenu
 
 function ItemMenu:init(menuManager, item)
     self.menuManager = menuManager

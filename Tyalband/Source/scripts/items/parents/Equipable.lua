@@ -1,4 +1,7 @@
-class("Equipable").extends(Item)
+---@class Equipable
+---@overload fun(actor: Actor): Equipable
+Equipable = class("Equipable").extends(Item) or Equipable
+
 
 eQualityTypes = enum.new({
     "Average",

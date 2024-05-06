@@ -1,6 +1,8 @@
 local gfx <const> = playdate.graphics
 
-class("ScreenManager").extends()
+---@class ScreenManager
+---@overload fun(): ScreenManager
+ScreenManager = class("ScreenManager").extends() or ScreenManager
 
 function ScreenManager:init()
     self.fps = false
@@ -211,6 +213,7 @@ function ScreenManager:redrawMenu()
     self._redrawMenu = true
 end
 
+---@param value string
 function ScreenManager:setLevelFont(value)
     if value == "8px" then
         self.currentLevelFont = self.levelFont_8px
@@ -224,6 +227,7 @@ function ScreenManager:setLevelFont(value)
     self:redrawScreen()
 end
 
+---@param value string
 function ScreenManager:setLogFont(value)
     if value == "6px" then
         self.currentLogFont = self.logFont_6px

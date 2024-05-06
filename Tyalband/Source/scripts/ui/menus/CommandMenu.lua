@@ -1,4 +1,6 @@
-class("CommandMenu").extends()
+---@class CommandMenu
+---@overload fun(menuManager: MenuManager): CommandMenu
+CommandMenu = class("CommandMenu").extends() or CommandMenu
 
 function CommandMenu:init(menuManager)
 

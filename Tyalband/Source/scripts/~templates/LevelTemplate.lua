@@ -1,6 +1,9 @@
 local gfx <const> = playdate.graphics
 
-class("Template").extends(Level)
+---@class 
+---@overload fun(theLevelManager: LevelManager, thePlayer: Player): Template
+Template = class("Template").extends(Level) or Template
+
 
 function Template:init(theLevelManager, thePlayer)
     Template.super.init(self, theLevelManager, thePlayer)

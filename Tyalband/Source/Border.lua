@@ -1,8 +1,10 @@
-class("Border").extends()
+---@class Border
+---@overload fun(posX: integer, posY: integer, sizeX: integer, sizeY: integer, thickness: integer, color: integer): Border
+Border = class("Border").extends() or Border
 
 local gfx <const> = playdate.graphics
 
-function Border:init( posX, posY, sizeX, sizeY, thickness, color )
+function Border:init(posX, posY, sizeX, sizeY, thickness, color)
 	self.position = { x = posX, y = posY }
 	self.size = { x = sizeX, y = sizeY}
 	self.thickness = thickness

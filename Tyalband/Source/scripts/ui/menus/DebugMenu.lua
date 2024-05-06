@@ -1,4 +1,6 @@
-class("DebugMenu").extends()
+---@class DebugMenu
+---@overload fun(menuManager: MenuManager): DebugMenu
+DebugMenu = class("DebugMenu").extends() or DebugMenu
 
 function DebugMenu:init(menuManager)
 
