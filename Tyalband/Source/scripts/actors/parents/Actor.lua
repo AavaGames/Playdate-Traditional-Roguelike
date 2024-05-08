@@ -59,7 +59,7 @@ function Actor:init(theLevel, startPosition)
 end
 
 function Actor:round(ticks)
-    self.ticksTillAction -= ticks -- decrease by player action ticks
+    self.ticksTillAction -= ticks -- decreased by Player.ticksTillAction
     while self.ticksTillAction <= 0 do
         self:doAction() -- take actions until needing to wait again
     end
@@ -111,9 +111,12 @@ end
 
 --#region General Actions
 
--- Movement action
-function Actor:move(moveAmount)
-    local newPosition = self.position + Vector2.new(moveAmount.x, moveAmount.y)
+--- Movement action
+---@param moveDirection Vcctor2
+---@return boolean
+function Actor:move(moveDirection)
+    -- TODO make sure move direction is only a mag of 1?
+    local newPosition = self.position + Vector2.new(moveDirection.x, moveDirection.y)
     local moved = self:moveTo(newPosition)
     if (moved) then
         self.ticksTillAction += self:getTicks(self.moveSpeed)
@@ -124,6 +127,11 @@ function Actor:move(moveAmount)
 end
 
 function Actor:wait()
+    -- TODO remove eventually
+    self.ticksTillAction += self:getTicks(self.moveSpeed)
+end
+
+function Actor:skipTurn()
     self.ticksTillAction += self:getTicks(self.moveSpeed)
 end
 

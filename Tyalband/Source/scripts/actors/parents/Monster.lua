@@ -104,10 +104,9 @@ function Monster:doAction()
         if (dir == Vector2.zero()) then
             dir = Vector2.randomCardinal()
         end
-        if not self:move(dir) then
-            self:wait()
+        if self:move(dir) then
+            return
         end
-        return
     end
 
     self:wait()

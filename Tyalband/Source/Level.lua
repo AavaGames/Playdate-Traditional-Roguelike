@@ -19,6 +19,7 @@ function Level:init(theLevelManager, thePlayer)
     self.grid = nil -- table
     self.gridDimensions = Vector2.zero()
 
+    ---@type table<Monster>
     self.monsters = {}
     self.effects = {}
 
@@ -108,12 +109,38 @@ function Level:round()
 
     -- TODO rework to check if monsters can take actions if other monsters have taken actions
     local monstersMax = #self.monsters
+
+    local monstersNotActed = {}
+
     for i = 1, monstersMax, 1 do
         local mon = self.monsters[i]
         if (not mon.dead) then
             mon:round(ticks);
+
+            -- if (mon.ticksTillAction > 0) then
+            --     table.insert(monstersNotActed, { true, mon } )
+            -- end
+
         end
     end
+
+    -- while #monstersNotActed > 0 do
+    --     for i = 1, #monstersNotActed, 1 do
+
+    --         local hasntActed = monstersNotActed[i][1]
+    --         if (hasntActed) then
+    --             local mon = monstersNotActed[i][2]
+
+    --             pDebug:log("Monster didnt get to move" )
+
+    --             mon:round(ticks)
+
+    --             if (mon.ticksTillAction <= 0) then
+    --                 monstersNotActed[i][1] = false
+    --             end
+    --         end
+    --     end
+    -- end
 
     self.camera:update() -- must update last to follow player, if anything moved them
 

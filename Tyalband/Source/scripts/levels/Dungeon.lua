@@ -20,6 +20,9 @@ function Dungeon:create()
 
     frameProfiler:startTimer("Dungeon Generation")
 
+    --utilities.seedUsingTime(999999)
+    math.randomseed(601093)
+
     self.gridDimensions = { x = 50, y = 20 }
 
     self.grid = table.create(self.gridDimensions.x)
@@ -27,11 +30,7 @@ function Dungeon:create()
         self.grid[x] = table.create(self.gridDimensions.y)
     end
 
-    local seed = 343
-
-    math.randomseed(seed)
-
-    local roomAmount = 20
+    local roomAmount = 10
     local roomWidthRange = Vector2.new(3, 5)
     local roomHeightRange = Vector2.new(3, 5)
 
@@ -39,7 +38,9 @@ function Dungeon:create()
 
     -- optimizations
     -- Add walls when making rooms, walls are placed when x and y are 1 or max
+        -- what about tunnels?
     -- tunneler will have to break the first wall, then it will stop when it encounters not nil
+        -- tunneler should only connect to closest room and make sure it reaches that room before stopping
 
     local function addRooms()
         -- create a simple dungeon algorithm, place rectangles and then connect them all with tunnels
