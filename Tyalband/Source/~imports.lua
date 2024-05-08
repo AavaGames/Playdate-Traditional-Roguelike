@@ -9,6 +9,8 @@ import "CoreLibs/crank"
 import "CoreLibs/ui"
 
 import "/extensions/math"
+import "/extensions/utilities"
+
 import "/extensions/dm/enum"
 import "/extensions/dm/filepath"
 import "/extensions/dm/table"
@@ -60,8 +62,11 @@ import "/scripts/ui/menus/SettingsMenu"
 import "/scripts/ui/menus/ItemMenu"
 import "/scripts/ui/menus/InventoryMenu"
 
-import "/scripts/levels/Town"
 import "/scripts/levels/Dungeon"
+
+-- Premade Levels
+import "/scripts/levels/Town"
+import "/scripts/levels/DungeonPremade"
 import "/scripts/levels/TestRoom"
 
 import "/scripts/levels/Prototype"

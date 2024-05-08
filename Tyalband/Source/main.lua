@@ -5,9 +5,12 @@ local gfx <const> = playdate.graphics
 local function initializeGame()
 
 	pDebug = P_Debug()
+	frameProfiler = FrameProfiler()
+	frameProfiler:frameStart()
+	frameProfiler:startTimer("Initialization")
+
 	settings = Settings()
 	inputManager = InputManager()
-	frameProfiler = FrameProfiler()
 	screenManager = ScreenManager()
 	
 	gameManager = GameManager()
@@ -19,6 +22,9 @@ local function initializeGame()
 	--pDebug:log(Test-C(true))
 
 	--Test_Lua()
+
+	frameProfiler:endTimer("Initialization")
+	frameProfiler:endFrame(true)
 end
 
 local function updateGame()

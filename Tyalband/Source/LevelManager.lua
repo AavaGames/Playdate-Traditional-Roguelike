@@ -10,7 +10,7 @@ function LevelManager:init(player)
     self.currentLevel = nil
 
     -- FIRST LEVEL LOADED
-    self:loadLevel(Town)
+    self:loadLevel(Dungeon)
 end
 
 function LevelManager:update()

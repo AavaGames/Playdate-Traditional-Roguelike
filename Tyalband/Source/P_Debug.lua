@@ -8,7 +8,7 @@ function P_Debug:init()
     self.debug = true
 
     self.frameTime = false
-    self.profile = false
+    self.profile = true
     self.menu = nil
 end
 
@@ -21,7 +21,7 @@ end
 
 ---@param text string
 function P_Debug:error(text)
-    print("ERROR: " .. text .. "\n\t" .. where())
+    print("ERROR: " .. text .. "\n\t CALLBACK STACK: " .. where())
     -- TODO write to a log file for players to send bug reports
 end
 

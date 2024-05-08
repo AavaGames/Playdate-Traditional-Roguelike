@@ -34,21 +34,18 @@ function Town:create()
     self.grid = table.create(self.gridDimensions.x)
     for x = 1, self.gridDimensions.x, 1 do
         self.grid[x] = table.create(self.gridDimensions.y)
-    end
 
-    -- populate map
-    for x = 1, self.gridDimensions.x, 1 do
         for y = 1, self.gridDimensions.y, 1 do
             local width = self.gridDimensions.x
             local index = x + width * (y-1)
             local type = townArray[index]
 
             if (type > 0) then
-                self.grid[x][y] = Tile(x, y)
+                self.grid[x][y] = Tile(self, x, y)
             else
                 self.grid[x][y] = nil
             end
-    
+
             local tile = self.grid[x][y]
             if (tile ~= nil) then
                 if type == 1 then
@@ -61,4 +58,5 @@ function Town:create()
             end
         end
     end
+
 end

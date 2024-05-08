@@ -6,76 +6,137 @@ Dungeon = class("Dungeon").extends("Level") or Dungeon
 
 function Dungeon:init(theLevelManager, thePlayer)
     Dungeon.super.init(self, theLevelManager, thePlayer)
-    self.name = "Floor 1 (50 feet)"
 
-    self.FullyLit = true
-
-    self.playerSpawnPosition = { x = 18, y = 19 }
-    self.playerSpawnPosition = { x = 18, y = 12 }
-
-    self.playerSpawnPosition = { x = 9, y = 8}
-
-
-    Cat(self, Vector2.new(2, 2)) -- Cat locked away in top left corner
-
-    Zombie(self, Vector2.new(2, 13))
-    Zombie(self, Vector2.new(3, 13))
-
-    Zombie(self, Vector2.new(2, 14))
-    Zombie(self, Vector2.new(3, 14))
-
-    --Cat(self, Vector2.new(23, 2))
-
-    self.grid[2][2].glow = true
-    self.grid[2][3].glow = true
-    self.grid[3][2].glow = true
-    self.grid[3][3].glow = true
-
-    self.grid[9][18].glow = true
-    self.grid[9][19].glow = true
-    self.grid[10][18].glow = true
-    self.grid[10][19].glow = true
-
+    -- do stuff
+    self.name = "Dungeon Depth _"
+    self.FullySeen = false
+    
     Dungeon.super.finishInit(self)
 end
 
+-- Creates the dungeon, called in super.init
 function Dungeon:create()
-    -- var tile = array[y * width + x]
-    -- 0 = empty, 1 = wall, 2 = crystal, 3 = ground, 4 = grass
-    local dungeonFile = playdate.file.open("assets/maps/dungeon.json")
-    local dungeonJson = json.decodeFile(dungeonFile)
-    local dungeonArray = dungeonJson.layers[1].data
-    self.gridDimensions = { x = dungeonJson.width, y = dungeonJson.height }
-    
-    -- init table
+    -- abstract function to create grid. JSON or generated
+
+    frameProfiler:startTimer("Dungeon Generation")
+
+    self.gridDimensions = { x = 50, y = 20 }
+
     self.grid = table.create(self.gridDimensions.x)
     for x = 1, self.gridDimensions.x, 1 do
         self.grid[x] = table.create(self.gridDimensions.y)
     end
 
-    -- populate map
-    for x = 1, self.gridDimensions.x, 1 do
-        for y = 1, self.gridDimensions.y, 1 do
-            local width = self.gridDimensions.x
-            local index = x + width * (y-1)
-            local type = dungeonArray[index]
+    local seed = 343
 
-            if (type > 0) then
-                self.grid[x][y] = Tile(x, y)
-            else
-                self.grid[x][y] = nil
-            end
-    
-            local tile = self.grid[x][y]
-            if (tile ~= nil) then
-                if type == 1 then
-                    tile.feature = Wall(self, Vector2.new(x,y))
-                elseif type == 2 then
-                    tile.feature = Crystal(self, Vector2.new(x,y))
-                elseif type == 4 then
-                    tile.feature = Grass(self, Vector2.new(x,y))
-                end
+    math.randomseed(seed)
+
+    local roomAmount = 20
+    local roomWidthRange = Vector2.new(3, 5)
+    local roomHeightRange = Vector2.new(3, 5)
+
+    -- create a simple dungeon algorithm, place rectangles and then connect them all with tunnels
+    local rooms = table.create(roomAmount)
+    for i = 1, roomAmount, 1 do
+        local roomWidth = math.random(roomWidthRange.x, roomWidthRange.y)
+        local roomHeight = math.random(roomHeightRange.x, roomHeightRange.y)
+
+        -- add padding by 1 so walls can be placed
+        local roomX = math.random(2, self.gridDimensions.x - roomWidth - 1)
+        local roomY = math.random(2, self.gridDimensions.y - roomHeight - 1)
+
+        local room = { x = roomX, y = roomY, w = roomWidth, h = roomHeight }
+        table.insert(rooms, room)
+
+        for x = roomX, roomX + roomWidth, 1 do
+            for y = roomY, roomY + roomHeight, 1 do
+                self.grid[x][y] = Tile(self, x, y)
             end
         end
     end
+
+    local function addTunnels()
+        -- tunnel between each room's center without diagonal movement
+        for i = 1, #rooms - 1, 1 do
+            local roomA = rooms[i]
+            local roomB = rooms[i + 1]
+
+            local pointA = Vector2.new(roomA.x + math.floor(roomA.w / 2), roomA.y + math.floor(roomA.h / 2))
+            local pointB = Vector2.new(roomB.x + math.floor(roomB.w / 2), roomB.y + math.floor(roomB.h / 2))
+
+            local x = pointA.x
+            local y = pointA.y
+
+            local startedTunneling = false
+
+            while (x ~= pointB.x or y ~= pointB.y) do
+
+                -- stop tunneling if we hit a tile only after we started tunneling
+                -- since we start from the center of the room
+                if (self.grid[x][y] ~= nil) then
+                    if (startedTunneling) then
+                        break
+                    end
+                else
+                    startedTunneling = true
+                    self.grid[x][y] = Tile(self, x, y)
+                end
+
+                if (x < pointB.x) then
+                    x = x + 1
+                elseif (x > pointB.x) then
+                    x = x - 1
+                else
+                    if (y < pointB.y) then
+                        y = y + 1
+                    elseif (y > pointB.y) then
+                        y = y - 1
+                    end
+                end
+
+            end
+        end
+    end
+
+    local function addWalls()
+        self:tileLoop(function (func, x, y)
+            -- look at cardinal neighbors and if its null, place a tile and crystal there
+            local tile = self.grid[x][y]
+
+            if (tile.feature.collision == false) then
+
+                for i, pos in ipairs(tile:getNeighborPositions(true)) do
+
+                    local neighbor = self.grid[pos.x][pos.y]
+    
+                    if (neighbor == nil) then
+                        self.grid[pos.x][pos.y] = Tile(self, pos.x, pos.y, Crystal)
+                    end
+
+                end
+
+            end
+
+        end)
+    end
+
+    addTunnels()
+    addWalls()
+
+    self.playerSpawnPosition = Vector2.new(rooms[1].x + math.floor(rooms[1].w / 2), rooms[1].y + math.floor(rooms[1].h / 2))
+
+    self:print()
+
+    frameProfiler:endTimer("Dungeon Generation")
+
+    frameProfiler:startTimer("Dungeon Garbage Collection")
+
+
+    print("garbage count = " .. collectgarbage("count"))
+
+    -- clean up
+    collectgarbage("collect")
+
+    frameProfiler:endTimer("Dungeon Garbage Collection")
+
 end

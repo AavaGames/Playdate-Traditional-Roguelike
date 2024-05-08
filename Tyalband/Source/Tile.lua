@@ -1,14 +1,21 @@
 local gfx <const> = playdate.graphics
 
 ---@class Tile : Object
----@overload fun(x?: integer, y?: integer): Tile
+---@overload fun(theLevel: Level, x: integer, y: integer, featureClass?: Feature): Tile
 Tile = class("Tile").extends() or Tile
 
-function Tile:init(x, y)
+function Tile:init(theLevel, x, y, featureClass)
+    self.level = theLevel
+
     self.position = Vector2.new(x, y)
-    self.feature = Ground(self, Vector2.new(x,y))
+
+    ---@type Feature
+    self.feature = featureClass and featureClass(theLevel, Vector2.new(x, y)) or Ground(theLevel, Vector2.new(x,y))
+    ---@type Actor
     self.actor = nil
+    ---@type Item
     self.item = nil
+
     self.effects = {}
     self.triggers = {}
 
@@ -66,3 +73,28 @@ function Tile:addLightLevel(level, emitter)
         -- this shouldnt matter since light should always applies strongest first
     end
 end
+
+--#region Utility
+
+---@param getIntercardinal? boolean @Optional, if true returns 8 neighbors, if false returns 4 neighbors
+---@return table @Vector2[4] of neighbor positions [North, East, South, West, NE, SE, SW, NW]
+function Tile:getNeighborPositions(getIntercardinal)
+    local positions = table.create(getIntercardinal and 8 or 4)
+
+    positions[1] = self.position + Vector2.up()
+    positions[3] = self.position + Vector2.right()
+    positions[2] = self.position + Vector2.down()
+    positions[4] = self.position + Vector2.left()
+
+    if (getIntercardinal) then
+        positions[5] = self.position + Vector2.up() + Vector2.right()
+        positions[6] = self.position + Vector2.down() + Vector2.right()
+        positions[7] = self.position + Vector2.down() + Vector2.left()
+        positions[8] = self.position + Vector2.up() + Vector2.left()
+    end
+
+    return positions
+
+end
+
+--#endregion

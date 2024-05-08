@@ -2,8 +2,8 @@
 ---@overload fun(theLevel: Level, startPosition: Vector2): Grass
 Grass = class("Grass").extends("Feature") or Grass
 
-function Grass:init()
-    Grass.super:init(self)
+function Grass:init(theLevel, startPosition)
+    Grass.super.init(self, theLevel, startPosition)
     self.glyph = "/"
     self.name = "Long Grass"
     self.description = "Long grass swaying in the wind."

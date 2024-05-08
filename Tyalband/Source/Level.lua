@@ -16,7 +16,7 @@ function Level:init(theLevelManager, thePlayer)
     self.FullyLit = false
     self.FullySeen = false
 
-    self.grid = nil
+    self.grid = nil -- table
     self.gridDimensions = Vector2.zero()
 
     self.monsters = {}
@@ -41,6 +41,14 @@ function Level:finishInit()
         end)
     end
     screenManager:setBGColor(self.FullyLit == true and gfx.kColorWhite or gfx.kColorBlack)
+
+    if (self:collisionCheck(self.playerSpawnPosition)[1] == true) then
+        pDebug:error("Player spawned inside collider")
+        -- todo reconcile by finding a valid location to move
+    end
+
+    pDebug:log("Player Spawned at " .. tostring(self.playerSpawnPosition))
+
     self.player:spawn(self, self.playerSpawnPosition)
     self.camera = Camera(self.player)
 
@@ -93,7 +101,7 @@ function Level:round()
     local ticks = self.player.ticksTillAction
     self.tickCounter += ticks
 
-    print("round tick = ", ticks)
+    -- print("round tick = ", ticks)
 
     --if (self.tickCounter % TurnTicks * 10) then end -- 10 turns: regenerate player, poison
     --if (self.tickCounter % TurnTicks * 100) then end -- 100 turns: regenerate monsters
@@ -297,6 +305,36 @@ end
 
 --#region Utility
 
+--- Prints the grid out in console
+function Level:print()
+
+    local table = ""
+
+    for y = 1, self.gridDimensions.y, 1 do
+        for x = 1, self.gridDimensions.x, 1 do
+
+            if (self.playerSpawnPosition.x == x and self.playerSpawnPosition.y == y) then
+                table = table .. "P"
+                goto continue
+            end
+
+
+            local tile = self.grid[x][y]
+
+            if (tile == nil) then
+                table = table .. "_"
+            else
+                table = table .. "0"
+            end
+            ::continue::
+        end
+        table = table .. "\n"
+    end
+
+    printTable(table)
+
+end
+
 -- @param position Vector2
 function Level:floodFindValidPosition(position)
     local validPos = position
@@ -364,13 +402,14 @@ function Level:inBounds(x, y)
     return x >= 1 and x <= self.gridDimensions.x and y >= 1 and y <= self.gridDimensions.y
 end
 
----@param func function with (tile) parameter required
+--- Loops through all Tiles in grid, skipping nil in grid
+---@param func function with (tile, x, y)
 function Level:tileLoop(func)
     for x = 1, self.gridDimensions.x, 1 do
         for y = 1, self.gridDimensions.y, 1 do
             local tile = self.grid[x][y]
             if (tile ~= nil) then
-                func(tile)
+                func(tile, x, y)
             end
         end
     end

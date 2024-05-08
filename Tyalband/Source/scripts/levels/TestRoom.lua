@@ -36,7 +36,7 @@ function TestRoom:create()
         self.grid[x] = table.create(self.gridDimensions.y)
 
         for y = 1, self.gridDimensions.y, 1 do
-            self.grid[x][y] = Tile(x, y)
+            self.grid[x][y] = Tile(self, x, y)
 
             local tile = self.grid[x][y]
             if (tile ~= nil) then

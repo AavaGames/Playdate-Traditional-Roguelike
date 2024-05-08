@@ -1,6 +1,6 @@
 local gfx <const> = playdate.graphics
 
-local distanceMapMaxStepLimit <const> = 100
+local DISTANCE_MAP_MAX_STEP_LIMIT <const> = 100
 
 ---@class DistanceMapManager : Object
 ---@overload fun(level: Level, gridDimensions: Vector2): DistanceMapManager
@@ -29,13 +29,17 @@ function DistanceMapManager:reset()
     end
 end
 
+---@param name string
+---@param centerSourceActor? Actor | nil
+---@param centreSourceWeight? integer | nil
+---@param stepLimit? integer | nil
 function DistanceMapManager:addMap(name, centerSourceActor, centreSourceWeight, stepLimit)
     self.distanceMaps[name] = {
-        cMap = DistanceMap.new(self.gridDimensions.x, self.gridDimensions.y, self.collisionMask, stepLimit or distanceMapMaxStepLimit),
+        cMap = DistanceMap.new(self.gridDimensions.x, self.gridDimensions.y, self.collisionMask, stepLimit or DISTANCE_MAP_MAX_STEP_LIMIT),
         centerSource = centerSourceActor and DistanceMapSource(centerSourceActor, centreSourceWeight) or nil,
         sources = {},
         -- TODO convert to a function that gets the value this is set to (i.e player.soundRadius)
-        stepLimit = stepLimit or distanceMapMaxStepLimit,
+        stepLimit = stepLimit ~= nil and math.min(stepLimit, DISTANCE_MAP_MAX_STEP_LIMIT) or DISTANCE_MAP_MAX_STEP_LIMIT,
         updated = centerSourceActor == nil
     }
 end

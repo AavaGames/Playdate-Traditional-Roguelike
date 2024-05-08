@@ -76,7 +76,7 @@ local function div(self, value)
 end
 
 local function tostringMetamethod(self)
-	return ("( " .. self.x .. ", " .. self.y .. ")")
+	return ("(" .. self.x .. ", " .. self.y .. ")")
 end
 
 local function eq(self, value)

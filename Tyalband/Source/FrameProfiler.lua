@@ -23,8 +23,9 @@ function FrameProfiler:endTimer(purpose)
     self.timers[purpose]:endTimer()
 end
 
-function FrameProfiler:endFrame(drew)
-    if (drew and pDebug.profile == true) then
+---@param shouldPrint boolean Should a print be made?
+function FrameProfiler:endFrame(shouldPrint)
+    if (shouldPrint and pDebug.profile == true) then
         print("-- Frame Profile --")
         for index, purpose in ipairs(self.purposes) do 
             if (self.timers[purpose] ~= nil) then
@@ -39,7 +40,7 @@ function FrameProfiler:endFrame(drew)
         print(1000 / (self.frameTime.endTime - self.frameTime.startTime) .. " fps")
         print("----")
     end
-    if (drew and pDebug.frameTime == true) then
+    if (shouldPrint and pDebug.frameTime == true) then
         gfx.setColor(gfx.kColorWhite)
         local font = screenManager.logFont_6px
         local frameTime = 1000 / (self.frameTime.endTime - self.frameTime.startTime)
