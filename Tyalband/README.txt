@@ -29,4 +29,4 @@ DEVICE BUILDING
 2. cd to */Build/
 3. Enter: cmake .. -G "NMake Makefiles" --toolchain=C:/Apps/PlaydateSDK/C_API/buildsupport/arm.cmake -DCMAKE_BUILD_TYPE=Release
 4. Enter: nmake
-5. Open in sim and upload || set device to data disk mode and add it to /Games/
+5. Open in sim and upload OR set device to data disk mode and add it to /Games/

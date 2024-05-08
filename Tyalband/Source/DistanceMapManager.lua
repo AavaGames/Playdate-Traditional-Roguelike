@@ -18,9 +18,13 @@ function DistanceMapManager:init(level, gridDimensions)
     end)
     self.distanceMaps = {}
 
+    frameProfiler:startTimer("Distance Map Init")
+
     self:addMap("toPlayerPathMap", self.level.player, 0) -- defaults to max step range
     self:addMap("smellMap", self.level.player, 0, 10) -- add smell range
     self:addMap("soundMap", self.level.player, 0, 10) -- add sound radius
+
+    frameProfiler:endTimer("Distance Map Init")
 end
 
 function DistanceMapManager:reset()

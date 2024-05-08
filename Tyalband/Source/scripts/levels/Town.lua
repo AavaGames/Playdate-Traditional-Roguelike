@@ -11,13 +11,16 @@ function Town:init(theLevelManager, thePlayer)
     self.FullyLit = true
     self.FullySeen = true
 
-    self.playerSpawnPosition = { x = 16, y = 53 }
+    self.playerSpawnPosition = Vector2.new(16, 53)
 
     Cat(self, Vector2.new(6, 43))
     Animal(self, Vector2.new(7, 43))
 
     local downPos = Vector2.new(16, 1)
     self.grid[downPos.x][downPos.y].feature = Stairs(self, downPos, true, Prototype)
+
+    downPos = Vector2.new(16, 55)
+    self.grid[downPos.x][downPos.y].feature = Stairs(self, downPos, true, Dungeon)
 
     Town.super.finishInit(self)
 end

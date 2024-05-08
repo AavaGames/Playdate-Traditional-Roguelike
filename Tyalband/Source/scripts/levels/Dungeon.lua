@@ -9,7 +9,7 @@ function Dungeon:init(theLevelManager, thePlayer)
 
     -- do stuff
     self.name = "Dungeon Depth _"
-    self.FullySeen = false
+    self.FullySeen = true
     
     Dungeon.super.finishInit(self)
 end
@@ -35,22 +35,30 @@ function Dungeon:create()
     local roomWidthRange = Vector2.new(3, 5)
     local roomHeightRange = Vector2.new(3, 5)
 
-    -- create a simple dungeon algorithm, place rectangles and then connect them all with tunnels
     local rooms = table.create(roomAmount)
-    for i = 1, roomAmount, 1 do
-        local roomWidth = math.random(roomWidthRange.x, roomWidthRange.y)
-        local roomHeight = math.random(roomHeightRange.x, roomHeightRange.y)
 
-        -- add padding by 1 so walls can be placed
-        local roomX = math.random(2, self.gridDimensions.x - roomWidth - 1)
-        local roomY = math.random(2, self.gridDimensions.y - roomHeight - 1)
+    -- optimizations
+    -- Add walls when making rooms, walls are placed when x and y are 1 or max
+    -- tunneler will have to break the first wall, then it will stop when it encounters not nil
 
-        local room = { x = roomX, y = roomY, w = roomWidth, h = roomHeight }
-        table.insert(rooms, room)
+    local function addRooms()
+        -- create a simple dungeon algorithm, place rectangles and then connect them all with tunnels
 
-        for x = roomX, roomX + roomWidth, 1 do
-            for y = roomY, roomY + roomHeight, 1 do
-                self.grid[x][y] = Tile(self, x, y)
+        for i = 1, roomAmount, 1 do
+            local roomWidth = math.random(roomWidthRange.x, roomWidthRange.y)
+            local roomHeight = math.random(roomHeightRange.x, roomHeightRange.y)
+
+            -- add padding by 1 so walls can be placed
+            local roomX = math.random(2, self.gridDimensions.x - roomWidth - 1)
+            local roomY = math.random(2, self.gridDimensions.y - roomHeight - 1)
+
+            local room = { x = roomX, y = roomY, w = roomWidth, h = roomHeight }
+            table.insert(rooms, room)
+
+            for x = roomX, roomX + roomWidth, 1 do
+                for y = roomY, roomY + roomHeight, 1 do
+                    self.grid[x][y] = Tile(self, x, y)
+                end
             end
         end
     end
@@ -120,7 +128,24 @@ function Dungeon:create()
         end)
     end
 
+    local function drawLoading(text)
+        gfx.setFont(screenManager.menuFont)
+        gfx.clear()
+        gfx.setImageDrawMode(gfx.kDrawModeNXOR)
+        gfx.drawTextAligned(text .. "...", screenManager.screenDimensions.x, screenManager.screenDimensions.y - 16, kTextAlignment.right)
+        coroutine.yield()
+    end
+
+    drawLoading("creating rooms")
+
+    addRooms()
+
+    drawLoading("creating tunnels")
+
     addTunnels()
+
+    drawLoading("creating walls")
+
     addWalls()
 
     self.playerSpawnPosition = Vector2.new(rooms[1].x + math.floor(rooms[1].w / 2), rooms[1].y + math.floor(rooms[1].h / 2))
@@ -131,12 +156,16 @@ function Dungeon:create()
 
     frameProfiler:startTimer("Dungeon Garbage Collection")
 
+    --pDebug:log("garbage count = " .. collectgarbage("count"))
 
-    print("garbage count = " .. collectgarbage("count"))
+    drawLoading("collecting garbage")
 
     -- clean up
     collectgarbage("collect")
 
     frameProfiler:endTimer("Dungeon Garbage Collection")
 
+    drawLoading("wrapping up")
+
 end
+

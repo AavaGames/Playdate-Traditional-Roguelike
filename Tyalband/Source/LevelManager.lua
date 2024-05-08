@@ -8,7 +8,9 @@ function LevelManager:init(player)
     screenManager.levelManager = self
     self.player = player
     self.currentLevel = nil
+end
 
+function LevelManager:postInit()
     -- FIRST LEVEL LOADED
     self:loadLevel(Dungeon)
 end

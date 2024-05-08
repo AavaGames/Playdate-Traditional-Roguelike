@@ -43,13 +43,16 @@ function GameManager:init()
 end
 
 function GameManager:update()
+	-- required for waiting one frame before opening a new menu (see: MenuManager.pauseAdding)
+	self.menuManager:update()
+
 	if self:isState(self.GameStates.Level) then
 		self.levelManager:update()
 		self.logManager:update()
 	elseif self:isState(self.GameStates.FullLog) then
 		self.logManager:update()
 	elseif self:isState(self.GameStates.Menu) then
-		self.menuManager:update()
+
 	end
 end
 

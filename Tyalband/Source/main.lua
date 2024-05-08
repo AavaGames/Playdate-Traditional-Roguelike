@@ -2,7 +2,9 @@ import "~imports"
 
 local gfx <const> = playdate.graphics
 
-local function initializeGame()
+local postInitialized = false
+
+local function initialize()
 
 	pDebug = P_Debug()
 	frameProfiler = FrameProfiler()
@@ -27,6 +29,11 @@ local function initializeGame()
 	frameProfiler:endFrame(true)
 end
 
+-- Called after game is initialized inside playdate.update to allow coroutine yielding
+local function postInitialize()
+	gameManager.levelManager:postInit()
+end
+
 local function updateGame()
 	frameProfiler:frameStart()
 	frameProfiler:startTimer("Logic")
@@ -47,9 +54,15 @@ local function drawGame()
 	screenManager:draw()
 end
 
-initializeGame()
+initialize()
+
 
 function playdate.update()
+	if not postInitialized then
+		postInitialized = true
+		postInitialize()
+	end
+
 	playdate.timer.updateTimers()
 	updateGame()
 	drawGame()
