@@ -28,7 +28,7 @@ function Town:create()
     local townFile = playdate.file.open("assets/maps/town.json")
     local townJson = json.decodeFile(townFile)
     local townArray = townJson.layers[1].data
-    self.gridDimensions = { x = townJson.width, y = townJson.height }
+    self.gridDimensions = Vector2.new(townJson.width, townJson.height)
 
     -- init table
     self.grid = table.create(self.gridDimensions.x)

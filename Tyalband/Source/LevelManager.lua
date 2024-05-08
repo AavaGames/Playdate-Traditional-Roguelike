@@ -9,7 +9,8 @@ function LevelManager:init(player)
     self.player = player
     self.currentLevel = nil
 
-    self:loadLevel(Prototype)
+    -- FIRST LEVEL LOADED
+    self:loadLevel(Town)
 end
 
 function LevelManager:update()

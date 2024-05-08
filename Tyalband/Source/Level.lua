@@ -76,6 +76,7 @@ function Level:finishInit()
     end
 end
 
+-- Abstract function called by super init
 function Level:create()
     -- abstract function to create grid
 end
@@ -97,6 +98,7 @@ function Level:round()
     --if (self.tickCounter % TurnTicks * 10) then end -- 10 turns: regenerate player, poison
     --if (self.tickCounter % TurnTicks * 100) then end -- 100 turns: regenerate monsters
 
+    -- TODO rework to check if monsters can take actions if other monsters have taken actions
     local monstersMax = #self.monsters
     for i = 1, monstersMax, 1 do
         local mon = self.monsters[i]
@@ -115,7 +117,6 @@ function Level:round()
 end
 
 --region Drawing & Lighting
-
 function Level:updateLighting()
     frameProfiler:startTimer("Logic: Vision")
 
@@ -343,7 +344,7 @@ function Level:floodFindValidPosition(position)
     return validPos
 end
 
--- @param position Vector2
+--- @param position Vector2
 function Level:randomValidMoveDirection(position)
 
 end
@@ -363,7 +364,7 @@ function Level:inBounds(x, y)
     return x >= 1 and x <= self.gridDimensions.x and y >= 1 and y <= self.gridDimensions.y
 end
 
---Pass in a function for the the tile to run through ( function(tile) )
+---@param func function with (tile) parameter required
 function Level:tileLoop(func)
     for x = 1, self.gridDimensions.x, 1 do
         for y = 1, self.gridDimensions.y, 1 do
@@ -375,7 +376,9 @@ function Level:tileLoop(func)
     end
 end
 
--- Check tile in the level for collision. Returns { bool: collision?, [empty tile, actor collision or nil] }
+--- Check tile in the level for collision. Returns { bool: collision?, [empty tile, actor collision or nil] }
+---@param position Vector2
+---@return table { bool: collision?, [tile.actor, tile.feature, tile or nil] }
 function Level:collisionCheck(position)
     if (self:inBounds(position.x, position.y)) then
         local tile = self.grid[position.x][position.y]
