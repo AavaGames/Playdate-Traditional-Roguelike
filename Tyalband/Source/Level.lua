@@ -16,8 +16,12 @@ function Level:init(theLevelManager, thePlayer)
     self.FullyLit = false
     self.FullySeen = false
 
+    --- @type table<Tile | nil> The whole levels grid. Use addTile() to insert tiles into grid
     self.grid = nil -- table
     self.gridDimensions = Vector2.zero()
+
+    --- @type table<Vector2> All tile positions. Do not insert directly use addTile()
+    self.tilePositions = {}
 
     ---@type table<Monster>
     self.monsters = {}
@@ -330,6 +334,14 @@ function Level:despawn(monster)
     --table.remove(self.monsters, monster.index)
 end
 
+---@param x integer
+---@param y integer
+---@param featureClass? Feature
+function Level:addTile(x, y, featureClass)
+    self.grid[x][y] = Tile(self, x, y, featureClass)
+    table.insert(self.tilePositions, self.grid[x][y].position)
+end
+
 --#region Utility
 
 --- Prints the grid out in console
@@ -351,7 +363,12 @@ function Level:print()
             if (tile == nil) then
                 table = table .. "_"
             else
-                table = table .. "0"
+                if (tile.feature.collision) then
+                    table = table .. "#"
+                else
+                    table = table .. "."
+                end
+                
             end
             ::continue::
         end
@@ -462,6 +479,60 @@ function Level:collisionCheck(position)
     else
         return { true, nil } -- oob
     end
+end
+
+--- Checks whether the bounding box is colliding
+---@param position Vector2
+---@param w integer
+---@param h integer
+function Level:boundingBoxCollisionCheck(position, w, h)
+    for x = position.x, position.x + w - 1, 1 do
+        for y = position.y, position.y + h - 1, 1 do
+            if (self:collisionCheck(Vector2.new(x, y))[1] == true) then
+                return true
+            end
+        end
+    end
+    return false
+end
+
+---@param position Vector2
+---@param boxPosition Vector2
+---@param w integer
+---@param h integer
+---@return boolean
+function Level:positionInBoundingBox(position, boxPosition, w, h)
+    return position.x >= boxPosition.x and position.x < boxPosition.x + w
+        and position.y >= boxPosition.y and position.y < boxPosition.y + h
+end
+
+--- Checks whether the bounding box is touching a tile
+---@param position Vector2
+---@param w integer
+---@param h integer
+function Level:boundingBoxTileCheck(position, w, h)
+    for x = position.x, position.x + w - 1, 1 do
+        for y = position.y, position.y + h - 1, 1 do
+            if (self.grid[x][y] ~= nil) then
+                return true
+            end
+        end
+    end
+    return false
+end
+
+--- Gets a random valid tile without collision, returns false if infinite looping
+---@return Vector2 | false
+function Level:getRandomValidTilePosition()
+    local pos
+    local attempts = 0
+    repeat
+        pos = self.tilePositions[math.random(#self.tilePositions)]
+        if (self:collisionCheck(pos)[1] == false) then
+            return pos
+        end
+    until attempts > 100000
+    return false
 end
 
 --#endregion

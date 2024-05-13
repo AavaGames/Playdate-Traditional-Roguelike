@@ -71,7 +71,7 @@ end
 ---@diagnostic disable-next-line: duplicate-set-field
 function playdate.keyPressed(key)
 	if key == "n" then
-
+		gameManager.levelManager:loadLevel(Dungeon)
 	end
 end
 

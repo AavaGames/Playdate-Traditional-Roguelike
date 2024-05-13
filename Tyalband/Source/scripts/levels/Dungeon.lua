@@ -20,8 +20,8 @@ function Dungeon:create()
 
     frameProfiler:startTimer("Dungeon Generation")
 
-    --utilities.seedUsingTime(999999)
-    math.randomseed(601093)
+    utilities.seedUsingTime(999999)
+    math.randomseed(895960)
 
     self.gridDimensions = { x = 50, y = 20 }
 
@@ -30,9 +30,15 @@ function Dungeon:create()
         self.grid[x] = table.create(self.gridDimensions.y)
     end
 
-    local roomAmount = 10
-    local roomWidthRange = Vector2.new(3, 5)
-    local roomHeightRange = Vector2.new(3, 5)
+
+    local roomAmountRange = Vector2.new(8, 12)
+    local roomWidthRange = Vector2.new(5, 9)
+    local roomHeightRange = Vector2.new(5, 7)
+    local maxRoomPlacingAttempts = 5
+
+    local randomTunnelTurnChance = 0
+
+    local roomAmount = math.random(roomAmountRange.x, roomAmountRange.y)
 
     local rooms = table.create(roomAmount)
 
@@ -49,60 +55,174 @@ function Dungeon:create()
             local roomWidth = math.random(roomWidthRange.x, roomWidthRange.y)
             local roomHeight = math.random(roomHeightRange.x, roomHeightRange.y)
 
-            -- add padding by 1 so walls can be placed
-            local roomX = math.random(2, self.gridDimensions.x - roomWidth - 1)
-            local roomY = math.random(2, self.gridDimensions.y - roomHeight - 1)
-
-            local room = { x = roomX, y = roomY, w = roomWidth, h = roomHeight }
+            local room = { w = roomWidth, h = roomHeight, size = roomWidth * roomHeight, position = nil }
             table.insert(rooms, room)
+        end
 
-            for x = roomX, roomX + roomWidth, 1 do
-                for y = roomY, roomY + roomHeight, 1 do
-                    self.grid[x][y] = Tile(self, x, y)
+        -- sort rooms by size
+        table.sort(rooms, function(a, b) return a.size > b.size end)
+
+        -- place rooms
+        for i, room in ipairs(rooms) do
+            local position = Vector2.one()
+
+            -- check if intersecting with other rooms X times
+            local attempts = 1
+            repeat
+                -- add padding to edge to be able to place walls
+                position.x = math.random(2, self.gridDimensions.x - room.w - 1)
+                position.y = math.random(2, self.gridDimensions.y - room.h - 1)
+                if (not self:boundingBoxTileCheck(position, room.w, room.h)) then
+                    pDebug:log("Room not colliding " .. i .. " attempts: " .. attempts)
+                    break
+                end
+                attempts += 1
+            until attempts > maxRoomPlacingAttempts
+
+            if (attempts > maxRoomPlacingAttempts) then
+                pDebug:log("Nesting room " .. i)
+            end
+
+            room.position = position
+
+            -- place room
+            for xx = position.x, position.x + room.w, 1 do
+                for yy = position.y, position.y + room.h, 1 do
+                    -- place wall on edges
+                    if (xx == position.x or xx == position.x + room.w
+                        or yy == position.y or yy == position.y + room.h) then
+                        self:addTile(xx, yy, Crystal)
+                    else
+                        self:addTile(xx, yy, Ground)
+                    end
                 end
             end
         end
     end
 
     local function addTunnels()
-        -- tunnel between each room's center without diagonal movement
-        for i = 1, #rooms - 1, 1 do
-            local roomA = rooms[i]
-            local roomB = rooms[i + 1]
+        for a = 1, #rooms - 1, 1 do
+            for b = a + 1, #rooms, 1 do
+                local roomA = rooms[a]
+                local roomB = rooms[b]
 
-            local pointA = Vector2.new(roomA.x + math.floor(roomA.w / 2), roomA.y + math.floor(roomA.h / 2))
-            local pointB = Vector2.new(roomB.x + math.floor(roomB.w / 2), roomB.y + math.floor(roomB.h / 2))
+                local centerA = Vector2.new(roomA.position.x + math.floor(roomA.w / 2),
+                                            roomA.position.y + math.floor(roomA.h / 2))
+                local centerB = Vector2.new(roomB.position.x + math.floor(roomB.w / 2),
+                                            roomB.position.y + math.floor(roomB.h / 2))
 
-            local x = pointA.x
-            local y = pointA.y
+                local tunneler
 
-            local startedTunneling = false
+                local function tunnelStep()
+                    -- move toward centerB
+                    -- step without moving diagonal
+                    -- sometimes switch axis of movement if moving in a straight line
+                    
+                    local d = centerB - tunneler
 
-            while (x ~= pointB.x or y ~= pointB.y) do
-
-                -- stop tunneling if we hit a tile only after we started tunneling
-                -- since we start from the center of the room
-                if (self.grid[x][y] ~= nil) then
-                    if (startedTunneling) then
-                        break
+                    if (d.x == 0 and d.y == 0) then
+                        return false
                     end
-                else
-                    startedTunneling = true
-                    self.grid[x][y] = Tile(self, x, y)
+
+                    -- move toward centerB
+                    if (math.abs(d.x) > math.abs(d.y)) then
+                        if (d.x > 0) then
+                            tunneler.x += 1
+                        else
+                            tunneler.x -= 1
+                        end
+                    else
+                        if (d.y > 0) then
+                            tunneler.y += 1
+                        else
+                            tunneler.y -= 1
+                        end
+                    end
+
+                    -- -- 90 degree turn
+                    -- if (math.random() < randomTunnelTurnChance) then
+                    --     if (math.random() < 0.5) then
+                    --         -- switch axis
+                    --         local temp = tunneler.x
+                    --         tunneler.x = tunneler.y
+                    --         tunneler.y = temp
+                    --     else
+                    --         -- switch sign
+                    --         tunneler.x = -tunneler.x
+                    --         tunneler.y = -tunneler.y
+                    --     end
+                    -- end
+
+                    return true
                 end
 
-                if (x < pointB.x) then
-                    x = x + 1
-                elseif (x > pointB.x) then
-                    x = x - 1
-                else
-                    if (y < pointB.y) then
-                        y = y + 1
-                    elseif (y > pointB.y) then
-                        y = y - 1
+                local function tunnelLoop(dryRun)
+
+                    tunneler = centerA
+
+                    local leftRoomA = false
+                    while tunnelStep() do
+                        local tile = self.grid[tunneler.x][tunneler.y]
+    
+                        if (tile == nil) then
+                            if (not dryRun) then
+                                self:addTile(tunneler.x, tunneler.y)
+                            end
+                        else
+                            print(tunneler)
+
+                            if (tile.feature.collision == true) then -- collided with a room wall
+                                
+
+
+                                if self:positionInBoundingBox(tunneler, roomA.position, roomA.w, roomA.h) then
+                                    -- break wall of room A
+                                    pDebug:log("breaking Room A wall")
+
+                                    if (not dryRun) then
+                                        tile.feature = Ground(self, Vector2.new(tunneler.x, tunneler.y))
+                                    end
+                                elseif self:positionInBoundingBox(tunneler, roomB.position, roomB.w, roomB.h) then
+
+                                    pDebug:log("breaking Room B wall")
+
+                                    -- break wall of room B 
+                                    if (not dryRun) then
+                                        tile.feature = Ground(self, Vector2.new(tunneler.x, tunneler.y))
+                                    end
+                                else
+                                    
+
+                                    print(roomA.position)
+                                    printTable(roomA)
+                                    print(roomB.position)
+                                    printTable(roomB)
+
+                                    -- hit wall of another room, tunnel is INVALID
+                                    return false
+    
+                                end
+
+                            elseif self:positionInBoundingBox(tunneler, roomA.position, roomA.w, roomA.h) == false then
+                                -- found ground and out of room a
+                                -- hit a tunnel or inside a room
+                                pDebug:log("outer ground, stop")
+                                break
+                            else
+                                pDebug:log("inner ground")
+                                -- inner ground do nothing
+                            end
+                        end
                     end
+
+                    return true
                 end
 
+                if (tunnelLoop(true)) then
+                    tunnelLoop(false)
+                else
+                    pDebug:log("Invalid tunnel, skipping")
+                end
             end
         end
     end
@@ -114,14 +234,29 @@ function Dungeon:create()
 
             if (tile.feature.collision == false) then
 
+                -- place walls at any nil tile around ground (8 way)
                 for i, pos in ipairs(tile:getNeighborPositions(true)) do
 
                     local neighbor = self.grid[pos.x][pos.y]
     
                     if (neighbor == nil) then
-                        self.grid[pos.x][pos.y] = Tile(self, pos.x, pos.y, Crystal)
+                        self:addTile(pos.x, pos.y, Crystal)
                     end
 
+                end
+                
+            else
+
+                -- remove walls if surrounded (4 way)
+                local surrounded = true
+                for i, pos in ipairs(tile:getNeighborPositions(true)) do
+                    if (self:collisionCheck(pos)[1] == false) then
+                        surrounded = false
+                        break
+                    end
+                end
+                if surrounded then
+                    self.grid[x][y] = nil
                 end
 
             end
@@ -149,7 +284,10 @@ function Dungeon:create()
 
     addWalls()
 
-    self.playerSpawnPosition = Vector2.new(rooms[1].x + math.floor(rooms[1].w / 2), rooms[1].y + math.floor(rooms[1].h / 2))
+    self.playerSpawnPosition = self:getRandomValidTilePosition()
+    if (self.playerSpawnPosition == false) then
+        self.playerSpawnPosition = Vector2.one()
+    end
 
     self:print()
 
@@ -169,4 +307,3 @@ function Dungeon:create()
     drawLoading("wrapping up")
 
 end
-
